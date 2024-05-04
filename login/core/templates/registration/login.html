@@ -1,0 +1,31 @@
+{% extends 'core/base.html' %}
+
+{% load static %} <!-- Agrega esta línea al principio para cargar las etiquetas de archivos estáticos -->
+
+{% block content %}
+<link rel="stylesheet" type="text/css" href="{% static 'css/login-estilos.css' %}"> <!-- Mueve esta línea fuera del bloque content -->
+
+    <h3>Iniciar Sesion</h3>
+    <br>
+    <div class="container">
+        <form action="{% url 'login' %}" method="post">
+            {% csrf_token %}
+            <input type="email" name="email" placeholder="Email">
+            <br>
+            <input type="password" name="contraseña" placeholder="Contraseña">
+            <br>
+            <button>Iniciar Sesión</button>
+            <br>        
+            {% if error_message %}
+                <p>{{ error_message }}</p>
+            {% endif %}
+            
+            {% if failed_attempts is not None %}
+                <p>Número de intentos fallidos: {{ failed_attempts }}</p>
+            {% endif %}
+        </form>
+        <div class="crear-cuenta">
+            <a href="{% url 'registro' %}">Crear cuenta nueva</a>
+        </div>
+    </div>
+{% endblock %}
