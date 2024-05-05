@@ -14,7 +14,8 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.urls import path 
-from .views import home,products,exit
+from .views import home,products
+from log_out.views import confirmar_salida,exit
 #importo funcion exit
 from . import views
 
@@ -28,4 +29,5 @@ urlpatterns = [
     path('login_ayudante/', views.procesar_clave, name="login_ayudante"),
    # path('bajaAyudante/',views.bajaAyudante,name='bajaAyudante'), #la tengo q hacer 
     path('bajaAyudante/',views.mostrarBaja,name='mostrarBaja'),
+    path('confirmar_salida/', confirmar_salida, name='confirmar_salida'),
 ]

@@ -40,12 +40,6 @@ def home(request):
 def products(request):
     return render(request, 'core/products.html')
 
-#funcion para salir
-def exit(request):
-    logout(request)
-    print("saliendo")
-    return redirect('home')
-
 
 
 
