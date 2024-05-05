@@ -1,15 +1,15 @@
 from django.shortcuts import render, redirect
 from .models import FailedLoginAttempt, Usuario, UsuarioBloqueado
-from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth import login, logout
 from . formreg import UsuarioForm
-from django.core.mail import send_mail
 import logging
 from django.core.mail import EmailMessage
+from django.template.loader import render_to_string
 from django.conf import settings
-from django.core.mail import send_mail
 import os
-from sendgrid import SendGridAPIClient
-from sendgrid.helpers.mail import Mail
+from django.conf import settings
+import random
+import string
 
 
 
@@ -18,7 +18,6 @@ from sendgrid.helpers.mail import Mail
 #a una vista 
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import logout
-from django.contrib.auth.decorators import login_required
 
 
 # Create your views here.
@@ -26,14 +25,12 @@ logger = logging.getLogger(__name__)
 
 
 
+
+
 def home(request):
-    print("HOLA")
-    print(request.session.get('user_email'))
-    user = Usuario.objects.get(email=request.session.get('user_email')) 
-    #user = request
+    user = request.user  # Obtiene el usuario autenticado de la sesión
     context = {'user': user}
     return render(request, 'home.html', context)
-
 
 
 #estoy aplicando la restrinccion de que si no esta logueado
@@ -52,41 +49,19 @@ def exit(request):
 
 
 
-
-def enviar_correo(usuario_email, asunto, mensaje):
-    try:
-        # Configura el cliente de SendGrid con tu API Key
-        sg = SendGridAPIClient(os.environ.get('SENDGRID_API_KEY'))
-
-        # Crea el objeto Mail con los detalles del correo electrónico
-        message = Mail(
-            from_email='giuproyectocaritas@gmail.com',
-            to_emails=usuario_email,
-            subject=asunto,
-            plain_text_content=mensaje
-        )
-
-        # Envía el correo electrónico utilizando la API de SendGrid
-        response = sg.send(message)
-        print(response.status_code)
-        print(response.body)
-        print(response.headers)
-
-    except Exception as e:
-        # Manejo de errores
-        print(f"Error al enviar correo electrónico: {str(e)}")
+def generar_codigo_aleatorio(longitud):
+    caracteres = string.ascii_letters + string.digits
+    codigo = ''.join(random.choice(caracteres) for _ in range(longitud))
+    return codigo
 
 
-
-#andas
-#no puedo usar authenticate porque estoy usando otro modelo de bd 
+#perfecto
 def login_nuevo(request):
     error_message = None
     failed_attempts = None
 
     if request.method == 'POST':
         # Tomar los datos del formulario
-
         email = request.POST.get('email')  
         contraseña = request.POST.get('contraseña') 
         print(contraseña)
@@ -98,9 +73,30 @@ def login_nuevo(request):
             if contraseña == usuario.contraseña: #autenticacion exitosa
                 try:
                      UsuarioBloqueado.objects.get(email=email) #esta bloqueado
-                     error_message = 'El Usuario esta bloqueado, para desbloquearlo debe enviar un mail a la fundacion'
+                     error_message = 'El Usuario esta bloqueado'
                      return render(request, 'login.html', {'error_message': error_message})
                 except UsuarioBloqueado.DoesNotExist:         #autenticacion exitosa y usuario no bloqueado
+                     if(usuario.tipo=="ayudante"):
+                         #hago una clave aleatorea, se la envio por mail
+                         #lo redirijo a un segundo formulario para que se loguee
+                         codigo = generar_codigo_aleatorio(6)
+                         request.session['codigo_autenticacion'] = codigo #guardo temporalmente la clave en la sesion 
+                         subject = 'Codigo autenticacion' 
+                         template = render_to_string('correos\email_template.html', {
+                             'name' : usuario.nombre ,
+                             'email' : usuario.email ,
+                             'message' : f"Codigo aleatoreo de autenticacion {codigo}"
+                         })
+                         email = EmailMessage(
+                             subject,
+                             template,
+                             settings.EMAIL_HOST_USER,
+                             [usuario.email]
+                         )
+                         email.fail_silently = False 
+                         email.send()
+                         request.session['_auth_user_id'] = usuario.id   #me guardo el usuario
+                         return render(request, 'login_ayudante.html', {'messages': 'Se ha enviado el codigo de autenticacion a su correo'})
                      login(request, usuario)
                      print("estoy con los datos correctos")
                 # Elimina los intentos fallidos anteriores (si los hay)
@@ -108,9 +104,7 @@ def login_nuevo(request):
                 # Redirige al usuario a la página de inicio
                      print(usuario.email)
                      print(usuario.contraseña)
-                     request.session['user_email'] = usuario.email
                      return redirect('home')
-
             else:
                  print("La autenticación falló debido a la contraseña incorrecta")
                  print(usuario.contraseña)
@@ -122,8 +116,8 @@ def login_nuevo(request):
                  if failed_attempts == 3:
                     # Se bloquea el usuario y se le manda mail de recuperacion
                      UsuarioBloqueado.objects.create(email=email)    #lo agrego a usuarios bloqueados
-                     enviar_correo(usuario.email, 'Cuenta bloqueada', 'Su cuenta ha sido bloqueada debido a múltiples intentos de inicio de sesión fallidos.Para recuperarla ingrese al siguiente link : ')
-                     return render(request, 'login.html', {'error_message': 'Cuenta bloqueada: Para desbloquear la cuenta comuníquese vía mail con la fundación'})
+                    #  dijimos q no ibamos a enviar correos enviar_correo(usuario.email, 'Cuenta bloqueada', 'Su cuenta ha sido bloqueada debido a múltiples intentos de inicio de sesión fallidos.Para recuperarla ingrese al siguiente link : ')
+                     return render(request, 'login.html', {'error_message': 'Cuenta bloqueada: Supero los intentos fallidos permitidos'})
                  else:
                      error_message = f'Contraseña incorrecta, cantidad de intentos fallidos: {failed_attempts}'
         except Usuario.DoesNotExist:
@@ -137,9 +131,26 @@ def login_nuevo(request):
 
 
 
+#perfecto
+def procesar_clave(request):
+    if request.method == 'POST':
+        clave_ingresada = request.POST.get('clave')
+        codigo_correcto = request.session.get('codigo_autenticacion')
 
-
-
+        if clave_ingresada == codigo_correcto:
+            usuario_id = request.session.get('_auth_user_id')
+            if usuario_id is not None:
+                print("recupere el usuario")
+                usuario = Usuario.objects.get(id=usuario_id)
+                print(usuario.email)
+                request.session.pop('codigo_autenticacion', None)
+                login(request, usuario)
+                return redirect('home')
+        else:
+            messages = "Clave incorrecta: por favor intentelo de nuevo"
+    # Si no es una solicitud POST o la clave es incorrecta, redirige a la página de inicio de sesión.
+   # return redirect('login_ayudante')
+    return render(request, 'login_ayudante.html', {'messages': messages})
 
 
 
@@ -157,6 +168,14 @@ def formularioreg(request):
         form = UsuarioForm()  
 
     return render(request, 'registration/registro.html', {'form': form}) 
+
+def mostrarBaja(request):
+     print("estoy aca")
+     elementos = Usuario.objects.all()
+     return render(request, 'core/bajaAyudante/bajaAyudante.html', {'elementos': elementos})
+
+
+
 
 
 

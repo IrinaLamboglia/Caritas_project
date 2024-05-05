@@ -41,14 +41,25 @@ INSTALLED_APPS = [
     'core',
 ]
 
+
 # settings.py
 
+AUTH_USER_MODEL = 'core.Usuario'
+
+
+AUTHENTICATION_BACKENDS = [
+    'django.contrib.auth.backends.ModelBackend',
+    #'core.models.Usuario',  # Si has creado un backend personalizado
+]
+
+
+
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-EMAIL_HOST = 'smtp.sendgrid.net'
+EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
-EMAIL_HOST_USER = 'apikey'  # Usar 'apikey' como usuario
-EMAIL_HOST_PASSWORD = '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'  # Reemplaza con tu API Key de SendGrid
+EMAIL_HOST_USER = 'giuproyectocaritas@gmail.com'  # Usar 'apikey' como usuario
+EMAIL_HOST_PASSWORD = 'buhy wbny mebp xbfe'
 
 
 

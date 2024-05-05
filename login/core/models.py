@@ -1,5 +1,6 @@
 from django.db import models
 from django.core.validators import MinLengthValidator
+from django.contrib.auth.models import AbstractUser
 
 # Create your models here.
 
@@ -20,7 +21,7 @@ class FailedLoginAttempt(models.Model):
 # Nombre y
 # Apellido: Martina colombo y presiona “aceptar”
 
-class Usuario(models.Model):
+class Usuario(AbstractUser):
     email = models.EmailField(unique=True)
     nombre = models.CharField(max_length=50)
     apellido = models.CharField(max_length=50)
@@ -29,6 +30,9 @@ class Usuario(models.Model):
     telefono = models.CharField(max_length=10)
     contraseña = models.CharField(max_length=128, validators=[MinLengthValidator(6)], default='valor_predeterminado')  # Campo para almacenar la contraseña cifrada
     last_login = models.DateTimeField(verbose_name='last login', blank=True, null=True)
+    tipo= models.CharField(max_length=30, default="")
+  #  USERNAME_FIELD = 'email'
+   # REQUIRED_FIELDS = []
 
 
 
