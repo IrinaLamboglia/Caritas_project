@@ -31,8 +31,7 @@ class Usuario(AbstractUser):
     contraseña = models.CharField(max_length=128, validators=[MinLengthValidator(6)], default='valor_predeterminado')  # Campo para almacenar la contraseña cifrada
     last_login = models.DateTimeField(verbose_name='last login', blank=True, null=True)
     tipo= models.CharField(max_length=30, default="")
-  #  USERNAME_FIELD = 'email'
-   # REQUIRED_FIELDS = []
+
 
 
 
@@ -40,11 +39,5 @@ class UsuarioBloqueado(models.Model):
     email= models.EmailField(unique=True)
 
 
-#opciones de rol que vamos a necesitar mas adelante
-
-
-
-OPCIONES_ROL = [
-    ('usuario','ayudante','Administrador')
-]
-roles= models.CharField(max_length=7,choices=OPCIONES_ROL,default='usuario')
+class porDesbloquear(models.Model):
+    email= models.EmailField(unique=True)
