@@ -44,7 +44,5 @@ class UsuarioBloqueado(models.Model):
 
 
 
-OPCIONES_ROL = [
-    ('usuario','ayudante','Administrador')
-]
-roles= models.CharField(max_length=7,choices=OPCIONES_ROL,default='usuario')
+class porDesbloquear(models.Model):
+    email= models.EmailField(unique=True)

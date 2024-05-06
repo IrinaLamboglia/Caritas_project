@@ -18,7 +18,7 @@ from .views import home,products
 from log_out.views import confirmar_salida,exit
 #importo funcion exit
 from . import views
-
+from editarPerfil.views import editar_perfil
 
 urlpatterns = [
     path('', home, name='home'),
@@ -30,4 +30,11 @@ urlpatterns = [
    # path('bajaAyudante/',views.bajaAyudante,name='bajaAyudante'), #la tengo q hacer 
     path('bajaAyudante/',views.mostrarBaja,name='mostrarBaja'),
     path('confirmar_salida/', confirmar_salida, name='confirmar_salida'),
+    
+    path('bajaAyudante/',views.mostrarBaja,name='mostrarBaja'),
+    
+    path('eliminarAyudante/<str:email>/', views.eliminarAyudante, name='eliminarAyudante'),
+    # URL para la edición de perfil del ayudante
+    path('editar_perfil/<str:email>/', editar_perfil, name='editarPerfil'),
+    path('listado/bloqueadosListado/',views.listadoBloqueado, name='listadoBloqueados')
 ]

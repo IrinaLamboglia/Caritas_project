@@ -62,3 +62,8 @@ li:last-child {
 .empty {
     color: #888;
 }
+
+.button-container form {
+    display: inline-block; /* Para que los formularios se muestren en línea */
+    margin-right: 10px; /* Para agregar un pequeño espacio entre los botones */
+}
