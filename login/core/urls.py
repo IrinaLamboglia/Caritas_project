@@ -35,6 +35,7 @@ urlpatterns = [
     
     path('eliminarAyudante/<str:email>/', views.eliminarAyudante, name='eliminarAyudante'),
     # URL para la edición de perfil del ayudante
-    path('editar_perfil/<str:email>/', editar_perfil, name='editarPerfil'),
+   path('editar_perfil/', editar_perfil, name='editar_perfil'),
+   
     path('listado/bloqueadosListado/',views.listadoBloqueado, name='listadoBloqueados')
 ]
