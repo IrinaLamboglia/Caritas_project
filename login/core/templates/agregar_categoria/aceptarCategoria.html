@@ -1,0 +1,31 @@
+{% load static %}
+<!-- formulario_aceptar_categoria.html -->
+<!-- formulario_aceptar_categoria.html -->
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Agregar Categoría</title>
+    <link rel="stylesheet" href="{% static 'css/estiloCategoria.css' %}">
+</head>
+<body>
+    <div class="container">
+        <h1 class="title">Agregar Categoría</h1>
+        <div class="form-container">
+            <form method="post">
+                {% csrf_token %}
+                <div class="form-group">
+                    <label for="nombre_categoria">Ingrese el nombre:</label>
+                    <input type="text" id="nombre_categoria" name="nombre_categoria" class="form-control" required>
+                </div>
+                <button type="submit" class="btn btn-primary btn-lg btn-block">Aceptar</button>
+                <a href="{% url 'home' %}" class="btn btn-primary btn-lg btn-block">Cancelar</a>
+            </form>
+            {% if error_message %}
+                <p class="error-message">{{ error_message }}</p>
+            {% endif %}
+        </div>
+    </div>
+</body>
+</html>
