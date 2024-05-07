@@ -28,4 +28,5 @@ urlpatterns = [
     path('login_ayudante/', views.procesar_clave, name="login_ayudante"),
    # path('bajaAyudante/',views.bajaAyudante,name='bajaAyudante'), #la tengo q hacer 
     path('bajaAyudante/',views.mostrarBaja,name='mostrarBaja'),
+    path('sobreNosotros/',views.editar_sobre_nosotros,name='editarSobreNosotros')
 ]

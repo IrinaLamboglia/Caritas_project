@@ -10,6 +10,7 @@ import os
 from django.conf import settings
 import random
 import string
+from .globals import contenido_actual
 
 
 
@@ -29,9 +30,11 @@ logger = logging.getLogger(__name__)
 
 def home(request):
     user = request.user  # Obtiene el usuario autenticado de la sesión
-    context = {'user': user}
+    context = {
+        'user': user,
+        'contenido_actual': contenido_actual,  # Agrega la variable global contenido_actual al contexto
+    }
     return render(request, 'home.html', context)
-
 
 #estoy aplicando la restrinccion de que si no esta logueado
 #no puude ver los productos
@@ -176,6 +179,14 @@ def mostrarBaja(request):
 
 
 
+def editar_sobre_nosotros(request):
+    global contenido_actual
+    if request.method == 'POST':
+        nuevo_contenido = request.POST.get('nuevo_contenido')
+        contenido_actual = nuevo_contenido
+        return redirect('home')
+    else:
+        return render(request, 'core/editar_sobre_nosotros.html', {'contenido_actual': contenido_actual})
 
 
 
