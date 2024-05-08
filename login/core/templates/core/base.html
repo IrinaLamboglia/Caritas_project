@@ -17,10 +17,11 @@
     <ul>
         <li><a href={% url 'home' %}>Inicio</a></li>
         <li><a href={% url 'products' %}>Productos</a></li>
-        <li><a href={% url 'mostarCategoria' %}>Categorias</a></li>
+        <li><a href={% url 'mostarCategoria' %}>Bajar categorias</a></li>
         {% if user.is_authenticated %}
             {% if user.tipo == "administrador" %}
                  <li><a href={% url 'mostrarBaja' %}>Buscar ayudante</a></li>
+
             {%  endif %}
             {% if user.tipo == "ayudante" %}
                  <li><a href="{% url 'agregar_categoria' %}">Agregar categoría</a></li>

@@ -1,76 +1,36 @@
-/* styles.css */
+
+
 body {
-    font-family: Arial, sans-serif;
-    background-color: #f4f4f4;
-    margin: 0;
-    padding: 0;
+    position: relative;
 }
-
-.container {
-    max-width: 600px;
-    margin: 50px auto;
-    padding: 20px;
-    background-color: #fff;
-    border-radius: 8px;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-    text-align: center; /* Centra el contenido */
+h1 {
+    text-align: center; /* Centra el título */
+    margin-bottom: 20px; /* Añade espacio entre el título y el contenido */
 }
-
-.title {
-    margin-bottom: 20px; /* Separación entre el título y el formulario */
-}
-
-.form-container {
-    margin-top: 20px;
-}
-
-.form-group {
-    margin-bottom: 20px;
-}
-
-label {
+#volver {
+    position: fixed; /* Cambiamos a fixed para que permanezca en la misma posición al hacer scroll */
+    top: 10px;
+    left: 10px;
+    background-color: transparent;
+    border: none;
+    color: black;
+    font-size: 18px;
     font-weight: bold;
-}
-
-.form-control {
-    width: 100%;
-    padding: 10px;
-    font-size: 16px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    box-sizing: border-box;
-}
-
-.btn {
-    padding: 15px; /* Aumenta el tamaño del botón */
-    font-size: 18px; /* Aumenta el tamaño del texto del botón */
     cursor: pointer;
 }
-
-.btn-lg {
-    margin-top: 20px; /* Espaciado superior para separar el botón */
+.button-container {
+    display: flex;
+    justify-content: center;
 }
-
-.error-message {
-    color: #ff0000;
-    margin-top: 10px;
+.button-container button {
+    margin: 5px;
+    padding: 10px 20px;
+    background-color: transparent;
+    border: 1px solid black;
+    color: black;
+    font-weight: bold;
+    cursor: pointer;
 }
-
-/* Estilos para los enlaces que los hacen lucir como botones */
-.btn {
-    display: inline-block;
-    text-decoration: none; /* Quita el subrayado del enlace */
-    color: #202020; /* Cambia el color del texto a blanco */
-    padding: 15px; /* Ajusta el espaciado interno del enlace */
-    font-size: 18px; /* Ajusta el tamaño de la fuente del enlace */
-    border: 1px solid #87898b; /* Añade un borde alrededor del enlace */
-    border-radius: 4px; /* Añade esquinas redondeadas al borde del enlace */
-    background-color: #c1c5c9; /* Cambia el color de fondo del enlace */
-    cursor: pointer; /* Cambia el cursor al pasar por encima del enlace */
-    text-align: center; /* Centra el texto del enlace */
-}
-
-/* Estilos adicionales para los enlaces que los hacen lucir como botones */
-.btn:hover {
-    background-color: #7ab2c0; /* Cambia el color de fondo del enlace al pasar el ratón por encima */
+.button-container button:hover {
+    background-color: lightgray;
 }

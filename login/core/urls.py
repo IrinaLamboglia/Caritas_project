@@ -20,6 +20,7 @@ from log_out.views import confirmar_salida,exit
 from . import views
 from editarPerfil.views import editar_perfil
 from agregarCategoria.views import agregar_categoria, mostrar_categorias
+from bajaCategoria.views import bajar_categoria
 
 urlpatterns = [
     path('', home, name='home'),
@@ -43,4 +44,6 @@ urlpatterns = [
     path('agregar_categoria/', agregar_categoria, name='agregar_categoria'),
     
     path('categoria/', mostrar_categorias, name='mostarCategoria'),
+
+    path('categoria/<int:categoria_id>/', bajar_categoria, name='bajarCategoria'),
 ]

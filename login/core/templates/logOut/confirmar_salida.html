@@ -1,27 +1,10 @@
-<!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Confirmar Salida</title>
-</head>
-<body>
-    <h2>¿Estás seguro de que deseas cerrar sesión?</h2>
-    <form action="{% url 'exit' %}" method="post">
-        {% csrf_token %}
-        <button type="submit">Sí, cerrar sesión</button>
-        <a href="{% url 'home' %}">Cancelar</a>
-    </form>
-</body>
-</html>
 
-<!--
 
 <!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <title>Confirmar Salida</title>
+    <title></title>
     <script>
         function confirmarSalida() {
             var confirmacion = confirm("¿Estás seguro de que deseas cerrar sesión?");
@@ -41,5 +24,3 @@
 </body>
 </html>
 
-
-    >
