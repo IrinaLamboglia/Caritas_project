@@ -1,5 +1,5 @@
-from django.shortcuts import render, redirect
-from .models import FailedLoginAttempt, Usuario, UsuarioBloqueado, porDesbloquear
+from django.shortcuts import get_object_or_404, render, redirect
+from .models import FailedLoginAttempt, Publicacion, Usuario, UsuarioBloqueado, porDesbloquear, Categoria
 from django.contrib.auth import login, logout
 from . formreg import UsuarioForm
 import logging
@@ -11,7 +11,8 @@ from django.conf import settings
 import random
 import string
 from .globals import contenido_actual
-
+from .formpubl import PublicacionForm
+from django.contrib import messages
 
 
 
@@ -41,7 +42,8 @@ def home(request):
 #el template login es lo que se muestra antes de q se loguee
 @login_required
 def products(request):
-    return render(request, 'core/products.html')
+    publicaciones = Publicacion.objects.all()
+    return render(request, 'core/products.html',{'publicaciones': publicaciones})
 
 #funcion para salir
 def exit(request):
@@ -239,3 +241,34 @@ def editar_sobre_nosotros(request):
         return redirect('home')
     else:
         return render(request, 'core/editar_sobre_nosotros.html', {'contenido_actual': contenido_actual})
+
+"""
+def crear_publicacion(request):
+    categorias = Categoria.objects.all()
+    return render(request, 'core/crearPublicacion/crear_publicacion.html', {'categorias': categorias})
+"""
+@login_required
+def crear_publicacion(request):
+    categorias = Categoria.objects.all()
+    if request.method == 'POST':
+        formulario = PublicacionForm(request.POST, request.FILES)
+        if formulario.is_valid():
+            publicacion = formulario.save(commit=False)
+            publicacion.usuario = request.user
+            publicacion.save()
+            messages.success(request,'La publicación se cargó correctamente')
+            return redirect('products')
+        else:
+            messages.error(request, 'Hubo un problema al cargar la publicación')
+    else:
+          formulario = PublicacionForm()
+    return render(request, 'core/crearPublicacion/crear_publicacion.html', {'categorias': categorias,'formulario': formulario}) 
+
+
+def ver_producto(request, publicacion_id):
+    publicacion = get_object_or_404(Publicacion, id=publicacion_id)
+    return render(request, 'core/crearPublicacion/ver_producto.html', {'publicacion': publicacion})
+
+def solicitar_trueque(request, publicacion_id):
+    publicacion = get_object_or_404(Publicacion, id=publicacion_id)
+    return render(request, 'core/crearPublicacion/solicitar_trueque.html',  {'publicacion': publicacion})

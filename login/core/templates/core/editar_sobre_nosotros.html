@@ -2,12 +2,12 @@
 
 {% block content %}
 
-<h2>Editar Sobre Nosotros </h2>
+<h4>Editar Sobre Nosotros </h4>
 
 <form method="post">
     {% csrf_token %}
-    <textarea id="nuevo_contenido" name="nuevo_contenido" rows="20" cols="100">{{ contenido_actual }}</textarea><br>
-    <button type="submit">Guardar Cambios</button>
+    <textarea id="nuevo_contenido" name="nuevo_contenido" rows="10" cols="100">{{ contenido_actual }}</textarea><br>
+    <button type="submit" class="btn btn-primary">Guardar Cambios</button>
 </form>
 
 {% endblock %}

@@ -40,3 +40,24 @@ class UsuarioBloqueado(models.Model):
 
 class porDesbloquear(models.Model):
     email= models.EmailField(unique=True)
+
+
+class Categoria(models.Model):
+    nombre = models.CharField(max_length=100)
+
+    def __str__(self):
+        return self.nombre
+
+
+class Publicacion(models.Model):
+    titulo = models.CharField(max_length=200)
+    descripcion = models.CharField(max_length=400)
+    nuevo = models.BooleanField(default=True)
+    estado = models.BooleanField(default=True)
+    usuario = models.ForeignKey(Usuario, on_delete=models.CASCADE)
+    categoria = models.ForeignKey(Categoria, on_delete=models.CASCADE)
+    imagen = models.ImageField(upload_to='media/publicaciones/', null=True, blank=True)
+
+    def __str__(self):
+        return self.titulo
+    
