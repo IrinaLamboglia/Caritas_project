@@ -18,6 +18,7 @@ from .views import home,products,exit
 #importo funcion exit
 from . import views
 
+from administrador.views import alta
 
 urlpatterns = [
     path('', home, name='home'),
@@ -28,4 +29,5 @@ urlpatterns = [
     path('login_ayudante/', views.procesar_clave, name="login_ayudante"),
    # path('bajaAyudante/',views.bajaAyudante,name='bajaAyudante'), #la tengo q hacer 
     path('bajaAyudante/',views.mostrarBaja,name='mostrarBaja'),
+    path('administrador/', alta,name="alta"),
 ]

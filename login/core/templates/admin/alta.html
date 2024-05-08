@@ -1,0 +1,56 @@
+{% load static %} <!-- Agrega esta línea al principio para cargar las etiquetas de archivos estáticos -->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Alta Ayudantes</title>
+    <link rel="stylesheet" type="text/css" href="{% static 'css/registro-estilos.css' %}"> 
+    <link rel="icon" type="image/png" href="{% static 'imagenes/logoCaritas.jpg' %}">
+   
+</head>
+<body>
+    
+    <h2>Alta Ayudante</h2>
+    
+    <form action="{% url 'alta' %}" method="post">
+        {% csrf_token %}
+        <label for="email">Nombre de usuario:</label><br>
+        <input type="email" id="email" name="email" value="nombre@gmail.com" required><br>
+        
+        <label for="nombre">Nombre:</label><br>
+        <input type="text" id="nombre" name="nombre" required><br>
+    
+        <label for="apellido">Apellido:</label><br>
+        <input type="text" id="apellido" name="apellido" required><br><br>
+    
+        <label for="fecha_nacimiento">Fecha de nacimiento:</label><br>
+        <input type="date" id="fecha_nacimiento" name="fecha_nacimiento" value="2003-05-06" required><br>
+    
+        <label for="telefono">Teléfono:</label><br>
+        <input type="tel" id="telefono" name="telefono" required><br>
+        
+        <label for="password">Contraseña:</label><br>
+        <input type="password" id="password" name="contraseña" required><br>
+       
+        <label for="dni">Dni:</label><br>
+        <input type="text" id="dni" name="dni" required><br>
+        
+        <label for="filial">Filial:</label><br>
+        <input type="text" id="filial" name="filial" required><br>
+    
+        <input type="submit" value="Aceptar">
+       
+    {% if mensaje_exito  %}
+        </form><div >
+            <h2>{{ mensaje_exito  }}</h2>
+        </div>
+    {% else %}
+        <div >
+            <h2>{{ mensaje_error }}</h2>
+        </div>
+    {% endif %} 
+    
+</body>
+</html>
