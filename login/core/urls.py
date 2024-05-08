@@ -15,7 +15,6 @@ Including another URLconf
 """
 from django.urls import path 
 from .views import home,products,exit
-#importo funcion exit
 from . import views
 
 
@@ -27,6 +26,10 @@ urlpatterns = [
     path('registro/', views.formularioreg, name='registro'),  # URL para el formulario de registro
     path('login_ayudante/', views.procesar_clave, name="login_ayudante"),
    # path('bajaAyudante/',views.bajaAyudante,name='bajaAyudante'), #la tengo q hacer 
+    path('sobreNosotros/',views.editar_sobre_nosotros,name='editarSobreNosotros'),
     path('bajaAyudante/',views.mostrarBaja,name='mostrarBaja'),
-    path('sobreNosotros/',views.editar_sobre_nosotros,name='editarSobreNosotros')
+    path('eliminarAyudante/<str:email>/', views.eliminarAyudante, name='eliminarAyudante'),
+  #  path('accounts/login/<email>/', views.recuperarCuenta, name='recuperarCuenta'), #no anda y no lo tenia q hacer lpm
+    path('listado/bloqueadosListado/',views.listadoBloqueado, name='listadoBloqueados')
+
 ]
