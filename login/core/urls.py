@@ -15,7 +15,7 @@ Including another URLconf
 """
 from django.urls import path 
 from .views import home,products
-from log_out.views import confirmar_salida,exit
+from log_out.views import exit
 #importo funcion exit
 from . import views
 from editarPerfil.views import editar_perfil
@@ -31,7 +31,7 @@ urlpatterns = [
     path('login_ayudante/', views.procesar_clave, name="login_ayudante"),
    # path('bajaAyudante/',views.bajaAyudante,name='bajaAyudante'), #la tengo q hacer 
     path('bajaAyudante/',views.mostrarBaja,name='mostrarBaja'),
-    path('confirmar_salida/', confirmar_salida, name='confirmar_salida'),
+    #path('confirmar_salida/', confirmar_salida, name='confirmar_salida'),
     
     path('bajaAyudante/',views.mostrarBaja,name='mostrarBaja'),
     

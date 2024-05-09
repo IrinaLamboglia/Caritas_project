@@ -1,5 +1,6 @@
 
 from django.shortcuts import get_object_or_404, redirect, render
+from django.contrib import messages
 from core.models import Categoria
 
 def mostrar_categorias(request):
@@ -11,6 +12,11 @@ def bajar_categoria(request, categoria_id):
     if request.method == 'POST':
         print('Se ejecuta')
         categoria.delete()
+        messages.success(request, f'Baja Exitosa.')
+        print('Mensaje de éxito configurado')
         return redirect('mostarCategoria')
+        
     return render(request, 'bajaCategoria/confirmacionBaja.html', {'categoria': categoria})
 
+
+ 

@@ -88,6 +88,29 @@
              font-weight: bold;
              cursor: pointer;
          }
+ 
+         /* Estilos para los mensajes */
+         .messages-container {
+             width: 100%;
+             box-sizing: border-box;
+             padding-bottom: 20px; /* Aumenta el espacio para los mensajes */
+             text-align: center; /* Centra el contenido del contenedor */
+         }
+         
+         .messages {
+             list-style: none;
+             padding: 0;
+             margin: 0;
+             background-color: rgba(255, 0, 0, 0.2); /* Fondo semitransparente para los mensajes */
+             font-size: 20px;
+             color: red;
+             display: inline-block; /* Hace que el contenedor se ajuste automáticamente a su contenido */
+             border-radius: 5px; /* Añade esquinas redondeadas al contenedor */
+         }
+         
+         .messages li {
+             margin-bottom: 10px;
+         }
      </style>
      <script>
         function confirmarBaja(categoriaId) {
@@ -123,6 +146,15 @@
      <a href="{% url 'home' %}" id="volver" style="text-decoration: none; color: black;">
          &larr; Volver
      </a>
+    
+     <!-- Bloque condicional para mostrar mensajes de Django -->
+     {% if messages %}
+         <ul class="messages">
+             {% for message in messages %}
+                 <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+             {% endfor %}
+         </ul>
+     {% endif %}
  </body>
  </html>
  

@@ -7,7 +7,3 @@ def exit(request):
         return redirect('login')
     return render(request, 'logOut/confirmar_salida.html')
 
-
-def confirmar_salida(request):
-    return render(request, 'logOut/confirmar_salida.html')
-
