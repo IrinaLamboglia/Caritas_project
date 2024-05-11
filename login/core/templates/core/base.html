@@ -7,7 +7,20 @@
     <title>Cáritas Argentina</title>
     <link rel="icon" type="image/png" href="{% static 'imagenes/logoCaritas.jpg' %}">
     <link rel="stylesheet" type="text/css" href="{% static 'css/estilos.css' %}">
-
+    
+    <form id="formularioSalida" method="POST" action="{% url 'logout' %}">
+        {% csrf_token %}
+        <input type="hidden" name="logout" value="true">
+    </form>
+    
+    <script>
+        function confirmarSalida() {
+            var confirmacion = confirm("¿Estás seguro de que deseas cerrar sesión?");
+            if (confirmacion) {
+                document.getElementById("formularioSalida").submit();
+            } 
+        }
+    </script>
 </head>
 <body>
     <div class="header">
@@ -20,20 +33,18 @@
        
         {% if user.is_authenticated %}
             {% if user.tipo == "administrador" %}
+                 <li><a href="{% url 'agregar_categoria' %}">Agregar categoría</a></li>   
                  <li><a href={% url 'mostrarBaja' %}>Buscar ayudante</a></li>
                  <li><a href={% url 'mostarCategoria' %}>Bajar categorias</a></li>
             {%  endif %}
             {% if user.tipo == "ayudante" %}
                  <li><a href="{% url 'agregar_categoria' %}">Agregar categoría</a></li>
             {% endif %}
-            <li><a href={% url 'exit' %}>Salir</a></li>
-           
+            <li><a href="#" method="POST" onclick="confirmarSalida()" >Salir</a></li>
         {% else %}
-      <!-- link para ingresar es el tamplate de login  -->
-           <li><a href={% url 'login' %} >Ingresar</a></li>
+            <li><a href={% url 'login' %} >Ingresar</a></li>
         {% endif %}
     </ul>
     {% block content %}{% endblock %}
-
 </body>
 </html>

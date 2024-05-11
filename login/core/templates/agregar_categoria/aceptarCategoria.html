@@ -1,13 +1,96 @@
-{% load static %}
-<!-- formulario_aceptar_categoria.html -->
-<!-- formulario_aceptar_categoria.html -->
 <!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Agregar Categoría</title>
-    <link rel="stylesheet" href="{% static 'css/estiloCategoria.css' %}">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+        }
+        
+        .container {
+            width: 70%; /* Aumenté el ancho del contenedor para dar más espacio */
+            margin: auto;
+            margin-top: 50px;
+            background: #fff;
+            padding: 30px; /* Aumenté el padding para hacerlo más acogedor */
+            border-radius: 12px; /* Hice los bordes más redondeados */
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.2); /* Aumenté la intensidad del sombreado */
+        }
+        
+        .title {
+            text-align: center;
+            color: #333; /* Cambié el color del título para que sea más suave */
+            font-size: 32px; /* Aumenté el tamaño del título */
+            margin-bottom: 30px; /* Incrementé el espacio después del título */
+        }
+        
+        .form-container {
+            margin-top: 20px; /* Ajusté el margen superior */
+            text-align: center;
+        }
+        
+        .form-group {
+            margin-bottom: 20px; /* Incrementé el espacio entre grupos de formulario */
+        }
+        
+        .form-group label {
+            display: block;
+            font-size: 18px; /* Aumenté el tamaño de la etiqueta del formulario */
+            font-weight: bold;
+            color: #444; /* Cambié el color de la etiqueta para que sea más oscuro */
+        }
+        
+        .form-control {
+            width: 100%;
+            padding: 12px; /* Ajusté el padding para que sea más cómodo */
+            font-size: 16px; /* Aumenté el tamaño del texto del formulario */
+            border: 1px solid #ccc;
+            border-radius: 6px; /* Hice los bordes del input un poco más redondeados */
+        }
+        .search-input {
+            width: 130px; /* Reduje el ancho de la barra de búsqueda */
+            padding: 6px; /* Ajusté el padding para que sea más compacto */
+            font-size: 14px; /* Reduje el tamaño del texto para que se ajuste al tamaño de la barra */
+            border: 1px solid #ccc;
+            border-radius: 4px; /* Mantuve los bordes redondeados */
+        }
+        
+        .btn {
+            padding: 10px 20px; /* Ajusté el padding del botón */
+            font-size: 18px; /* Aumenté el tamaño del texto del botón */
+            text-align: center;
+            text-decoration: none;
+            border: 2px solid #218838;
+            border-radius: 6px;
+            background-color: transparent;
+            color: #218838;
+            cursor: pointer;
+            transition: background-color 0.3s, color 0.3s;
+        }
+        
+        .btn:hover {
+            background-color: #218838;
+            color: #fff;
+        }
+        
+        .btn-cancelar {
+            margin-right: 15px; /* Aumenté el margen derecho */
+        }
+        
+        .error-message {
+            color: red;
+            font-weight: bold;
+        }
+        
+        .exito-message {
+            color: green;
+            font-weight: bold;
+        }
+        
+    </style>
 </head>
 <body>
     <div class="container">
@@ -17,15 +100,24 @@
                 {% csrf_token %}
                 <div class="form-group">
                     <label for="nombre_categoria">Ingrese el nombre:</label>
-                    <input type="text" id="nombre_categoria" name="nombre_categoria" class="form-control" required>
+                    <div class="input-group">
+                        <input type="text" id="nombre_categoria" name="nombre_categoria" class="form-control" required>
+                        <div class="input-group-append">
+                            <span class="input-group-text"><i class="fas fa-search"></i></span>
+                        </div>
+                    </div>
                 </div>
                 <button type="submit" class="btn btn-primary btn-lg btn-block">Aceptar</button>
-                <a href="{% url 'home' %}" class="btn btn-primary btn-lg btn-block">Cancelar</a>
+                <a href="{% url 'home' %}" class="btn btn-cancelar btn-lg btn-block">Cancelar</a>
             </form>
             {% if error_message %}
                 <p class="error-message">{{ error_message }}</p>
             {% endif %}
+            {% if exito_message %}
+                <p class="exito-message">{{ exito_message }}</p>
+            {% endif %}
         </div>
+        
     </div>
 </body>
 </html>

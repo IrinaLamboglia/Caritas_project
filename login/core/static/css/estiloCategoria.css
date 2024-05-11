@@ -32,5 +32,5 @@ h1 {
     cursor: pointer;
 }
 .button-container button:hover {
-    background-color: lightgray;
+    background-color: rgb(211, 211, 211);
 }
