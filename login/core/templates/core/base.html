@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Cáritas Argentina</title>
     <link rel="icon" type="image/png" href="{% static 'imagenes/logoCaritas.jpg' %}">
-    <link rel="stylesheet" type="text/css" href="{% static 'css/estilos.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'css/estilo.css' %}">
 
 </head>
 <body>
@@ -20,6 +20,7 @@
         {% if user.is_authenticated %}
             {% if user.tipo == "administrador" %}
                  <li><a href={% url 'mostrarBaja' %}>Baja Ayudante</a></li>
+                 <li><a href={% url 'listadoBloqueados' %}>Ver bloqueados</a></li>
             {%  endif %}
             <li><a href={% url 'exit' %}>Salir</a></li>
            
