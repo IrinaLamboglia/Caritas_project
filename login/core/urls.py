@@ -29,9 +29,10 @@ urlpatterns = [
     path('sobreNosotros/',views.editar_sobre_nosotros,name='editarSobreNosotros'),
     path('bajaAyudante/',views.mostrarBaja,name='mostrarBaja'),
     path('eliminarAyudante/<str:email>/', views.eliminarAyudante, name='eliminarAyudante'),
-  #  path('accounts/login/<email>/', views.recuperarCuenta, name='recuperarCuenta'), #no anda y no lo tenia q hacer lpm
+    path('accounts/login/<email>/', views.recuperarCuenta, name='recuperarCuenta'), #no anda y no lo tenia q hacer lpm
     path('listado/bloqueadosListado/',views.listadoBloqueado, name='listadoBloqueados'),
     path('crearPublicacion/',views.crear_publicacion, name='crear_publicacion'),
     path('ver/<int:publicacion_id>/',views.ver_producto, name='ver_producto'),
-    path('solicitar/<int:publicacion_id>/',views.solicitar_trueque, name='solicitar_trueque')
+    path('solicitar/<int:publicacion_id>/',views.solicitar_trueque, name='solicitar_trueque'),
+    path('desbloquear/<str:email>/', views.desbloquearUsuario, name='desbloquear_usuario')
 ]

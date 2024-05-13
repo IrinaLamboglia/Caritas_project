@@ -9,6 +9,7 @@ from django.conf import settings
 import os
 from django.conf import settings
 import random
+from django.core.mail import send_mail
 import string
 from .globals import contenido_actual
 from .formpubl import PublicacionForm
@@ -213,14 +214,14 @@ def eliminarAyudante(request,email):
 #me di cuenta despues que no era mia(no anda el path)
 #la dejo por las dudas por si alguna les sirve 
 
-# def recuperarCuenta(request,email):
-#     print("estoy en la funcion recuperar cuenta")
-#     try:
-#         porDesbloquear.objects.get(email=email)  #si existe no lo guardo
-#     except porDesbloquear.DoesNotExist:
-#         print("estoy por guardarlo en por desbloquear")
-#         porDesbloquear.objects.create(email=email)    #lo agrego a usuarios bloqueados
-#     return render(request,'login.html', {'error_message': 'Se ha registrado su peticion con exito'})
+def recuperarCuenta(request,email):
+     print("estoy en la funcion recuperar cuenta")
+     try:
+         porDesbloquear.objects.get(email=email)  #si existe no lo guardo
+     except porDesbloquear.DoesNotExist:
+         print("estoy por guardarlo en por desbloquear")
+         porDesbloquear.objects.create(email=email)    #lo agrego a usuarios bloqueados
+     return render(request,'login.html', {'error_message': 'Se ha registrado su peticion con exito'})
     
 
 #perfecto
@@ -242,11 +243,7 @@ def editar_sobre_nosotros(request):
     else:
         return render(request, 'core/editar_sobre_nosotros.html', {'contenido_actual': contenido_actual})
 
-"""
-def crear_publicacion(request):
-    categorias = Categoria.objects.all()
-    return render(request, 'core/crearPublicacion/crear_publicacion.html', {'categorias': categorias})
-"""
+
 @login_required
 def crear_publicacion(request):
     categorias = Categoria.objects.all()
@@ -272,3 +269,30 @@ def ver_producto(request, publicacion_id):
 def solicitar_trueque(request, publicacion_id):
     publicacion = get_object_or_404(Publicacion, id=publicacion_id)
     return render(request, 'core/crearPublicacion/solicitar_trueque.html',  {'publicacion': publicacion})
+
+
+def desbloquearUsuario(request, email):
+    user = Usuario.objects.get(email=email)
+    nueva_contraseña = ''.join(random.choices(string.ascii_letters + string.digits, k=max(6, 10)))
+
+    user.contraseña = nueva_contraseña
+    user.save()
+
+    send_mail(
+        'Contraseña restablecida',
+        f'Su nueva contraseña es: {nueva_contraseña}',
+        settings.EMAIL_HOST_USER,
+        [email],
+        fail_silently=False,
+    )
+
+    # Eliminar al usuario de las tablas porDesbloquear y usuarioBloqueado
+    porDesbloquear.objects.filter(email=email).delete()
+    UsuarioBloqueado.objects.filter(email=email).delete()
+
+    # Restablecer los intentos fallidos a 0
+    FailedLoginAttempt.objects.filter(email=email).delete()
+   
+
+
+    return redirect('listadoBloqueados')
