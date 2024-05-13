@@ -8,12 +8,68 @@
     <title>Alta Ayudantes</title>
     <link rel="stylesheet" type="text/css" href="{% static 'css/registro-estilos.css' %}"> 
     <link rel="icon" type="image/png" href="{% static 'imagenes/logoCaritas.jpg' %}">
-   
+    <style>
+        .contenedor{
+            margin-bottom: 2%;
+            position: relative;
+            width: 100%; /* Ajusta el ancho según sea necesario */
+            height: 10%; /* Establece la altura al 100% del viewport */
+            background-color: #f0f0f0;
+            text-align: center;
+        }
+        .cartel {
+            text-align: center;
+            max-width: 500px;
+            padding: 0;
+            margin: 0;
+            background-color: rgba(255, 0, 0, 0.2); /* Fondo semitransparente para los mensajes */
+            font-size: 20px;
+            color: red;
+            display: inline-block; /* Hace que el contenedor se ajuste automáticamente a su contenido */
+            border-radius: 5px; /* Añade esquinas redondeadas al contenedor */
+        }
+        #volver {
+             position: fixed; /* Cambiamos a fixed para que permanezca en la misma posición al hacer scroll */
+             top: 10px;
+             left: 10px;
+             background-color: transparent;
+             border: none;
+             color: black;
+             font-size: 18px;
+             font-weight: bold;
+             cursor: pointer;
+         } 
+         #volver {
+             position: fixed; /* Cambiamos a fixed para que permanezca en la misma posición al hacer scroll */
+             top: 10px;
+             left: 10px;
+             background-color: transparent;
+             border: none;
+             color: black;
+             font-size: 18px;
+             font-weight: bold;
+             cursor: pointer;
+         }
+    </style>
 </head>
 <body>
     
     <h2>Alta Ayudante</h2>
-    
+    <!-- Botón Volver -->
+    <a href="{% url 'home' %}" id="volver" style="text-decoration: none; color: black;">
+        &larr; Volver
+    </a>
+    <div class="contenedor">
+        {% if mensaje_exito  %}
+           <div class="cartel" >
+                {{ mensaje_exito  }}
+            </div>
+        {% else %}
+            <div class="cartel">
+                {{ mensaje_error }}
+            </div>
+        {% endif %}
+     </div>
     <form action="{% url 'alta' %}" method="post">
         {% csrf_token %}
         <label for="email">Nombre de usuario:</label><br>
@@ -42,15 +98,7 @@
     
         <input type="submit" value="Aceptar">
        
-    {% if mensaje_exito  %}
-        </form><div >
-            <h2>{{ mensaje_exito  }}</h2>
-        </div>
-    {% else %}
-        <div >
-            <h2>{{ mensaje_error }}</h2>
-        </div>
-    {% endif %} 
+    
     
 </body>
 </html>
