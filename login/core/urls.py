@@ -19,6 +19,7 @@ from .views import home,products,exit
 from . import views
 
 from administrador.views import alta
+from editar_perfil.views import editar_ayudante 
 
 urlpatterns = [
     path('', home, name='home'),
@@ -30,4 +31,5 @@ urlpatterns = [
    # path('bajaAyudante/',views.bajaAyudante,name='bajaAyudante'), #la tengo q hacer 
     path('bajaAyudante/',views.mostrarBaja,name='mostrarBaja'),
     path('administrador/', alta,name="alta"),
+    path('editar_perfil/<int:id>/', editar_ayudante, name='editar_ayudante'),
 ]

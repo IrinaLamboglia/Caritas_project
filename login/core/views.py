@@ -10,10 +10,6 @@ import os
 from django.conf import settings
 import random
 import string
-
-
-
-
 #con esto estoy diciendo que me tengo que loguear para acceder
 #a una vista 
 from django.contrib.auth.decorators import login_required
