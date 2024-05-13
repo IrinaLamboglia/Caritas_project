@@ -31,8 +31,7 @@ class Usuario(AbstractUser):
     contraseña = models.CharField(max_length=128, validators=[MinLengthValidator(6)], default='valor_predeterminado')  # Campo para almacenar la contraseña cifrada
     last_login = models.DateTimeField(verbose_name='last login', blank=True, null=True)
     tipo= models.CharField(max_length=30, default="")
-  #  USERNAME_FIELD = 'email'
-   # REQUIRED_FIELDS = []
+
 
 
 
@@ -40,12 +39,8 @@ class UsuarioBloqueado(models.Model):
     email= models.EmailField(unique=True)
 
 
-#opciones de rol que vamos a necesitar mas adelante
-
-
-
 class porDesbloquear(models.Model):
-   email= models.EmailField(unique=True)
+    email= models.EmailField(unique=True)
    
    
 class Categoria(models.Model):
@@ -56,8 +51,8 @@ class Categoria(models.Model):
 
 class Producto(models.Model):
     nombre = models.CharField(max_length=100)
-    categoria = models.ForeignKey(Categoria, on_delete=models.CASCADE, related_name='productos')
+    categoria = models.ForeignKey(Categoria, on_delete=models.SET_NULL, null=True, blank=True, related_name='productos')
+    estado = models.BooleanField(default=False)  # Campo booleano para el estado
 
     def __str__(self):
-        return self.nombre    
-    
+        return self.nombre

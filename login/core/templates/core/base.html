@@ -39,6 +39,7 @@
             {%  endif %}
             {% if user.tipo == "ayudante" %}
                  <li><a href="{% url 'agregar_categoria' %}">Agregar categoría</a></li>
+                 <li><a href={% url 'mostarCategoria' %}>Bajar categorias</a></li>
             {% endif %}
             <li><a href="#" method="POST" onclick="confirmarSalida()" >Salir</a></li>
         {% else %}
