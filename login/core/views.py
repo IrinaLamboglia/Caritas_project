@@ -296,3 +296,7 @@ def desbloquearUsuario(request, email):
 
 
     return redirect('listadoBloqueados')
+
+def mis_publicaciones(request):
+    publicaciones = Publicacion.objects.filter(usuario=request.user)
+    return render(request, 'core/crearPublicacion/mis_publicaciones.html', {'publicaciones': publicaciones})

@@ -34,5 +34,6 @@ urlpatterns = [
     path('crearPublicacion/',views.crear_publicacion, name='crear_publicacion'),
     path('ver/<int:publicacion_id>/',views.ver_producto, name='ver_producto'),
     path('solicitar/<int:publicacion_id>/',views.solicitar_trueque, name='solicitar_trueque'),
-    path('desbloquear/<str:email>/', views.desbloquearUsuario, name='desbloquear_usuario')
+    path('desbloquear/<str:email>/', views.desbloquearUsuario, name='desbloquear_usuario'),
+    path('mis_publicaciones/', views.mis_publicaciones, name='mis_publicaciones'),
 ]
