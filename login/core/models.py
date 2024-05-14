@@ -48,11 +48,3 @@ class Categoria(models.Model):
 
     def __str__(self):
         return self.nombre
-
-class Producto(models.Model):
-    nombre = models.CharField(max_length=100)
-    categoria = models.ForeignKey(Categoria, on_delete=models.SET_NULL, null=True, blank=True, related_name='productos')
-    estado = models.BooleanField(default=False)  # Campo booleano para el estado
-
-    def __str__(self):
-        return self.nombre

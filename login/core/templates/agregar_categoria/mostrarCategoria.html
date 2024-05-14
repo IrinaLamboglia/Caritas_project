@@ -126,21 +126,26 @@
      
      <!-- Listado de categorías -->
      <ul class="categoria-lista">
-         {% for categoria in categorias %}
-             <li class="categoria-item">
-                 <span class="categoria-nombre">{{ categoria.nombre }}</span>
-                 <ul class="producto-lista">
-                     {% for producto in categoria.productos.all %}
-                         <li class="producto-item">{{ producto.nombre }}</li>
-                     {% endfor %}
-                 </ul>
-                 <form id="formulario{{ categoria.id }}" method="POST" action="{% url 'bajarCategoria' categoria.id %}">
+        {% for categoria in categorias %}
+            <li class="categoria-item">
+                <span class="categoria-nombre">{{ categoria.nombre }}</span>
+                <!-- Utiliza <details> para ocultar los productos inicialmente -->
+                <details>
+                    <summary>Ver productos</summary>
+                    <ul class="producto-lista">
+                        {% for producto in categoria.productos.all %}
+                            <li class="producto-item">{{ producto.nombre }}</li>
+                        {% endfor %}
+                    </ul>
+                </details>
+                <form id="formulario{{ categoria.id }}" method="POST" action="{% url 'bajarCategoria' categoria.id %}">
                     {% csrf_token %}
                     <button type="button" class="eliminar-btn" onclick="confirmarBaja({{ categoria.id }})">Eliminar</button>
                 </form>
-             </li>
-         {% endfor %}
-     </ul>
+            </li>
+        {% endfor %}
+    </ul>
+    
  
      <!-- Botón Volver -->
      <a href="{% url 'home' %}" id="volver" style="text-decoration: none; color: black;">
