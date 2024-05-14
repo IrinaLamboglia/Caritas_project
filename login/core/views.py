@@ -43,7 +43,7 @@ def home(request):
 #el template login es lo que se muestra antes de q se loguee
 @login_required
 def products(request):
-    publicaciones = Publicacion.objects.all()
+    publicaciones = Publicacion.objects.filter(estado=True)
     return render(request, 'core/products.html',{'publicaciones': publicaciones})
 
 #funcion para salir
@@ -252,8 +252,9 @@ def crear_publicacion(request):
         if formulario.is_valid():
             publicacion = formulario.save(commit=False)
             publicacion.usuario = request.user
+            publicacion.estado = False;
             publicacion.save()
-            messages.success(request,'La publicación se cargó correctamente')
+            messages.success(request,'La publicación se registró correctamente, queda a la espera de validación')
             return redirect('products')
         else:
             messages.error(request, 'Hubo un problema al cargar la publicación')

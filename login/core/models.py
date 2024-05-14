@@ -42,6 +42,7 @@ class porDesbloquear(models.Model):
     email= models.EmailField(unique=True)
 
 
+#eliminar este
 class Categoria(models.Model):
     nombre = models.CharField(max_length=100)
 
