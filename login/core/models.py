@@ -31,20 +31,20 @@ class Usuario(AbstractUser):
     contraseña = models.CharField(max_length=128, validators=[MinLengthValidator(6)], default='valor_predeterminado')  # Campo para almacenar la contraseña cifrada
     last_login = models.DateTimeField(verbose_name='last login', blank=True, null=True)
     tipo= models.CharField(max_length=30, default="")
-    
+    filial = models.CharField(max_length=100, unique=True)
   #  USERNAME_FIELD = 'email'
    # REQUIRED_FIELDS = []
 
 
-class Administrador(models.Model):
-    nombre_usuario = models.CharField(max_length=100, unique=True)
-    nombre = models.CharField(max_length=100)
-    apellido = models.CharField(max_length=100)
-    fecha_nacimiento = models.DateField()
-    telefono = models.CharField(max_length=20)
-    contraseña = models.CharField(max_length=100)
-    dni = models.CharField(max_length=20)
-    filial = models.CharField(max_length=100)
+#class Administrador(models.Model):
+ #   nombre_usuario = models.CharField(max_length=100, unique=True)
+  #  nombre = models.CharField(max_length=100)
+  #  apellido = models.CharField(max_length=100)
+  #  fecha_nacimiento = models.DateField()
+  #  filial = models.CharField(max_length=100) telefono = models.CharField(max_length=20)
+  #  contraseña = models.CharField(max_length=100)
+  #  dni = models.CharField(max_length=20)
+  #  filial = models.CharField(max_length=100)
 
 class UsuarioBloqueado(models.Model):
     email= models.EmailField(unique=True)

@@ -11,8 +11,14 @@ class UsuarioForm(forms.ModelForm):
             'fecha_nacimiento',
             'dni',
             'telefono',
-            'contraseña'
+            'contraseña',
+            'filial'
         ]
+    def clean_filial(self):
+        filial = self.cleaned_data['filial']
+        if Usuario.objects.filter(filial=filial).exists():
+            raise forms.ValidationError("Ya existe un usuario registrado en esta filial.")
+        return filial
 
     def save(self, commit=True):
         usuario = super().save(commit=False)

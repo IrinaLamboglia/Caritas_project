@@ -1,11 +1,11 @@
 
 from django.shortcuts import render, redirect
-from core.models import Administrador
+from core.models import Usuario
 from django.contrib import messages
 
 def editar_ayudante(request, id):
     
-    ayudante = Administrador.objects.get(id=id)
+    ayudante = Usuario.objects.get(id=id)
     
 
     if request.method == 'POST':
@@ -19,7 +19,7 @@ def editar_ayudante(request, id):
         nueva_contrasena = request.POST.get('nueva_contrasena')
 
         # Verificar si el nuevo correo electrónico corresponde a un usuario ya registrado
-        if Administrador.objects.exclude(id=id).filter(nombre_usuario=nuevo_email).exists():
+        if Usuario.objects.exclude(id=id).filter(email=nuevo_email).exists():
             messages.error(request, 'El correo electrónico ya corresponde a un usuario registrado.')
             return redirect('editar_ayudante',id=id)
         else:
@@ -29,7 +29,7 @@ def editar_ayudante(request, id):
                 return redirect('editar_ayudante', id=id)
             else:
                 # Actualizar la información del ayudante
-                ayudante.nombre_usuario = nuevo_email
+                ayudante.email = nuevo_email
                 ayudante.nombre = nuevo_nombre
                 ayudante.apellido = nuevo_apellido
                 ayudante.filial = nueva_filial
@@ -39,6 +39,6 @@ def editar_ayudante(request, id):
                 ayudante.contraseña = nueva_contrasena
                 ayudante.save()
                 messages.success(request, 'La información del ayudante se actualizó correctamente.')
-                return redirect('editar_ayudante',id=id)
+                return redirect('home')
         
     return render(request, 'admin/editar_ayudante.html', {'ayudante': ayudante})

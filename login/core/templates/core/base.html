@@ -20,7 +20,7 @@
         {% if user.is_authenticated %}
             {% if user.tipo == "administrador" %}
                  <li><a href={% url 'mostrarBaja' %}>Baja Ayudante</a></li>
-                 <li><a href={% url 'alta' %}>Alta Ayudante</a></li>
+                 <li><a href={% url 'registro' %}>Alta Ayudante</a></li>
             {%  endif %}
             <li><a href={% url 'exit' %}>Salir</a></li>
            
