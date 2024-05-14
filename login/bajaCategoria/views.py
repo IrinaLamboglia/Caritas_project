@@ -6,6 +6,7 @@ from core.models import Categoria, Publicacion
 from django.contrib import messages
 
 def bajar_categoria(request, categoria_id):
+    print(categoria_id)
     categoria = get_object_or_404(Categoria, pk=categoria_id)
     if request.method == 'POST':
         # Establecer el estado de todos los publicacions de esta categoría en False
