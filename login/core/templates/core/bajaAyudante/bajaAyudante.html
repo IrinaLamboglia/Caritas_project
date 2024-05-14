@@ -6,43 +6,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" type="text/css" href="{% static 'css/bajaAyudante-estilos.css' %}">
     <link rel="icon" type="image/png" href="{% static 'imagenes/logoCaritas.jpg' %}">
+
+
     <title>Busqueda ayudante</title>
-    <style>
-        /* Estilos personalizados */
-        body {
-            position: relative;
-        }
-        #volver {
-            position: fixed; /* Cambiamos a fixed para que permanezca en la misma posición al hacer scroll */
-            top: 10px;
-            left: 10px;
-            background-color: transparent;
-            border: none;
-            color: black;
-            font-size: 18px;
-            font-weight: bold;
-            cursor: pointer;
-        }
-        .button-container {
-            display: flex;
-            justify-content: center;
-        }
-        .button-container button {
-            margin: 5px;
-            padding: 10px 20px;
-            background-color: transparent;
-            border: 1px solid black;
-            color: black;
-            font-weight: bold;
-            cursor: pointer;
-        }
-        .button-container button:hover {
-            background-color: lightgray;
-        }
-    </style>
 </head>
 <body>
-    <h1>Busqueda ayudante</h1>
+    <h1>Dar de baja ayudante</h1>
     
     <!-- Formulario de búsqueda -->
     <form method="POST" action="{% url 'mostrarBaja' %}">
@@ -57,15 +26,15 @@
         {% if sin == None %}
             {% if elementos  %}
                  <li>{{ elementos.email }}</li>
-                 <div class="button-container">
-                    <form method="POST" action="{% url 'eliminarAyudante' elementos.email %}">
-                        {% csrf_token %}
-                        <button type="submit">Dar de baja</button>
-                    </form>   
+
+                 <form method="POST" action="{% url 'eliminarAyudante' elementos.email %}">
+                    {% csrf_token %}
+                    <button type="submit">Dar de baja</button>
+                </form>  
+                </form>   
                     <form method="GET" action="{% url 'home'  %}">
-                        <button type="submit">Editar perfil</button>
-                    </form>
-                </div>
+                    <button type="submit">Editar perfil</button>
+                </form> 
             {% else %}
                  {% if error_message == None %}
                      <li>El ayudante no existe.</li>
@@ -76,10 +45,5 @@
                 <p>{{ error_message }}</p>
          {% endif %}
     </ul>
-
-    <!-- Botón Volver -->
-    <a href="{% url 'home' %}" id="volver" style="text-decoration: none; color: black;">
-        &larr; Volver
-    </a>
 </body>
 </html>

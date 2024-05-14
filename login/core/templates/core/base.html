@@ -35,6 +35,7 @@
             {% if user.tipo == "administrador" %}
                  <li><a href="{% url 'agregar_categoria' %}">Agregar categoría</a></li>   
                  <li><a href={% url 'mostrarBaja' %}>Buscar ayudante</a></li>
+                 <li><a href={% url 'listadoBloqueados' %}>Ver bloqueados</a></li>
                  <li><a href={% url 'mostarCategoria' %}>Bajar categorias</a></li>
             {%  endif %}
             {% if user.tipo == "ayudante" %}

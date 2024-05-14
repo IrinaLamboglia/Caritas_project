@@ -33,7 +33,6 @@ urlpatterns = [
     path('bajaAyudante/',views.mostrarBaja,name='mostrarBaja'),
     #path('confirmar_salida/', confirmar_salida, name='confirmar_salida'),
     
-    path('bajaAyudante/',views.mostrarBaja,name='mostrarBaja'),
     
     path('eliminarAyudante/<str:email>/', views.eliminarAyudante, name='eliminarAyudante'),
     # URL para la edición de perfil del ayudante
@@ -46,4 +45,5 @@ urlpatterns = [
     path('categoria/', mostrar_categorias, name='mostarCategoria'),
 
     path('categoria/<int:categoria_id>/', bajar_categoria, name='bajarCategoria'),
+    path('listado/bloqueadosListado/',views.listadoBloqueado, name='listadoBloqueados')
 ]

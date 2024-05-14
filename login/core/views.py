@@ -41,10 +41,10 @@ def products(request):
     return render(request, 'core/products.html')
 
 #funcion para salir
-def exit(request):
-    logout(request)
-    print("saliendo")
-    return redirect('home')
+##def exit(request):
+##    logout(request)
+##    print("saliendo")
+##    return redirect('home')
 
 
 
@@ -227,5 +227,3 @@ def listadoBloqueado(request):
     #porDesbloquear.objects.create(email=email) 
     elementos = porDesbloquear.objects.all()
     return render(request, 'core/listado/bloqueadosListado.html', {'elementos': elementos})
-
-
