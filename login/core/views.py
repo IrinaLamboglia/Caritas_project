@@ -1,5 +1,5 @@
-from django.shortcuts import render, redirect
-from .models import FailedLoginAttempt, Usuario, UsuarioBloqueado, porDesbloquear
+from django.shortcuts import get_object_or_404, render, redirect
+from .models import FailedLoginAttempt, Publicacion, Usuario, UsuarioBloqueado, porDesbloquear, Categoria
 from django.contrib.auth import login, logout
 from . formreg import UsuarioForm
 import logging
@@ -9,8 +9,11 @@ from django.conf import settings
 import os
 from django.conf import settings
 import random
+from django.core.mail import send_mail
 import string
-
+from .globals import contenido_actual
+from .formpubl import PublicacionForm
+from django.contrib import messages
 
 #los css los restaure por las dudas por si llega a haber conflicto
 #estan al pedo, en deshuso
@@ -36,16 +39,19 @@ logger = logging.getLogger(__name__)
 
 def home(request):
     user = request.user  # Obtiene el usuario autenticado de la sesión
-    context = {'user': user}
+    context = {
+        'user': user,
+        'contenido_actual': contenido_actual,  # Agrega la variable global contenido_actual al contexto
+    }
     return render(request, 'home.html', context)
-
 
 #estoy aplicando la restrinccion de que si no esta logueado
 #no puude ver los productos
 #el template login es lo que se muestra antes de q se loguee
 @login_required
 def products(request):
-    return render(request, 'core/products.html')
+    publicaciones = Publicacion.objects.all()
+    return render(request, 'core/products.html',{'publicaciones': publicaciones})
 
 #funcion para salir
 ##def exit(request):
@@ -215,14 +221,14 @@ def eliminarAyudante(request,email):
      Usuario.objects.filter(email=email).delete()
      return render(request, 'core/bajaAyudante/bajaAyudante.html', {'error_message': 'Se ha eliminado con exito'})
 
-# def recuperarCuenta(request,email):
-#     print("estoy en la funcion recuperar cuenta")
-#     try:
-#         porDesbloquear.objects.get(email=email)  #si existe no lo guardo
-#     except porDesbloquear.DoesNotExist:
-#         print("estoy por guardarlo en por desbloquear")
-#         porDesbloquear.objects.create(email=email)    #lo agrego a usuarios bloqueados
-#     return render(request,'login.html', {'error_message': 'Se ha registrado su peticion con exito'})
+def recuperarCuenta(request,email):
+     print("estoy en la funcion recuperar cuenta")
+     try:
+         porDesbloquear.objects.get(email=email)  #si existe no lo guardo
+     except porDesbloquear.DoesNotExist:
+         print("estoy por guardarlo en por desbloquear")
+         porDesbloquear.objects.create(email=email)    #lo agrego a usuarios bloqueados
+     return render(request,'login.html', {'error_message': 'Se ha registrado su peticion con exito'})
     
 
 #perfecto
@@ -234,3 +240,66 @@ def listadoBloqueado(request):
     #porDesbloquear.objects.create(email=email) 
     elementos = porDesbloquear.objects.all()
     return render(request, 'core/listado/bloqueadosListado.html', {'elementos': elementos})
+
+def editar_sobre_nosotros(request):
+    global contenido_actual
+    if request.method == 'POST':
+        nuevo_contenido = request.POST.get('nuevo_contenido')
+        contenido_actual = nuevo_contenido
+        return redirect('home')
+    else:
+        return render(request, 'core/editar_sobre_nosotros.html', {'contenido_actual': contenido_actual})
+
+
+@login_required
+def crear_publicacion(request):
+    categorias = Categoria.objects.all()
+    if request.method == 'POST':
+        formulario = PublicacionForm(request.POST, request.FILES)
+        if formulario.is_valid():
+            publicacion = formulario.save(commit=False)
+            publicacion.usuario = request.user
+            publicacion.save()
+            messages.success(request,'La publicación se cargó correctamente')
+            return redirect('products')
+        else:
+            messages.error(request, 'Hubo un problema al cargar la publicación')
+    else:
+          formulario = PublicacionForm()
+    return render(request, 'core/crearPublicacion/crear_publicacion.html', {'categorias': categorias,'formulario': formulario}) 
+
+
+def ver_producto(request, publicacion_id):
+    publicacion = get_object_or_404(Publicacion, id=publicacion_id)
+    return render(request, 'core/crearPublicacion/ver_producto.html', {'publicacion': publicacion})
+
+def solicitar_trueque(request, publicacion_id):
+    publicacion = get_object_or_404(Publicacion, id=publicacion_id)
+    return render(request, 'core/crearPublicacion/solicitar_trueque.html',  {'publicacion': publicacion})
+
+
+def desbloquearUsuario(request, email):
+    user = Usuario.objects.get(email=email)
+    nueva_contraseña = ''.join(random.choices(string.ascii_letters + string.digits, k=max(6, 10)))
+
+    user.contraseña = nueva_contraseña
+    user.save()
+
+    send_mail(
+        'Contraseña restablecida',
+        f'Su nueva contraseña es: {nueva_contraseña}',
+        settings.EMAIL_HOST_USER,
+        [email],
+        fail_silently=False,
+    )
+
+    # Eliminar al usuario de las tablas porDesbloquear y usuarioBloqueado
+    porDesbloquear.objects.filter(email=email).delete()
+    UsuarioBloqueado.objects.filter(email=email).delete()
+
+    # Restablecer los intentos fallidos a 0
+    FailedLoginAttempt.objects.filter(email=email).delete()
+   
+
+
+    return redirect('listadoBloqueados')

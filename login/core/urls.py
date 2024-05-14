@@ -29,6 +29,9 @@ urlpatterns = [
     path('accounts/login/', views.login_nuevo , name='login'),
     path('registro/', views.formularioreg, name='registro'),  
     path('login_ayudante/', views.procesar_clave, name="login_ayudante"),
+
+   # path('bajaAyudante/',views.bajaAyudante,name='bajaAyudante'), #la tengo q hacer 
+    path('sobreNosotros/',views.editar_sobre_nosotros,name='editarSobreNosotros'),
     path('bajaAyudante/',views.mostrarBaja,name='mostrarBaja'),
     #path('confirmar_salida/', confirmar_salida, name='confirmar_salida'),
     
@@ -44,6 +47,11 @@ urlpatterns = [
     path('categoria/', mostrar_categorias, name='mostarCategoria'),
 
     path('categoria/<int:categoria_id>/', bajar_categoria, name='bajarCategoria'),
-    path('listado/bloqueadosListado/',views.listadoBloqueado, name='listadoBloqueados'),
     path('inicio/', home, name='inicio'),
+    path('accounts/login/<email>/', views.recuperarCuenta, name='recuperarCuenta'), #no anda y no lo tenia q hacer lpm
+    
+    path('crearPublicacion/',views.crear_publicacion, name='crear_publicacion'),
+    path('ver/<int:publicacion_id>/',views.ver_producto, name='ver_producto'),
+    path('solicitar/<int:publicacion_id>/',views.solicitar_trueque, name='solicitar_trueque'),
+    path('desbloquear/<str:email>/', views.desbloquearUsuario, name='desbloquear_usuario')
 ]

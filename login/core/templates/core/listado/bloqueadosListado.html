@@ -14,9 +14,10 @@
         {% if elementos %}
         <ul>
             {% for elemento in elementos %}
-                <li>
-                    <span class="email">{{ elemento.email }}</span>
-                </li>
+              <li style="display: flex; justify-content: space-between;">
+                 <span class="email">{{ elemento.email }}</span>
+                 <button onclick="desbloquear('{{ elemento.email }}')" class="btn btn-dark">Desbloquear</button>
+              </li>
             {% endfor %}
         </ul>
         {% else %}
@@ -30,3 +31,15 @@
 </li>
 </body>
 </html>
+<script>
+    function desbloquear(email) {
+        if (confirm("¿Estás seguro de que quieres desbloquear este usuario?")) {
+            fetch(`/desbloquear/${email}`)
+            .then(response => {
+                if (response.redirected) {
+                    window.location.reload();
+                }
+            });
+        }
+    }
+</script>

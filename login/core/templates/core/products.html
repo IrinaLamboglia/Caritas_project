@@ -1,17 +1,70 @@
 {% extends 'core/base.html' %}
+{% load static %}
 
+<link rel="stylesheet" type="text/css" href="{% static 'css/products-estilos.css' %}">
 
 {% block content %}
 
-<h3>Productos</h3>
+{% if  user.tipo != 'ayudante' and user.tipo != 'administrador' %}
+    {% include 'core/crearPublicacion/mensajes.html' %}
 
+    <html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Publicación</title>
+        <link rel="stylesheet" href="{% static 'css/products-estilos.css' %}">
+    </head>
+   
+    <body>
+        <div class="album py-5 bg-body-tertiary">
+            <div class="container">
+                <div class="row">
+                    <div class="col-6">
+                        <h2>Productos Disponibles</h2>
+                    </div>
+                    <div class="col-6 text-right">
+                        {% block button %}
+                        <a href="{% url 'crear_publicacion' %}" class="boton-crear">Crear Publicación</a>
+                        {% endblock button %}
+                    </div>
+                </div>
+    
+    
+        <div class="album py-5 bg-body-tertiary">
+            <div class="container">
+    
+                <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-3">
+                  {% if publicaciones %}  
+                    {% for publicacion in publicaciones %}
+                        <div class="col">
+                            <div class="card shadow-sm">
+                                <img src="{{ publicacion.imagen.url }}" class="card-img-top" alt="{{ publicacion.titulo }}">
+                                <div class="card-body">
+                                    <h5 class="card-title">{{ publicacion.titulo }}</h5>
+                                    <p class="card-text">{{ publicacion.descripcion }}</p>
+                                    <div class="d-flex justify-content-between align-items-center">
+                                      
+                                            <a href="{% url 'ver_producto' publicacion.id %}" class="btn btn-outline-primary">Ver Detalles</a>
+                                            <a href="{% url 'solicitar_trueque' publicacion.id %}" class="btn btn-outline-primary">Solicitar trueque</a>
 
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    {% endfor %}
+                 {% else %}
+                 <div class="col">
+                    <p>No hay productos disponibles.</p>
+                </div>
+                {% endif %}
+                
+                </div>
+    
+            </div>
+        </div>
 
-<p>Producto 1</p>
-<p>Producto 2</p>
-<p>Producto 3</p>
-<p>Producto 4</p>
-<p>Producto 5</p>
-
+   
+    {% endif %}
 
 {% endblock %}

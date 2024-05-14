@@ -18,7 +18,15 @@
             <br>        
             {% if error_message %}
                 <p>{{ error_message }}</p>
-            {% endif %}
+
+                <!--Resolver como mostrar solo si user esta bloqueado, funciona pero es raro hacerlo asi-->
+                {% if error_message == 'El Usuario esta bloqueado'  %}
+                    {% block button %}
+                    <a href="{% url 'recuperarCuenta' user.email %}" class="btn btn-outline-danger">Desbloquear Cuenta</a>
+                    {% endblock button %}
+               {% endif %}
+           {% endif %}   
+        
             
             {% if failed_attempts is not None %}
                 <p>Número de intentos fallidos: {{ failed_attempts }}</p>
