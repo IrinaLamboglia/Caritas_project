@@ -48,4 +48,5 @@ class Categoria(models.Model):
 
     def __str__(self):
         return self.nombre
-    email= models.EmailField(unique=True)
+
+email= models.EmailField(unique=True)

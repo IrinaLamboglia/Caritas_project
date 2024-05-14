@@ -1,4 +1,4 @@
-{% load static %} <!-- Agrega esta línea al principio para cargar las etiquetas de archivos estáticos -->
+{% load static %}
 
 <!DOCTYPE html>
 <html lang="es">
@@ -7,37 +7,49 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Registrarse</title>
     <link rel="icon" type="image/png" href="{% static 'imagenes/logoCaritas.jpg' %}">
-    <link rel="stylesheet" type="text/css" href="{% static 'css/registro-estilos.css' %}"> 
-
+    <link rel="stylesheet" type="text/css" href="{% static 'css/estilo.css' %}"> 
 </head>
 <body>
     <h2>Registrarse</h2>
-    <form action="{% url 'registro' %}" method="post">
-        {% csrf_token %}
-        <label for="email">Email:</label><br>
-        <input type="email" id="email" name="email" value="nombre@gmail.com" required><br>
+    <div class="form-container"> <!-- Contenedor del formulario -->
+        <form action="{% url 'registro' %}" method="post">
+            {% csrf_token %}
+            <label for="email">Email:</label><br>
+            <input type="email" id="email" name="email" value="nombre@gmail.com" required class="input-field"><br>
+            <span class="error-message">{{ form.email.errors }}</span> <!-- Mensaje de error para el campo email -->
+
+            <label for="nombre">Nombre:</label><br>
+            <input type="text" id="nombre" name="nombre" required class="input-field"><br>
         
-        <label for="nombre">Nombre:</label><br>
-        <input type="text" id="nombre" name="nombre" required><br>
-    
-        <label for="apellido">Apellido:</label><br>
-        <input type="text" id="apellido" name="apellido" required><br><br>
-    
-        <label for="fecha_nacimiento">Fecha de nacimiento:</label><br>
-        <input type="date" id="fecha_nacimiento" name="fecha_nacimiento" value="2003-05-06" required><br>
-    
-        <label for="telefono">Teléfono:</label><br>
-        <input type="tel" id="telefono" name="telefono" required><br>
+            <label for="apellido">Apellido:</label><br>
+            <input type="text" id="apellido" name="apellido" required class="input-field"><br>
         
-        <label for="password">Contraseña:</label><br>
-        <input type="password" id="password" name="contraseña" required><br>
-       
-        <label for="dni">DNI:</label><br>
-        <input type="text" id="dni" name="dni" required><br>
+            <label for="fecha_nacimiento">Fecha de nacimiento:</label><br>
+            <input type="date" id="fecha_nacimiento" name="fecha_nacimiento" value="2003-05-06" required class="input-field"><br>
+            <span class="error-message">{{ form.fecha_nacimiento.errors }}</span> <!-- Mensaje de error para el campo fecha de nacimiento -->
+
+            
+            <label for="telefono">Teléfono:</label><br>
+            <input type="tel" id="telefono" name="telefono" required class="input-field"><br>
+            
+            <label for="password">Contraseña:</label><br>
+            <input type="password" id="password" name="contraseña" required class="input-field"><br>
+            {% if form.errors.contraseña %}
+            <span class="error-message">{{ form.errors.contraseña }}</span>
+            {% endif %}
+
+            
+            <label for="dni">DNI:</label><br>
+            <input type="text" id="dni" name="dni" required class="input-field"><br>
+        
+            <input type="submit" value="Aceptar">
+        </form>
+    </div>
     
-        <input type="submit" value="Aceptar">
-    </form>
-    
+</ul>
+<li class="btn-container">
+    <a href="{% url 'login' %}" class="btn-volver">Volver atras</a>
+</li>
+
 </body>
 </html>
-

@@ -12,6 +12,13 @@ import random
 import string
 
 
+#los css los restaure por las dudas por si llega a haber conflicto
+#estan al pedo, en deshuso
+#solo hay que mantener estilo.css y login-estilos.css
+
+
+
+
 
 
 #con esto estoy diciendo que me tengo que loguear para acceder
@@ -197,16 +204,16 @@ def mostrarBaja(request):
      except Usuario.DoesNotExist:
          return render(request, 'core/bajaAyudante/bajaAyudante.html')#ayudante no existe
 
-
-
 #anda bien, chequear si lo tengo que bajr de otro modelo(chicas)
 def eliminarAyudante(request,email):
      Usuario.objects.filter(email=email).delete()
      return render(request, 'core/bajaAyudante/bajaAyudante.html', {'error_message': 'Se ha eliminado con exito'})
 
 
-#me di cuenta despues que no era mia(no anda el path)
-#la dejo por las dudas por si alguna les sirve 
+#anda bien, chequear si lo tengo que bajr de otro modelo(chicas)
+def eliminarAyudante(request,email):
+     Usuario.objects.filter(email=email).delete()
+     return render(request, 'core/bajaAyudante/bajaAyudante.html', {'error_message': 'Se ha eliminado con exito'})
 
 # def recuperarCuenta(request,email):
 #     print("estoy en la funcion recuperar cuenta")

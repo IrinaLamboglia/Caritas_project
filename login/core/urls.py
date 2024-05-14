@@ -27,9 +27,8 @@ urlpatterns = [
     path('products/', products,name='products'),
     path('logout/',exit, name='exit'),
     path('accounts/login/', views.login_nuevo , name='login'),
-    path('registro/', views.formularioreg, name='registro'),  # URL para el formulario de registro
+    path('registro/', views.formularioreg, name='registro'),  
     path('login_ayudante/', views.procesar_clave, name="login_ayudante"),
-   # path('bajaAyudante/',views.bajaAyudante,name='bajaAyudante'), #la tengo q hacer 
     path('bajaAyudante/',views.mostrarBaja,name='mostrarBaja'),
     #path('confirmar_salida/', confirmar_salida, name='confirmar_salida'),
     
@@ -45,5 +44,6 @@ urlpatterns = [
     path('categoria/', mostrar_categorias, name='mostarCategoria'),
 
     path('categoria/<int:categoria_id>/', bajar_categoria, name='bajarCategoria'),
-    path('listado/bloqueadosListado/',views.listadoBloqueado, name='listadoBloqueados')
+    path('listado/bloqueadosListado/',views.listadoBloqueado, name='listadoBloqueados'),
+    path('inicio/', home, name='inicio'),
 ]
