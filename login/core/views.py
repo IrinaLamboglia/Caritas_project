@@ -1,12 +1,11 @@
 from django.shortcuts import get_object_or_404, render, redirect
 from .models import FailedLoginAttempt, Publicacion, Usuario, UsuarioBloqueado, porDesbloquear, Categoria
-from django.contrib.auth import login, logout
+from django.contrib.auth import login
 from . formreg import UsuarioForm
 import logging
 from django.core.mail import EmailMessage
 from django.template.loader import render_to_string
 from django.conf import settings
-import os
 from django.conf import settings
 import random
 from django.core.mail import send_mail
@@ -179,23 +178,35 @@ def procesar_clave(request):
    # return redirect('login_ayudante')
     return render(request, 'login_ayudante.html', {'messages': messages})
 
-
+def enviar_correo_ayudante(ayudante):
+    asunto = "Bienvenido a nuestra plataforma"
+    mensaje = f"¡Hola {ayudante.nombre} {ayudante.apellido}! Te hemos registrado en nuestra plataforma como ayudante. Te enviamos tu informacion para que puedas iniciar sesion: Nombre de usuario: {ayudante.email} y la contraseña:{ayudante.contraseña}. Saludos."
+    correo_destino = ayudante.email
+    send_mail(asunto, mensaje, 'tucorreo@gmail.com', [correo_destino])
 
 #perfecto
 def formularioreg(request):
-    print("ejecutando recibo de regisro")
-    if request.method =='POST':
+    print("Ejecutando recibo de registro")
+    if request.method == 'POST':
         form = UsuarioForm(request.POST)
         if form.is_valid():
-            print("el formulario es valido")
+            print("El formulario es válido")
+            usuario = form.save()
+            
+            if (request.user.is_authenticated):
+                if (request.user.tipo == "administrador"):
+                     usuario.email = usuario.email  # Establecer el nombre de usuario como el correo electrónico
+                     usuario.tipo="ayudante"
+                     usuario.save()
+                     enviar_correo_ayudante(request.user)
+                     return redirect('home')
             form.save()
             return redirect('login')
     else:
-        print("el formulario es invalido")
-        form = UsuarioForm()  
+        print("El formulario es inválido")
+        form = UsuarioForm()
 
-    return render(request, 'registration/registro.html', {'form': form}) 
-
+    return render(request, 'registration/registro.html', {'form': form})
 
 #perfecto
 def mostrarBaja(request):

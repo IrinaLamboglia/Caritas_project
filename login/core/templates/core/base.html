@@ -39,20 +39,21 @@
         <li><a href={% url 'products' %}>Productos</a></li>
        
         {% if user.is_authenticated %}
-            {% if user.tipo == "administrador" %}
-                 <li><a href="{% url 'agregar_categoria' %}">Agregar categoría</a></li>   
+             {% if user.tipo == "administrador" %}
+              <li><a href="{% url 'agregar_categoria' %}">Agregar categoría</a></li>   
                  <li><a href={% url 'mostrarBaja' %}>Buscar ayudante</a></li>
                  <li><a href={% url 'listadoBloqueados' %}>Ver bloqueados</a></li>
                  <li><a href={% url 'mostarCategoria' %}>Bajar categorias</a></li>
-            {% else %}
-                {% if user.tipo == "ayudante" %}
+                 <li><a href={% url 'registro' %}>Alta Ayudante</a></li>
+             {% else %}
+                 {% if user.tipo == "ayudante" %}
                       <li><a href="{% url 'agregar_categoria' %}">Agregar categoría</a></li>
-                      <li><a href={% url 'mostarCategoria' %}>Bajar categorias</a></li>
-                {% else %}    
+                     <li><a href={% url 'mostarCategoria' %}>Bajar categorias</a></li>
+                 {% else %}    
                       <li><a href={% url 'mis_publicaciones' %}>Mis Publicaciones</a></li>
                  {% endif %}  
-            {% endif %}
-            <li><a href="#" method="POST" onclick="confirmarSalida()" >Salir</a></li>
+             {% endif %}
+             <li><a href="#" method="POST" onclick="confirmarSalida()" >Salir</a></li>
         {% else %}
             <li><a href={% url 'login' %} >Ingresar</a></li>
         {% endif %}
