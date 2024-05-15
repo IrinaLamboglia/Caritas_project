@@ -12,7 +12,7 @@ class UsuarioForm(forms.ModelForm):
             'fecha_nacimiento',
             'dni',
             'telefono',
-            'contraseña'
+            'contraseña',
         ]
 
     def clean_email(self):
@@ -41,3 +41,9 @@ class UsuarioForm(forms.ModelForm):
         if commit:
             usuario.save()
         return usuario
+    
+    def clean_filial(self):
+        filial = self.cleaned_data['filial']
+        if Usuario.objects.filter(filial=filial).exists():
+            raise forms.ValidationError("Ya existe un usuario registrado en esta filial.")
+        return filial

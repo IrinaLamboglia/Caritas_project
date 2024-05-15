@@ -193,6 +193,7 @@ def formularioreg(request):
             print("El formulario es válido")
             usuario = form.save()
             
+            
             if (request.user.is_authenticated):
                 if (request.user.tipo == "administrador"):
                      usuario.email = usuario.email  # Establecer el nombre de usuario como el correo electrónico

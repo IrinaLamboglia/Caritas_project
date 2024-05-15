@@ -36,12 +36,22 @@
      <style>
          /* Estilos personalizados */
          body {
-             position: relative;
-         }
+            background-image: url('https://i.pinimg.com/originals/98/da/8f/98da8f9306de27424460d16e53938b72.jpg');
+            background-size: cover; /* Ajusta la imagen al tamaño de la ventana del navegador */
+            background-repeat: no-repeat; /* Evita que la imagen se repita */
+            background-attachment: fixed; /* Fija la imagen de fondo para que no se desplace con el contenido */
+        }
          h1 {
-             text-align: center; /* Centra el título */
-             margin-bottom: 20px; /* Añade espacio entre el título y el contenido */
-         }
+            text-align: center; /* Centra el texto horizontalmente */
+            margin-bottom: 20px; /* Añade espacio entre el título y el contenido */
+            background-color: #f0f0f0; /* Color de fondo del ovalo */
+            border-radius: 50px; /* Define un radio de borde para crear la forma de un ovalo */
+            padding: 10px 20px; /* Añade espacio alrededor del texto dentro del ovalo */
+            display: inline-block; /* Permite que el ovalo se ajuste al texto */
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Agrega una sombra suave al ovalo */
+            width: 100%; /* Asegura que el título ocupe todo el ancho disponible */
+        }
+        
          .categoria-lista {
              list-style: none; /* Quita los puntos de la lista */
              padding: 0; /* Quita el espacio interno de la lista */
@@ -53,9 +63,11 @@
              margin-bottom: 10px; /* Añade espacio entre cada categoría */
              padding: 10px; /* Añade espacio interno a cada categoría */
              position: relative; /* Permite alinear el botón al centro */
+             background-color: #f0f0f0;; /* Fondo semi-transparente */
          }
          .categoria-nombre {
              font-weight: bold; /* Hace que el nombre de la categoría sea negrita */
+             font-size: 30px;
          }
          .producto-lista {
              padding-left: 20px; /* Añade un poco de espacio a la izquierda para los productos */
@@ -79,12 +91,12 @@
          }
          #volver {
              position: fixed; /* Cambiamos a fixed para que permanezca en la misma posición al hacer scroll */
-             top: 10px;
+             top: 40px;
              left: 10px;
              background-color: transparent;
              border: none;
              color: black;
-             font-size: 18px;
+             font-size: 25px;
              font-weight: bold;
              cursor: pointer;
          }
@@ -98,19 +110,32 @@
          }
          
          .messages {
-             list-style: none;
-             padding: 0;
-             margin: 0;
-             background-color: rgba(255, 0, 0, 0.2); /* Fondo semitransparente para los mensajes */
-             font-size: 20px;
-             color: red;
-             display: inline-block; /* Hace que el contenedor se ajuste automáticamente a su contenido */
-             border-radius: 5px; /* Añade esquinas redondeadas al contenedor */
-         }
-         
-         .messages li {
-             margin-bottom: 10px;
-         }
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            background-color: rgba(255, 0, 0, 0.5); /* Fondo semitransparente para los mensajes */
+            font-size: 30px; /* Ajustar el tamaño del texto */
+            color: black; /* Cambiar el color del texto a rojo */
+            display: inline-block; /* Hace que el contenedor se ajuste automáticamente a su contenido */
+            border-radius: 5px; /* Añade esquinas redondeadas al contenedor */
+            padding: 10px; /* Añadir relleno alrededor de los mensajes */
+        }
+        
+        .messages li {
+            margin-bottom: 10px; /* Añadir espacio entre los mensajes */
+        }
+        
+
+        .no-categorias-mensaje {
+            font-size: 50px; /* Ajustar el tamaño del texto */
+            color: black; /* Cambiar el color del texto a rojo */
+            background-color: rgba(255, 0, 0, 0.5); /* Agregar un fondo semitransparente */
+            padding: 20px; /* Agregar relleno alrededor del texto */
+            border-radius: 5px; /* Añadir bordes redondeados */
+            /* Otros estilos CSS según tus preferencias */
+        }
+        
+        
      </style>
      <script>
         function confirmarBaja(categoriaId) {
@@ -122,10 +147,11 @@
     </script>
  </head>
  <body>
-     <h1>Categorías y Productos</h1>
+     <h1>Categorías</h1>
      
      <!-- Listado de categorías -->
-     <ul class="categoria-lista">
+      {% if categorias %}  
+       <ul class="categoria-lista">
         {% for categoria in categorias %}
             <li class="categoria-item">
                 <span class="categoria-nombre">{{ categoria.nombre }}</span>
@@ -136,9 +162,11 @@
                 </form>
             </li>
         {% endfor %}
-    </ul>
-    
- 
+        </ul>
+        {% else %}
+        <p class="no-categorias-mensaje"> No hay categorias disponibles</p>
+     {% endif %}  
+
      <!-- Botón Volver -->
      <a href="{% url 'home' %}" id="volver" style="text-decoration: none; color: black;">
          &larr; Volver
