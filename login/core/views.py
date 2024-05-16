@@ -1,3 +1,4 @@
+from django.http import JsonResponse
 from django.shortcuts import get_object_or_404, render, redirect
 from .models import FailedLoginAttempt, Publicacion, Usuario, UsuarioBloqueado, porDesbloquear, Categoria
 from django.contrib.auth import login
@@ -13,6 +14,7 @@ import string
 from .globals import contenido_actual
 from .formpubl import PublicacionForm
 from django.contrib import messages
+from django.views.decorators.csrf import csrf_exempt
 
 #los css los restaure por las dudas por si llega a haber conflicto
 #estan al pedo, en deshuso
@@ -323,3 +325,18 @@ def mis_publicaciones(request):
     publicaciones = Publicacion.objects.filter(usuario=request.user)
     return render(request, 'core/crearPublicacion/mis_publicaciones.html', {'publicaciones': publicaciones})
 
+@csrf_exempt
+def eliminar_publicacion(request, publicacion_id):
+    print("fuera del try")
+    if request.method == 'DELETE':
+        try:
+            print("entra al try")
+            publicacion = Publicacion.objects.get(pk=publicacion_id)
+            publicacion.delete()
+            mensaje = 'La publicación ha sido eliminada correctamente.'
+            return JsonResponse({'message': mensaje}, status=200)
+        except Publicacion.DoesNotExist:
+            mensaje = 'La publicación no existe.'
+            return JsonResponse({'error': mensaje}, status=404)
+    else:
+        return JsonResponse({'error': 'Método no permitido'}, status=405)

@@ -55,4 +55,6 @@ urlpatterns = [
     path('solicitar/<int:publicacion_id>/',views.solicitar_trueque, name='solicitar_trueque'),
     path('desbloquear/<str:email>/', views.desbloquearUsuario, name='desbloquear_usuario'),
     path('mis_publicaciones/', views.mis_publicaciones, name='mis_publicaciones'),
+    #ESTO ES NUEVO
+    path('eliminar_publicacion/<int:publicacion_id>/', views.eliminar_publicacion, name='eliminar_publicacion'),
 ]
