@@ -102,7 +102,7 @@ def login_nuevo(request):
                          codigo = generar_codigo_aleatorio(6)
                          request.session['codigo_autenticacion'] = codigo #guardo temporalmente la clave en la sesion 
                          subject = 'Codigo autenticacion' 
-                         template = render_to_string('correos\email_template.html', {
+                         template = render_to_string('correos/email_template.html', {
                              'name' : usuario.nombre ,
                              'email' : usuario.email ,
                              'message' : f"Codigo aleatoreo de autenticacion {codigo}"
@@ -322,7 +322,10 @@ def desbloquearUsuario(request, email):
     return redirect('listadoBloqueados')
 
 def mis_publicaciones(request):
-    publicaciones = Publicacion.objects.filter(usuario=request.user)
+    if request.user.tipo =="administrador":
+        publicaciones = Publicacion.objects.all()
+    else:
+        publicaciones = Publicacion.objects.filter(usuario=request.user)
     return render(request, 'core/crearPublicacion/mis_publicaciones.html', {'publicaciones': publicaciones})
 
 @csrf_exempt

@@ -18,9 +18,10 @@ from .views import home,products
 from log_out.views import exit
 #importo funcion exit
 from . import views
-from editarPerfil.views import editar_perfil
+from editarPerfil.views import editar_ayudante
 from agregarCategoria.views import agregar_categoria, mostrar_categorias
 from bajaCategoria.views import bajar_categoria
+from listarprod.views import mostrar_validacion,aceptar_publicacion,rechazar_publicacion,bloquear_usuario
 
 urlpatterns = [
     path('', home, name='home'),
@@ -38,7 +39,7 @@ urlpatterns = [
     
     path('eliminarAyudante/<str:email>/', views.eliminarAyudante, name='eliminarAyudante'),
     # URL para la edición de perfil del ayudante
-    path('editar_perfil/', editar_perfil, name='editar_perfil'),
+    path('editar_perfil/<int:id>/', editar_ayudante, name='editar_ayudante'),
    
     path('listado/bloqueadosListado/',views.listadoBloqueado, name='listadoBloqueados'),
     
@@ -57,4 +58,9 @@ urlpatterns = [
     path('mis_publicaciones/', views.mis_publicaciones, name='mis_publicaciones'),
     #ESTO ES NUEVO
     path('eliminar_publicacion/<int:publicacion_id>/', views.eliminar_publicacion, name='eliminar_publicacion'),
+    path('mostrarValidacion/', mostrar_validacion, name='mostrar_validacion'),
+    path('aceptarPublicacion/<int:id>/', aceptar_publicacion, name='aceptar_publicacion'),
+    path('rechazarPublicacion/<int:id>/', rechazar_publicacion, name='rechazar_publicacion'),
+    path('bloquearUsuario/<int:id>/', bloquear_usuario, name='bloquear_usuario'),
+
 ]

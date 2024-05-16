@@ -39,7 +39,11 @@
                     {% for publicacion in publicaciones %}
                         <div class="col">
                             <div class="card shadow-sm">
-                                <img src="{{ publicacion.imagen.url }}" class="card-img-top" alt="{{ publicacion.titulo }}">
+                                {% if publicacion.imagen %}
+                                    <img src="{{ publicacion.imagen.url }}" class="card-img-top" alt="{{ publicacion.titulo }}">
+                                {% else %}
+                                    <img src="{% static 'placeholder_image.jpg' %}" class="card-img-top" alt="Imagen no disponible">
+                                {% endif %}
                                 <div class="card-body">
                                     <h5 class="card-title">{{ publicacion.titulo }}</h5>
                                     <p class="card-text">{{ publicacion.descripcion }}</p>
