@@ -2,7 +2,7 @@ from django.shortcuts import render, redirect
 from core.models import Publicacion, Usuario, UsuarioBloqueado
 
 def mostrar_validacion(request):
-    publicaciones_a_validar = Publicacion.objects.filter(estado=False)
+    publicaciones_a_validar = Publicacion.objects.filter(estado=False, categoria__isnull = False)
     return render(request, 'validacion/mostrar_validacion.html', {'publicaciones_a_validar': publicaciones_a_validar})
 
 def aceptar_publicacion(request, id):

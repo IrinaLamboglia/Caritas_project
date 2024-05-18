@@ -23,12 +23,12 @@ def editar_ayudante(request, id):
         # Verificar si el nuevo correo electrónico corresponde a un usuario ya registrado
         if Usuario.objects.exclude(id=id).filter(email=nuevo_email).exists():
             messages.error(request, 'El correo electrónico ya corresponde a un usuario registrado.')
-            return redirect('admin/editar_ayudante.html',id=id)
+            return redirect('editar_ayudante',id=id)
         else:
             #verifico que la contraseña tenga al menos 6 digitos
             if nueva_contrasena and nueva_contrasena != ayudante.contraseña and len(nueva_contrasena) < 6:
                 messages.error(request, 'La contraseña debe tener al menos 6 caracteres.')
-                return redirect('admin/editar_ayudante.html', id=id)
+                return redirect('editar_ayudante', id=id)
             else:
                 # Actualizar la información del ayudante
                 ayudante.email = nuevo_email
@@ -40,7 +40,6 @@ def editar_ayudante(request, id):
                 ayudante.telefono = nuevo_telefono
                 ayudante.contraseña = nueva_contrasena
                 ayudante.save()
-                messages.success(request, 'La información del ayudante se actualizó correctamente.')
                 return redirect('home')
         
     return render(request, 'admin/editar_ayudante.html', {'ayudante': ayudante})
