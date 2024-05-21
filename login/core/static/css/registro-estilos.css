@@ -9,6 +9,7 @@ h2 {
     margin-top: 50px;
     margin-bottom: 30px;
 }
+
 form {
     max-width: 500px;
     margin: 0 auto;
@@ -48,16 +49,4 @@ input[type="submit"] {
 
 input[type="submit"]:hover {
     background-color: #0056b3;
-}
-/*cuadro del mensaje de error o exito en el alta de ayudantes*/
-.alerta1{
-    position: fixed; /* posición fija para que se mantenga en la parte superior */
-            top: 0; /* distancia desde el borde superior */
-            left: 0; /* distancia desde el borde izquierdo */
-            width: 100%; /* ancho del cuadro */
-            background-color: #f8d7da; /* color de fondo */
-            color: #721c24; /* color del texto */
-            padding: 10px; /* espacio interior */
-            box-sizing: border-box; /* incluir bordes y padding en el ancho */
-            z-index: 1000; /* asegurar que esté por encima de otros elementos */
 }

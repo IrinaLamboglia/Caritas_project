@@ -31,28 +31,41 @@ class Usuario(AbstractUser):
     contraseña = models.CharField(max_length=128, validators=[MinLengthValidator(6)], default='valor_predeterminado')  # Campo para almacenar la contraseña cifrada
     last_login = models.DateTimeField(verbose_name='last login', blank=True, null=True)
     tipo= models.CharField(max_length=30, default="")
-    filial = models.CharField(max_length=100, unique=True)
-  #  USERNAME_FIELD = 'email'
-   # REQUIRED_FIELDS = []
+
+    # Campo filial solo para ayudantes
+    filial = models.CharField(max_length=100, null=True, blank=True)
+
+    def save(self, *args, **kwargs):
+        if self.tipo != "ayudante":
+            self.filial = None  # Resetear el valor de filial si el tipo no es ayudante
+        super().save(*args, **kwargs)
 
 
-#class Administrador(models.Model):
- #   nombre_usuario = models.CharField(max_length=100, unique=True)
-  #  nombre = models.CharField(max_length=100)
-  #  apellido = models.CharField(max_length=100)
-  #  fecha_nacimiento = models.DateField()
-  #  filial = models.CharField(max_length=100) telefono = models.CharField(max_length=20)
-  #  contraseña = models.CharField(max_length=100)
-  #  dni = models.CharField(max_length=20)
-  #  filial = models.CharField(max_length=100)
 
 class UsuarioBloqueado(models.Model):
     email= models.EmailField(unique=True)
 
 
-#opciones de rol que vamos a necesitar mas adelante
+class porDesbloquear(models.Model):
+    email= models.EmailField(unique=True)  
+class Categoria(models.Model):
+    nombre = models.CharField(max_length=100, unique=True)
 
-OPCIONES_ROL = [
-    ('usuario','ayudante','Administrador')
-]
-roles= models.CharField(max_length=7,choices=OPCIONES_ROL,default='usuario')
+    def __str__(self):
+        return self.nombre
+
+
+
+class Publicacion(models.Model):
+    titulo = models.CharField(max_length=200)
+    descripcion = models.CharField(max_length=400)
+    nuevo = models.BooleanField(default=True)
+    estado = models.BooleanField(default=True)
+    usuario = models.ForeignKey(Usuario, on_delete=models.CASCADE)
+    categoria = models.ForeignKey(Categoria, on_delete=models.CASCADE, null = True)
+    imagen = models.ImageField(upload_to='media/publicaciones/', null=True, blank=True)
+
+    def __str__(self):
+        return self.titulo
+    
+email= models.EmailField(unique=True)

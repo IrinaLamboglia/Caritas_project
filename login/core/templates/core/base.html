@@ -6,8 +6,28 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Cáritas Argentina</title>
     <link rel="icon" type="image/png" href="{% static 'imagenes/logoCaritas.jpg' %}">
-    <link rel="stylesheet" type="text/css" href="{% static 'css/estilos.css' %}">
-
+    <!--Añado Bootstrap, jQuey y Popper.js-->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+    <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous"></script>
+	<script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
+	<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
+    <!---->
+    
+    <link rel="stylesheet" type="text/css" href="{% static 'css/estilo.css' %}">
+    
+    <form id="formularioSalida" method="POST" action="{% url 'logout' %}">
+        {% csrf_token %}
+        <input type="hidden" name="logout" value="true">
+    </form>
+    
+    <script>
+        function confirmarSalida() {
+            var confirmacion = confirm("¿Estás seguro de que deseas cerrar sesión?");
+            if (confirmacion) {
+                document.getElementById("formularioSalida").submit();
+            } 
+        }
+    </script>
 </head>
 <body>
     <div class="header">
@@ -17,19 +37,31 @@
     <ul>
         <li><a href={% url 'home' %}>Inicio</a></li>
         <li><a href={% url 'products' %}>Productos</a></li>
+       
         {% if user.is_authenticated %}
-            {% if user.tipo == "administrador" %}
-                 <li><a href={% url 'mostrarBaja' %}>Baja Ayudante</a></li>
+             {% if user.tipo == "administrador" %}
+              <li><a href="{% url 'agregar_categoria' %}">Agregar categoría</a></li>   
+                 <li><a href={% url 'mostrarBaja' %}>Buscar ayudante</a></li>
+                 <li><a href={% url 'listadoBloqueados' %}>Ver bloqueados</a></li>
+                 <li><a href={% url 'mostarCategoria' %}>Bajar categorias</a></li>
                  <li><a href={% url 'registro' %}>Alta Ayudante</a></li>
-            {%  endif %}
-            <li><a href={% url 'exit' %}>Salir</a></li>
-           
+                 <li><a href={% url 'mis_publicaciones' %}>Eliminar Publicaciones</a></li>
+                 
+             {% else %}
+                 {% if user.tipo == "ayudante" %}
+                      <li><a href="{% url 'agregar_categoria' %}">Agregar categoría</a></li>
+                     <li><a href={% url 'mostarCategoria' %}>Bajar categorias</a></li>
+                     <li><a href={% url 'mostrar_validacion' %}>Validar</a></li>
+               
+                     {% else %}    
+                      <li><a href={% url 'mis_publicaciones' %}>Mis Publicaciones</a></li>
+                 {% endif %}  
+             {% endif %}
+             <li><a href="#" method="POST" onclick="confirmarSalida()" >Salir</a></li>
         {% else %}
-      <!-- link para ingresar es el tamplate de login  -->
-           <li><a href={% url 'login' %} >Ingresar</a></li>
+            <li><a href={% url 'login' %} >Ingresar</a></li>
         {% endif %}
     </ul>
     {% block content %}{% endblock %}
-
 </body>
 </html>

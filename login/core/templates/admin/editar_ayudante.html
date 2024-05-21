@@ -58,7 +58,7 @@
     <form method="post" action="{%url 'editar_ayudante' ayudante.id%}">
         {% csrf_token %}
         <label for="nuevo_email">Email:</label>
-        <input type="email" id="nuevo_email" name="nuevo_email" value="{{ ayudante.nombre_usuario }}" required>
+        <input type="email" id="nuevo_email" name="nuevo_email" value="{{ ayudante.email}}" required>
         
         <label for="nuevo_nombre">Nombre:</label>
         <input type="text" id="nuevo_nombre" name="nuevo_nombre" value="{{ayudante.nombre }}" required>
