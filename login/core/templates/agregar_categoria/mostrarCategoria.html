@@ -1,96 +1,96 @@
 {% load static %}
-<!-- mostrar_categoria.html
+
 
 <!DOCTYPE html>
-<html lang="es">
+<html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mostrar Categorías</title>
-</head>
-<body>
-    <h1>Categorías y Productos</h1>
-    <ul>
-        {% for categoria in categorias %}
-            <li>{{ categoria.nombre }}</li>
-            <ul>
-                {% for producto in categoria.productos.all %}
-                    <li>{{ producto.nombre }}</li>
-                {% endfor %}
-            </ul>
-            <a href="{% url 'bajarCategoria' categoria.id %}">Eliminar</a>
-        {% endfor %}
-    </ul>
-</body>
-</html>
- -->
-
-
- <!DOCTYPE html>
- <html lang="en">
- <head>
      <meta charset="UTF-8">
      <meta name="viewport" content="width=device-width, initial-scale=1.0">
      <link rel="stylesheet" type="text/css" href="{% static 'css/estiloCategoria.css' %}">
      <title>Mostrar Categorías</title>
      <style>
-         /* Estilos personalizados */
          body {
-            background-image: url('https://i.pinimg.com/originals/98/da/8f/98da8f9306de27424460d16e53938b72.jpg');
-            background-size: cover; /* Ajusta la imagen al tamaño de la ventana del navegador */
-            background-repeat: no-repeat; /* Evita que la imagen se repita */
-            background-attachment: fixed; /* Fija la imagen de fondo para que no se desplace con el contenido */
-        }
+             background-image: url('https://i.pinimg.com/originals/98/da/8f/98da8f9306de27424460d16e53938b72.jpg');
+             background-size: cover;
+             background-repeat: no-repeat;
+             background-attachment: fixed;
+         }
          h1 {
-            text-align: center; /* Centra el texto horizontalmente */
-            margin-bottom: 20px; /* Añade espacio entre el título y el contenido */
-            background-color: #f0f0f0; /* Color de fondo del ovalo */
-            border-radius: 50px; /* Define un radio de borde para crear la forma de un ovalo */
-            padding: 10px 20px; /* Añade espacio alrededor del texto dentro del ovalo */
-            display: inline-block; /* Permite que el ovalo se ajuste al texto */
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Agrega una sombra suave al ovalo */
-            width: 100%; /* Asegura que el título ocupe todo el ancho disponible */
-        }
-        
+             text-align: center;
+             margin-bottom: 20px;
+             background-color: #f0f0f0;
+             border-radius: 50px;
+             padding: 10px 20px;
+             display: inline-block;
+             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+             width: 100%;
+         }
+         .filtro-container {
+             text-align: center;
+             margin-bottom: 20px;
+         }
+         .filtro-container select {
+             padding: 10px;
+             border-radius: 5px;
+             border: 1px solid #ccc;
+             background-color: #fff;
+             font-size: 16px;
+             outline: none;
+             margin-right: 10px;
+         }
+
+         .filtro-container button {
+             padding: 10px 20px;
+             border-radius: 5px;
+             border: none;
+             background-color: #ec8888;
+             color: #fff;
+             cursor: pointer;
+             font-size: 16px;
+             margin-left: 10px;
+         }
+
+         .filtro-container button:hover {
+             background-color: #b8aeae;
+         }
          .categoria-lista {
-             list-style: none; /* Quita los puntos de la lista */
-             padding: 0; /* Quita el espacio interno de la lista */
-             margin: 0; /* Quita el espacio externo de la lista */
+             list-style: none;
+             padding: 0;
+             margin: 0;
          }
          .categoria-item {
-             border: 1px solid #ccc; /* Añade un borde alrededor de cada categoría */
-             border-radius: 5px; /* Añade esquinas redondeadas */
-             margin-bottom: 10px; /* Añade espacio entre cada categoría */
-             padding: 10px; /* Añade espacio interno a cada categoría */
-             position: relative; /* Permite alinear el botón al centro */
-             background-color: #f0f0f0;; /* Fondo semi-transparente */
+             border: 1px solid #ccc;
+             border-radius: 5px;
+             margin-bottom: 10px;
+             padding: 10px;
+             position: relative;
+             background-color: #f0f0f0;
          }
          .categoria-nombre {
-             font-weight: bold; /* Hace que el nombre de la categoría sea negrita */
+             font-weight: bold;
              font-size: 30px;
          }
          .producto-lista {
-             padding-left: 20px; /* Añade un poco de espacio a la izquierda para los productos */
+             padding-left: 20px;
          }
          .producto-item {
-             margin-top: 5px; /* Añade espacio entre cada producto */
+             margin-top: 5px;
          }
          .eliminar-btn {
-             
-             color: #ec8888; /* Color del texto blanco */
-             padding: 10px 10px; /* Ajusta el espaciado del botón */
-             border-radius: 5px; /* Añade esquinas redondeadas al botón */
-             cursor: pointer; /* Cambia el cursor al pasar sobre el botón */
-             position: absolute; /* Posición absoluta para centrar el botón */
-             bottom: 0px; /* Espacio desde la parte inferior */
-             left: 50%; /* Alinea el botón al centro horizontal */
-             transform: translateX(-50%); /* Centra el botón horizontalmente */
+             color: #ec8888;
+             padding: 10px 10px;
+             border-radius: 5px;
+             cursor: pointer;
+             position: absolute;
+             bottom: 0px;
+             left: 50%;
+             transform: translateX(-50%);
          }
          .eliminar-btn:hover {
-             background-color: #b8aeae; /* Color de fondo más oscuro al pasar el ratón */
+             background-color: #b8aeae;
          }
          #volver {
-             position: fixed; /* Cambiamos a fixed para que permanezca en la misma posición al hacer scroll */
+             position: fixed;
              top: 40px;
              left: 10px;
              background-color: transparent;
@@ -100,86 +100,156 @@
              font-weight: bold;
              cursor: pointer;
          }
- 
-         /* Estilos para los mensajes */
          .messages-container {
              width: 100%;
              box-sizing: border-box;
-             padding-bottom: 20px; /* Aumenta el espacio para los mensajes */
-             text-align: center; /* Centra el contenido del contenedor */
+             padding-bottom: 20px;
+             text-align: center;
          }
-         
          .messages {
-            list-style: none;
-            padding: 0;
-            margin: 0;
-            background-color: rgba(255, 0, 0, 0.5); /* Fondo semitransparente para los mensajes */
-            font-size: 30px; /* Ajustar el tamaño del texto */
-            color: black; /* Cambiar el color del texto a rojo */
-            display: inline-block; /* Hace que el contenedor se ajuste automáticamente a su contenido */
-            border-radius: 5px; /* Añade esquinas redondeadas al contenedor */
-            padding: 10px; /* Añadir relleno alrededor de los mensajes */
-        }
-        
-        .messages li {
-            margin-bottom: 10px; /* Añadir espacio entre los mensajes */
-        }
-        
-
-        .no-categorias-mensaje {
-            font-size: 50px; /* Ajustar el tamaño del texto */
-            color: black; /* Cambiar el color del texto a rojo */
-            background-color: rgba(255, 0, 0, 0.5); /* Agregar un fondo semitransparente */
-            padding: 20px; /* Agregar relleno alrededor del texto */
-            border-radius: 5px; /* Añadir bordes redondeados */
-            /* Otros estilos CSS según tus preferencias */
-        }
-        
-        
+             list-style: none;
+             padding: 0;
+             margin: 0;
+             background-color: rgba(255, 0, 0, 0.5);
+             font-size: 30px;
+             color: black;
+             display: inline-block;
+             border-radius: 5px;
+             padding: 10px;
+         }
+         .messages li {
+             margin-bottom: 10px;
+         }
+         .no-categorias-mensaje {
+             font-size: 50px;
+             color: black;
+             background-color: rgba(255, 0, 0, 0.5);
+             padding: 20px;
+             border-radius: 5px;
+         }
+         /* Estilos para el modal de confirmación */
+         .modal {
+             display: none;
+             position: fixed;
+             z-index: 1;
+             left: 0;
+             top: 0;
+             width: 100%;
+             height: 100%;
+             overflow: auto;
+             background-color: rgba(0, 0, 0, 0.4);
+         }
+         .modal-content {
+             background-color: #fefefe;
+             margin: 15% auto;
+             padding: 20px;
+             border: 1px solid #888;
+             width: 80%;
+             max-width: 300px;
+             text-align: center;
+             border-radius: 10px;
+         }
+         .modal-button {
+             margin: 5px;
+             padding: 10px 20px;
+             border: none;
+             border-radius: 5px;
+             cursor: pointer;
+         }
+         .btn-accept {
+             background-color: #4CAF50;
+             color: white;
+         }
+         .btn-cancel {
+             background-color: #f44336;
+             color: white;
+         }
      </style>
-     <script>
-        function confirmarBaja(categoriaId) {
-            var confirmacion = confirm("¿Estás seguro de que deseas eliminar categoría?");
-            if (confirmacion) {
-                document.getElementById("formulario" + categoriaId).submit();
-            }
-        }        
-    </script>
  </head>
  <body>
      <h1>Categorías</h1>
-     
-     <!-- Listado de categorías -->
-      {% if categorias %}  
-       <ul class="categoria-lista">
-        {% for categoria in categorias %}
-            <li class="categoria-item">
-                <span class="categoria-nombre">{{ categoria.nombre }}</span>
-                <!-- Utiliza <details> para ocultar los productos inicialmente -->
-                <form id="formulario{{ categoria.id }}" method="POST" action="{% url 'bajarCategoria' categoria.id %}">
-                    {% csrf_token %}
-                    <button type="button" class="eliminar-btn" onclick="confirmarBaja({{ categoria.id }})">Eliminar</button>
-                </form>
-            </li>
-        {% endfor %}
-        </ul>
-        {% else %}
-        <p class="no-categorias-mensaje"> No hay categorias disponibles</p>
-     {% endif %}  
+     <!-- Formulario para filtrar las categorías -->
+     <div class="filtro-container">
+        <form action="{% url 'mostarCategoria' %}" method="GET">
+            <label for="filtro" style="font-weight: bold; font-size: 20px; color: #333; margin-right: 10px;">Mostrar:</label>
 
+            <select id="filtro" name="filtro">
+                <option value="activas" {% if filtro == 'activas' %} selected {% endif %}>Activas</option>
+                <option value="desactivadas" {% if filtro == 'desactivadas' %} selected {% endif %}>Desactivadas</option>
+                <option value="todas" {% if filtro == 'todas' %} selected {% endif %}>Todas</option>
+            </select>
+            <button type="submit">Filtrar</button>
+        </form>
+    </div>
+
+     <!-- Listado de categorías -->
+     {% if categorias %}
+     <ul class="categoria-lista">
+         {% for categoria in categorias %}
+         <li class="categoria-item">
+             <span class="categoria-nombre">{{ categoria.nombre }}</span>
+             <form id="formulario{{ categoria.id }}" method="POST" action="{% url 'desactivar_categoria' categoria.id %}">
+                 {% csrf_token %}
+                 <button type="button" class="eliminar-btn" onclick="confirmarBaja({{ categoria.id }})">
+                     {{ categoria.estado|yesno:"Desactivar,Activar" }}
+                 </button>
+             </form>
+         </li>
+         {% endfor %}
+     </ul>
+     {% else %}
+     <p class="no-categorias-mensaje"> No hay categorias disponibles</p>
+     {% endif %}
+ 
      <!-- Botón Volver -->
      <a href="{% url 'home' %}" id="volver" style="text-decoration: none; color: black;">
          &larr; Volver
      </a>
-    
+ 
      <!-- Bloque condicional para mostrar mensajes de Django -->
      {% if messages %}
-         <ul class="messages">
-             {% for message in messages %}
-                 <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
-             {% endfor %}
-         </ul>
+     <ul class="messages">
+         {% for message in messages %}
+         <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+         {% endfor %}
+     </ul>
      {% endif %}
+ 
+     <!-- Modal de confirmación -->
+     <div id="confirmModal" class="modal">
+         <div class="modal-content">
+             <p>¿Estás seguro de que deseas cambiar el estado de esta categoría?</p>
+             <button id="confirmBtn" class="modal-button btn-accept">Aceptar</button>
+             <button id="cancelBtn" class="modal-button btn-cancel">Cancelar</button>
+         </div>
+     </div>
+ 
+     <script>
+         function confirmarBaja(categoriaId) {
+             var modal = document.getElementById("confirmModal");
+             var confirmBtn = document.getElementById("confirmBtn");
+             var cancelBtn = document.getElementById("cancelBtn");
+ 
+             modal.style.display = "block";
+ 
+             confirmBtn.onclick = function() {
+                 document.getElementById("formulario" + categoriaId).submit();
+             }
+ 
+             cancelBtn.onclick = function() {
+                 modal.style.display = "none";
+             }
+         }
+ 
+         // Close the modal if the user clicks outside of it
+         window.onclick = function(event) {
+             var modal = document.getElementById("confirmModal");
+             if (event.target == modal) {
+                 modal.style.display = "none";
+             }
+         }
+     </script>
  </body>
  </html>
+ 
  

@@ -43,14 +43,14 @@
               <li><a href="{% url 'agregar_categoria' %}">Agregar categoría</a></li>   
                  <li><a href={% url 'mostrarBaja' %}>Buscar ayudante</a></li>
                  <li><a href={% url 'listadoBloqueados' %}>Ver bloqueados</a></li>
-                 <li><a href={% url 'mostarCategoria' %}>Bajar categorias</a></li>
+                 <li><a href={% url 'mostarCategoria' %}>Desactivar/Activar categorias</a></li>
                  <li><a href={% url 'registro' %}>Alta Ayudante</a></li>
                  <li><a href={% url 'mis_publicaciones' %}>Eliminar Publicaciones</a></li>
                  
              {% else %}
                  {% if user.tipo == "ayudante" %}
                       <li><a href="{% url 'agregar_categoria' %}">Agregar categoría</a></li>
-                     <li><a href={% url 'mostarCategoria' %}>Bajar categorias</a></li>
+                     <li><a href={% url 'mostarCategoria' %}>Desactivar/Activar categorias</a></li>
                      <li><a href={% url 'mostrar_validacion' %}>Validar</a></li>
                
                      {% else %}    

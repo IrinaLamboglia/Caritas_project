@@ -20,7 +20,7 @@ from log_out.views import exit
 from . import views
 from editarPerfil.views import editar_ayudante
 from agregarCategoria.views import agregar_categoria, mostrar_categorias
-from bajaCategoria.views import bajar_categoria
+from bajaCategoria.views import  desactivar_categoria
 from listarprod.views import mostrar_validacion,aceptar_publicacion,rechazar_publicacion,bloquear_usuario
 
 urlpatterns = [
@@ -47,7 +47,7 @@ urlpatterns = [
     
     path('categoria/', mostrar_categorias, name='mostarCategoria'),
 
-    path('categoria/<int:categoria_id>/', bajar_categoria, name='bajarCategoria'),
+   # path('categoria/<int:categoria_id>/', bajar_categoria, name='bajarCategoria'),
     path('inicio/', home, name='inicio'),
     path('accounts/login/<email>/', views.recuperarCuenta, name='recuperarCuenta'), #no anda y no lo tenia q hacer lpm
     
@@ -63,4 +63,5 @@ urlpatterns = [
     path('rechazarPublicacion/<int:id>/', rechazar_publicacion, name='rechazar_publicacion'),
     path('bloquearUsuario/<int:id>/', bloquear_usuario, name='bloquear_usuario'),
 
+     path('categoria/desactivar/<int:categoria_id>/', desactivar_categoria, name='desactivar_categoria'),
 ]

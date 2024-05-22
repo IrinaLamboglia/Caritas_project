@@ -50,7 +50,9 @@
                 <select class="form-control" id="categoria" name="categoria">
                     <option value="" disabled selected>Seleccione una categoría</option>
                     {% for categoria in categorias %}
-                        <option value="{{ categoria.id }}">{{ categoria.nombre }}</option>
+                        {% if categoria.estado %}
+                            <option value="{{ categoria.id }}">{{ categoria.nombre }}</option>
+                        {% endif %}                    
                     {% endfor %}
                 </select>
             </div>
