@@ -22,10 +22,8 @@ def mostrar_categorias(request):
     if filtro == 'activas':
         categorias = Categoria.objects.filter(estado=True)
         
-        print("Consulta SQL para categorías activas:")
     elif filtro == 'desactivadas':
         categorias = Categoria.objects.filter(estado=False)
     else:
-        categorias = Categoria.objects.all()
-        print("Consulta SQL para todas las categorías:")
+        categorias = Categoria.objects.all()   
     return render(request, 'agregar_categoria/mostrarCategoria.html', {'categorias': categorias})

@@ -22,6 +22,7 @@ from editarPerfil.views import editar_ayudante
 from agregarCategoria.views import agregar_categoria, mostrar_categorias
 from bajaCategoria.views import  desactivar_categoria
 from listarprod.views import mostrar_validacion,aceptar_publicacion,rechazar_publicacion,bloquear_usuario
+from editarCategoria.views import editar_categoria
 
 urlpatterns = [
     path('', home, name='home'),
@@ -63,5 +64,6 @@ urlpatterns = [
     path('rechazarPublicacion/<int:id>/', rechazar_publicacion, name='rechazar_publicacion'),
     path('bloquearUsuario/<int:id>/', bloquear_usuario, name='bloquear_usuario'),
 
-     path('categoria/desactivar/<int:categoria_id>/', desactivar_categoria, name='desactivar_categoria'),
+    path('categoria/desactivar/<int:categoria_id>/', desactivar_categoria, name='desactivar_categoria'),
+    path('editar_categoria/<int:id>/', editar_categoria, name='editar_categoria'),
 ]
