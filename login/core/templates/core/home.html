@@ -1,34 +1,131 @@
-{% extends 'core/base.html' %}
-    <!--es la vista q primero se muestra, y extiende de base.html  -->
-    {% load static %} <!-- Agrega esta línea al principio para cargar las etiquetas de archivos estáticos -->
+{% extends 'base.html' %}
 
-  
+{% load static %}
+
+{% block title %}Cáritas Argentina{% endblock %}
+
 {% block content %}
+<link rel="stylesheet" type="text/css" href="{% static 'css/home-estilo.css' %}">
 
-<link rel="stylesheet" type="text/css" href="{% static 'css/home-estilo.css' %}"> <!-- Mueve esta línea fuera del bloque content -->
 <style>
     body {
-        background-image: url('https://episcopado.org/assetsweb/cont/4019/img-900x500.jpg');
-        background-size: cover; /* Ajusta la imagen al tamaño de la ventana del navegador */
-        background-repeat: no-repeat; /* Evita que la imagen se repita */
-        background-attachment: fixed; /* Fija la imagen de fondo para que no se desplace con el contenido */
+        background-image: url('{% static "imagenes/Fondo.png" %}');
+        background-size: cover; 
+        background-repeat: no-repeat; 
+        background-attachment: fixed; 
+        background-position: center center; /* Centra la imagen en la pantalla */
+        background-color: #000; /* Añade un color de fondo para evitar bordes blancos */
+    }
+    /* home-estilo.css */
+
+    .carousel-item img {
+        max-height: 70vh; /* Ajusta la altura máxima de las imágenes del carrusel */
+        object-fit: cover;
+    }
+
+    .card {
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
     }
 </style>
 
 <hr>
 {% if user.is_authenticated %}
-<h4>
-    <!--upper pone ne mayus  -->
-   {{ user.email | upper}}, bienvenido!
-</h4>
+<h4>{{ user.email | upper }}, bienvenido!</h4>
 {% endif %}
+
+<div id="carouselExampleIndicators" class="carousel slide mb-5" data-ride="carousel">
+    <ol class="carousel-indicators">
+        <li data-target="#carouselExampleIndicators" data-slide-to="0" class="active"></li>
+        <li data-target="#carouselExampleIndicators" data-slide-to="1"></li>
+        <li data-target="#carouselExampleIndicators" data-slide-to="2"></li>
+    </ol>
+    <div class="carousel-inner">
+        <div class="carousel-item active">
+            <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR0M-tA9uhLW4rBeJ-s228nF6aOOHtgr5dlhCzTYYUR6w&s" class="d-block w-100" alt="Imagen 1">
+            <div class="carousel-caption d-none d-md-block">
+                <h5>Apoyando a quienes más lo necesitan</h5>
+                <p>Trabajamos juntos para mejorar la vida de las personas.</p>
+            </div>
+        </div>
+        <div class="carousel-item">
+            <img src="https://caritas.org.ar/wp-content/uploads/2022/05/colabora-con-caritas.png" class="d-block w-100" alt="Imagen 2">
+            <div class="carousel-caption d-none d-md-block">
+                <h5>Colabora con Cáritas</h5>
+                <p>Tu ayuda es esencial para nuestra misión.</p>
+            </div>
+        </div>
+        <div class="carousel-item">
+            <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTj1VUSkSXFD4rkYhWAEZWLjFhpJXvUVqh9qOuXhuvRNMkiKUsO0OPVEZnaA-KvxJXoHXA&usqp=CAU" class="d-block w-100" alt="Imagen 3">
+            <div class="carousel-caption d-none d-md-block">
+                <h5>Juntos podemos hacer la diferencia</h5>
+                <p>Únete a nuestra causa y marca la diferencia.</p>
+            </div>
+        </div>
+    </div>
+    <a class="carousel-control-prev" href="#carouselExampleIndicators" role="button" data-slide="prev">
+        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+        <span class="sr-only">Anterior</span>
+    </a>
+    <a class="carousel-control-next" href="#carouselExampleIndicators" role="button" data-slide="next">
+        <span class="carousel-control-next-icon" aria-hidden="true"></span>
+        <span class="sr-only">Siguiente</span>
+    </a>
+</div>
+
+<div class="row mb-5">
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">Programas de Ayuda</h5>
+                <p class="card-text">Descubre los programas de ayuda que ofrecemos para mejorar la calidad de vida de las personas en situación de vulnerabilidad.</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">Voluntariado</h5>
+                <p class="card-text">Únete a nuestro equipo de voluntarios y contribuye con tu tiempo y esfuerzo a nuestras causas.</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">Donaciones</h5>
+                <p class="card-text">Apoya nuestra misión con tus donaciones. Cada contribución marca una diferencia significativa.</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<section class="mb-5 mt-5">
+    <h2>Sobre Nosotros</h2>
+    <p>Fundación Cáritas Argentina es una organización comprometida con ayudar a las personas necesitadas. Nuestro objetivo es proporcionar apoyo y recursos a aquellos que más lo necesitan, promoviendo la solidaridad y la justicia social.</p>
+    {% if user.is_authenticated and user.tipo == 'administrador' %}
+        <a href="{% url 'editarSobreNosotros' %}" class="btn btn-primary">
+            Editar <i class="fas fa-paint-brush ml-1"></i>
+        </a>    
+    {% endif %}
+</section>
 
 <p>{{ contenido_actual }}</p>
 
-    {% if user.is_authenticated and user.tipo == 'administrador' %}
-    <a href="{% url 'editarSobreNosotros' %}" class="btn btn-primary">
-        Editar <i class="fas fa-paint-brush ml-1"></i>
-    </a>    
-    {% endif %}
+<form id="formularioSalida" method="POST" action="{% url 'logout' %}" style="display: none;">
+    {% csrf_token %}
+    <input type="hidden" name="logout" value="true">
+</form>
+
+<script>
+    function confirmarSalida() {
+        var confirmacion = confirm("¿Estás seguro de que deseas cerrar sesión?");
+        if (confirmacion) {
+            document.getElementById("formularioSalida").submit();
+        }
+    }
+</script>
 
 {% endblock %}
