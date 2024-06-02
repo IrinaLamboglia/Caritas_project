@@ -46,9 +46,11 @@
                         <li class="nav-item"><a class="nav-link" href="{% url 'agregar_categoria' %}">Agregar categoría</a></li>
                         <li class="nav-item"><a class="nav-link" href="{% url 'mostarCategoria' %}">Desactivar/Activar categorías</a></li>
                         <li class="nav-item"><a class="nav-link" href="{% url 'mostrar_validacion' %}">Validar</a></li>
+                        <li class="nav-item"><a class="nav-link" href="{% url 'visualizar_trueques_diarios' %}">Trueques diarios</a></li>
                     {% else %}
                         <li class="nav-item"><a class="nav-link" href="{% url 'mis_publicaciones' %}">Mis Publicaciones</a></li>
                         <li class="nav-item"><a class="nav-link" href="{% url 'products' %}">Productos</a></li>
+                        <li class="nav-item"><a class="nav-link" href="{% url 'misTrueques' %}"">Mis trueques</a></li>
                     {% endif %}
                     <li class="nav-item">
                         <a class="nav-link" href="#" method="POST" onclick="confirmarSalida()">Salir</a>
@@ -64,7 +66,3 @@
     </div>
 </body>
 </html>
-
-
-
-

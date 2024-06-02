@@ -185,16 +185,16 @@
      <div class="filtro-container">
         <form action="{% url 'mostarCategoria' %}" method="GET">
             <label for="filtro" style="font-weight: bold; font-size: 20px; color: #333; margin-right: 10px;">Mostrar:</label>
-
+    
             <select id="filtro" name="filtro">
-                <option value="...">...</option>
-                <option value="activas" {% if filtro == 'activas' %} selected {% endif %}>Activas</option>
-                <option value="desactivadas" {% if filtro == 'desactivadas' %} selected {% endif %}>Desactivadas</option>
-                <option value="todas" {% if filtro == 'todas' %} selected {% endif %}>Todas</option>
+                <option value="activas" {% if selected_option == 'activas' %} selected {% endif %}>Activas</option>
+                <option value="desactivadas" {% if selected_option == 'desactivadas' %} selected {% endif %}>Desactivadas</option>
+                <option value="todas" {% if selected_option == 'todas' %} selected {% endif %}>Todas</option>
             </select>
             <button type="submit">Filtrar</button>
         </form>
     </div>
+    
 
      <!-- Listado de categorías -->
      {% if categorias %}
@@ -204,7 +204,7 @@
              <span class="categoria-nombre">{{ categoria.nombre }}</span>
              <form id="formulario{{ categoria.id }}" method="POST" action="{% url 'desactivar_categoria' categoria.id %}">
                  {% csrf_token %}
-                 <button type="button" class="eliminar-btn" onclick="confirmarBaja({{ categoria.id }})">
+                 <button type="button" class="eliminar-btn" onclick="confirmarBaja({ categoria.id}})">
                      {{ categoria.estado|yesno:"Desactivar,Activar" }}
                  </button>
                  <a href="{% url 'editar_categoria' categoria.id %}" class="editar-btn">Editar</a>  <!-- Botón de editar -->

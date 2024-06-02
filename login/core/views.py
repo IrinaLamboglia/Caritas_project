@@ -1,6 +1,9 @@
-from django.http import JsonResponse
+from django.utils import timezone
+from django.db.models import Q
+
+from django.http import HttpResponseNotAllowed, JsonResponse
 from django.shortcuts import get_object_or_404, render, redirect
-from .models import FailedLoginAttempt, Publicacion, Usuario, UsuarioBloqueado, porDesbloquear, Categoria
+from .models import FailedLoginAttempt, Publicacion, Solicitud, Usuario, UsuarioBloqueado, porDesbloquear, Categoria
 from django.contrib.auth import login
 from . formreg import UsuarioForm
 import logging
@@ -94,7 +97,7 @@ def login_nuevo(request):
                      #aca lo redirige para mostrarle el mensaje y habilitarle el boton
 
 
-                     return render(request, 'login.html', {'error_message': error_message , 'user' : user})
+                     return render(request, 'core/login.html', {'error_message': error_message , 'user' : user})
                 except UsuarioBloqueado.DoesNotExist:         #autenticacion exitosa y usuario no bloqueado
                      if(usuario.tipo=="ayudante"):
                          #hago una clave aleatorea, se la envio por mail
@@ -191,10 +194,10 @@ def formularioreg(request):
     print("Ejecutando recibo de registro")
     if request.method == 'POST':
         form = UsuarioForm(request.POST)
+        print("estoy en el primer if")
         if form.is_valid():
             print("El formulario es válido")
             usuario = form.save()
-            
             
             if (request.user.is_authenticated):
                 if (request.user.tipo == "administrador"):
@@ -210,6 +213,10 @@ def formularioreg(request):
         form = UsuarioForm()
 
     return render(request, 'registration/registro.html', {'form': form})
+
+
+
+
 
 #perfecto
 def mostrarBaja(request):
@@ -249,11 +256,6 @@ def recuperarCuenta(request,email):
 
 #perfecto
 def listadoBloqueado(request):
-    #para probar
-    #email="g@gmail.com"
-    #porDesbloquear.objects.create(email=email) 
-    #email="yo@gmail.com"
-    #porDesbloquear.objects.create(email=email) 
     elementos = porDesbloquear.objects.all()
     return render(request, 'core/listado/bloqueadosListado.html', {'elementos': elementos})
 
@@ -290,9 +292,96 @@ def ver_producto(request, publicacion_id):
     publicacion = get_object_or_404(Publicacion, id=publicacion_id)
     return render(request, 'core/crearPublicacion/ver_producto.html', {'publicacion': publicacion})
 
+
+
+#perfecto
 def solicitar_trueque(request, publicacion_id):
-    publicacion = get_object_or_404(Publicacion, id=publicacion_id)
-    return render(request, 'core/crearPublicacion/solicitar_trueque.html',  {'publicacion': publicacion})
+    #toma las publicaciones de la misma categoria q el producto q quiere 
+    usu = request.user
+    publicacion = get_object_or_404(Publicacion, id=publicacion_id) #tomo la publicacion
+    categoria = publicacion.categoria
+    mispublis = Publicacion.objects.filter(estado=True, categoria=categoria, usuario=usu)
+    cantidad= mispublis.count()
+    if Solicitud.objects.filter(solicitante=usu, publicacion=publicacion).exists():
+        messages.info(request, 'Ya has solicitado esta publicación con exito anteriormente.')
+        return redirect('products')  # Redirigir a la página de inicio u otra página
+    
+    if mispublis.exists():
+         hoy = timezone.now().date()
+         solicitudes_hoy = Solicitud.objects.filter(solicitante=usu, fecha_solicitud__date=hoy)
+         if usu.puntuacion >= 3 and solicitudes_hoy.count() < 5:
+             return render(request, 'core/listado/publicaciones_elegir.html', {'publicaciones': mispublis, 'publicacion_objetivo': publicacion})
+         else:
+             messages.error(request, 'Error: No cumple con las condiciones para realizar un trueque.')
+             return redirect('products')
+    else:
+         messages.error(request, 'Error: No cuenta con productos de la misma categoría para truequear.')
+         return redirect('products')
+
+
+#perfecto
+def registrar_solicitud(request, publicacion_objetivo_id):
+    if request.method == 'POST':
+        publicacion_ofrecida_id = request.POST.get('publicacionOfrecida')
+        if not publicacion_ofrecida_id:
+            messages.error(request, 'Debes seleccionar una publicación para intercambiar.')
+            return redirect('solicitar_trueque', publicacion_id=publicacion_objetivo_id)
+
+        usu = request.user
+        publicacion_objetivo = get_object_or_404(Publicacion, id=publicacion_objetivo_id)
+        publicacion_ofrecida = get_object_or_404(Publicacion, id=publicacion_ofrecida_id, usuario=usu)
+
+        Solicitud.objects.create(
+            solicitante=usu,
+            publicacion=publicacion_objetivo,
+            publicacionOfrecida=publicacion_ofrecida,
+            fecha_solicitud=timezone.now(),
+            estado=False
+        )
+
+        messages.success(request, 'Solicitud de trueque registrada exitosamente.')
+        return redirect('products')
+
+    else:
+        # Manejar otros métodos de solicitud si es necesario
+        return HttpResponseNotAllowed(['POST'])
+
+
+
+
+
+#perfecto
+def filtro_trueques(request):
+    filtro = request.GET.get('filtro')
+    search_query = request.GET.get('search', '')
+    usu = request.user 
+
+
+    # Filtrar las categorías según el valor del filtro
+    if filtro == 'Aceptadas':
+        soli = Solicitud.objects.filter(publicacion__usuario=usu,estado=True)
+    elif filtro == 'Pendientes':
+        soli = Solicitud.objects.filter(publicacion__usuario=usu,estado=False)
+        if search_query:
+            soli = soli.filter(
+                Q(publicacion__titulo__icontains=search_query) |
+                Q(publicacionOfrecida__titulo__icontains=search_query)
+            )
+    else:
+        soli = Solicitud.objects.filter(publicacion__usuario=usu)
+
+    return render(request, 'listado/misTrueques.html', {'elementos': soli, 'filtro': filtro, 'search_query': search_query})
+
+
+
+#perfecto
+def ver_misTrueques(request):
+    usu = request.user 
+    elementos = Solicitud.objects.filter(publicacion__usuario=usu)
+    return render(request, 'core/listado/misTrueques.html', {'elementos': elementos})
+
+    
+
 
 
 def desbloquearUsuario(request, email):
@@ -330,6 +419,7 @@ def mis_publicaciones(request):
 
 @csrf_exempt
 def eliminar_publicacion(request, publicacion_id):
+
     print("fuera del try")
     if request.method == 'DELETE':
         try:
@@ -343,3 +433,26 @@ def eliminar_publicacion(request, publicacion_id):
             return JsonResponse({'error': mensaje}, status=404)
     else:
         return JsonResponse({'error': 'Método no permitido'}, status=405)
+    
+
+
+
+
+   # views.py
+
+
+
+
+
+
+#chequeo registro 
+from django.http import JsonResponse
+
+def check_email(request):
+    email = request.GET.get('email', None)
+    if email:
+        is_taken = Usuario.objects.filter(email=email).exists()
+    else:
+        is_taken = False  # Si no se proporciona un correo electrónico, no está tomado
+    data = {'is_taken': is_taken}
+    return JsonResponse(data)

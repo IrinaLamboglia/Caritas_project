@@ -1,25 +1,21 @@
 from django.db import models
 from django.core.validators import MinLengthValidator
 from django.contrib.auth.models import AbstractUser
+from django.utils import timezone
+import secrets
+
 
 # Create your models here.
 
 
 
-#uso la bd de django para almacenar los intentos fallidos para el inicio de sesion
 class FailedLoginAttempt(models.Model):
     email = models.CharField(max_length=100)
     timestamp = models.DateTimeField(auto_now_add=True)
 
 
 
-#para registro
-#  ingresa nombre de usuario “martinacolombo@gmail.com”,
-# contraseña “Marti2”, dni “44851840”, 
-# fecha de nacimiento:06/05/2003, 
-# teléfono “222884345”,
-# Nombre y
-# Apellido: Martina colombo y presiona “aceptar”
+
 
 class Usuario(AbstractUser):
     email = models.EmailField(unique=True)
@@ -31,6 +27,7 @@ class Usuario(AbstractUser):
     contraseña = models.CharField(max_length=128, validators=[MinLengthValidator(6)], default='valor_predeterminado')  # Campo para almacenar la contraseña cifrada
     last_login = models.DateTimeField(verbose_name='last login', blank=True, null=True)
     tipo= models.CharField(max_length=30, default="")
+    puntuacion = models.DecimalField(max_digits=10, decimal_places=2)
 
 
 
@@ -62,3 +59,62 @@ class Publicacion(models.Model):
         return self.titulo
     
 email= models.EmailField(unique=True)
+
+
+
+class Solicitud(models.Model):
+    solicitante = models.ForeignKey(Usuario, on_delete=models.CASCADE)
+    publicacion = models.ForeignKey(Publicacion, on_delete=models.CASCADE, related_name='solicitudes')
+    fecha_solicitud = models.DateTimeField(default=timezone.now)
+    estado = models.BooleanField(default=False)
+    publicacionOfrecida = models.ForeignKey(Publicacion, on_delete=models.CASCADE, related_name='ofrecimientos')
+
+
+    def __str__(self):
+        return f"{self.solicitante} solicita {self.publicacion}"
+    
+    def aceptar(self):
+        self.estado = True
+        self.publicacion.estado = False
+        self.publicacionOfrecida.estado = False
+        self.publicacion.save()
+        self.publicacionOfrecida.save()
+        self.save()  
+    
+class Filial(models.Model):
+    ayudante = models.ForeignKey(Usuario, on_delete=models.CASCADE,null=True)
+    nombre = models.CharField(max_length=20)
+    latitud = models.FloatField()
+    longitud = models.FloatField()
+
+class Turno(models.Model):
+    fecha = models.DateField()
+    filial = models.ForeignKey(Filial, on_delete=models.CASCADE)
+    cupo_maximo = models.IntegerField(default=50)
+    cupos_disponibles = models.IntegerField()
+    
+    def save(self, *args, **kwargs):
+        if not self.pk:
+            self.cupos_disponibles = self.cupo_maximo
+        super(Turno, self).save(*args, **kwargs)
+
+class Trueque(models.Model):
+    solicitante = models.ForeignKey(Usuario, related_name='solicitante', on_delete=models.CASCADE)
+    receptor = models.ForeignKey(Usuario, related_name='receptor', on_delete=models.CASCADE)
+    turno = models.ForeignKey(Turno, on_delete=models.SET_NULL, null=True, blank=True)
+    filial = models.ForeignKey(Filial, on_delete=models.SET_NULL, null=True, blank=True)
+    aceptado = models.BooleanField(default=False)
+    fecha_efectivizacion = models.DateTimeField(null=True, blank=True) 
+    codigo_confirmacion_solicitante = models.CharField(max_length=10, blank=True, null=True)
+    codigo_confirmacion_receptor = models.CharField(max_length=10, blank=True, null=True)
+    token = models.CharField(max_length=100, unique=True, default=secrets.token_urlsafe)
+    confirmado = models.BooleanField(default=False)
+    
+    def generar_codigos_confirmacion(self):
+        self.codigo_confirmacion_solicitante = secrets.token_hex(5)  # Genera un código aleatorio de 10 caracteres hexadecimales
+        self.codigo_confirmacion_receptor = secrets.token_hex(5)  # Genera un segundo código aleatorio
+        self.save()
+    
+    def generar_token(self):
+        self.token = secrets.token_hex(16)
+        self.save()

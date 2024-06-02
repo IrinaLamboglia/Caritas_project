@@ -24,6 +24,13 @@ from bajaCategoria.views import  desactivar_categoria
 from listarprod.views import mostrar_validacion,aceptar_publicacion,rechazar_publicacion,bloquear_usuario
 from editarCategoria.views import editar_categoria
 
+from django.urls import path
+from aceptarTrueque.views import aceptar_trueque
+from elegirTurno.views import elegir_turno
+from confirmarTurno.views import confirmar_turno
+from visualizarTrueques.views import visualizar_trueques_diarios
+
+
 urlpatterns = [
     path('', home, name='home'),
     path('products/', products,name='products'),
@@ -66,4 +73,18 @@ urlpatterns = [
 
     path('categoria/desactivar/<int:categoria_id>/', desactivar_categoria, name='desactivar_categoria'),
     path('editar_categoria/<int:id>/', editar_categoria, name='editar_categoria'),
+
+    path('check_email/', views.check_email, name='check_email'),
+    path('misTrueques/', views.ver_misTrueques, name='misTrueques'),
+
+    path('solicitar-trueque/<int:publicacion_id>/', views.solicitar_trueque, name='solicitar_trueque'),
+    path('registrar-solicitud/<int:publicacion_objetivo_id>/', views.registrar_solicitud, name='registrar_solicitud'),
+    path('filtro/misTrueques/',views.filtro_trueques,name='filtro_trueques'),
+
+    path('aceptar_trueque/<int:solicitud_id>/', aceptar_trueque, name='aceptar_trueque'),
+    path('elegir-turno/<int:trueque_id>/', elegir_turno, name='elegir_turno'),
+    
+    path('confirmar-turno/<int:trueque_id>/', confirmar_turno, name='confirmar_turno'),
+
+    path('trueques_diarios/', visualizar_trueques_diarios, name='visualizar_trueques_diarios'),
 ]
