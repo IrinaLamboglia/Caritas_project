@@ -46,7 +46,7 @@ class UsuarioForm(forms.ModelForm):
     def clean_filial(self):
         filial = self.cleaned_data['filial']
         # Validar la filial solo si se proporciona y el usuario es de tipo 'ayudante'
-        if filial and self.instance.tipo == 'ayudante':
+        if filial and self.instance.tipo == 'administrador':
             if Usuario.objects.filter(filial=filial).exists():
                 raise forms.ValidationError("Ya existe un usuario registrado en esta filial.")
         return filial

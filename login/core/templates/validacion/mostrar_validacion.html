@@ -18,15 +18,16 @@
                 <p> Estado:<td>{{ publicacion.estado }}</td></p>
                 <p>Categoria:<td>{{ publicacion.categoria}}</td></p>
                 <p>Usuario: <td>{{ publicacion.usuario }}</td>  </p>
+                <p>Imagen: 
                 {% if publicacion.imagen %}
-                    <td scope="row"><img src="{{ publicacion.imagen.url }}" style="height: 50px; width: 50px;" alt="...">
+                <img src="{{ publicacion.imagen.url}}" class="card-img-top" alt="{{ publicacion.titulo }}">
                 {% else %}
-                    <td scope="row" ><img src="" style="height: 50px; width: 50px;" alt="no cargo imagen"></td>
+                <img src="{% static 'placeholder_image.jpg' %}" class="card-img-top" alt="Imagen no disponible">
                 {% endif %}
                 <form method="post" action="{% url 'aceptar_publicacion' publicacion.id %}">
                     {% csrf_token %}
                     <button type="submit">Aceptar</button>
-                </form>
+                </form></p>
             
                 <form method="post" action="{% url 'rechazar_publicacion' publicacion.id %}">
                     {% csrf_token %}

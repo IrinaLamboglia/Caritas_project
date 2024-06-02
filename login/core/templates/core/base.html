@@ -55,6 +55,8 @@
                
                      {% else %}    
                       <li><a href={% url 'mis_publicaciones' %}>Mis Publicaciones</a></li>
+                      <li><a href="{% url 'publicaciones_eliminadas' %}">Mis Publicaciones Eliminadas</a></li>
+
                  {% endif %}  
              {% endif %}
              <li><a href="#" method="POST" onclick="confirmarSalida()" >Salir</a></li>

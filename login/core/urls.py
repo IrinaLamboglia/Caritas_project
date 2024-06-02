@@ -22,7 +22,7 @@ from editarPerfil.views import editar_ayudante
 from agregarCategoria.views import agregar_categoria, mostrar_categorias
 from bajaCategoria.views import bajar_categoria
 from listarprod.views import mostrar_validacion,aceptar_publicacion,rechazar_publicacion,bloquear_usuario
-
+from  listarPublicacioneseliminadas.views import listar_publicaciones_eliminadas 
 urlpatterns = [
     path('', home, name='home'),
     path('products/', products,name='products'),
@@ -57,10 +57,11 @@ urlpatterns = [
     path('desbloquear/<str:email>/', views.desbloquearUsuario, name='desbloquear_usuario'),
     path('mis_publicaciones/', views.mis_publicaciones, name='mis_publicaciones'),
     #ESTO ES NUEVO
-    path('eliminar_publicacion/<int:publicacion_id>/', views.eliminar_publicacion, name='eliminar_publicacion'),
     path('mostrarValidacion/', mostrar_validacion, name='mostrar_validacion'),
     path('aceptarPublicacion/<int:id>/', aceptar_publicacion, name='aceptar_publicacion'),
     path('rechazarPublicacion/<int:id>/', rechazar_publicacion, name='rechazar_publicacion'),
     path('bloquearUsuario/<int:id>/', bloquear_usuario, name='bloquear_usuario'),
-
+    path('eliminar_publicacion/<int:publicacion_id>/', views.eliminar_publicacion, name='eliminar_publicacion'),
+    path('publicaciones_eliminadas/', listar_publicaciones_eliminadas, name='publicaciones_eliminadas'),
+   
 ]

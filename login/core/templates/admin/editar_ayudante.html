@@ -8,22 +8,38 @@
     <title>Editar Ayudante</title>
     <link rel="stylesheet" type="text/css" href="{% static 'css/registro-estilos.css' %}"> 
     <style>
+        body{
+            background-color: rgba(168, 166, 166, 0.775);
+        }
         .contenedor{
             margin-bottom: 2%;
             position: relative;
             width: 100%; /* Ajusta el ancho según sea necesario */
             height: 10%; /* Establece la altura al 100% del viewport */
-            background-color: #f0f0f0;
+           
             text-align: center;
+        }
+        /* Estilo para el botón de volver al inicio */
+        .btn-volver {
+            display: inline-block; /* Cambiado a inline-block para que se ajuste al ancho del contenido */
+            margin: 20px auto; /* Centra el botón horizontalmente */
+            padding: 10px 20px;
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            text-decoration: none; /* Elimina el subrayado del texto */
+            transition: background-color 0.3s; /* Agrega una transición suave para el cambio de color de fondo */
         }
         .cartel {
             text-align: center;
             max-width: 500px;
             padding: 0;
             margin: 0;
-            background-color: rgba(255, 0, 0, 0.2); /* Fondo semitransparente para los mensajes */
+            background-color: rgb(255, 0, 0); /* Fondo semitransparente para los mensajes */
             font-size: 20px;
-            color: red;
+            color: rgb(7, 7, 7);
             display: inline-block; /* Hace que el contenedor se ajuste automáticamente a su contenido */
             border-radius: 5px; /* Añade esquinas redondeadas al contenedor */
         }
@@ -43,11 +59,9 @@
    
 </head>
 <body>
+    
     <h2>Editar Ayudante</h2>
-     <!-- Botón Volver -->
-     <a href="{% url 'home' %}" id="volver" style="text-decoration: none; color: black;">
-        &larr; Volver
-    </a>
+    
     {% if messages %}
         <div class="contenedor">
         {% for message in messages %}
@@ -81,7 +95,13 @@
         <label for="nueva_contrasena">Contraseña:</label>
         <input type="password" id="nueva_contrasena" name="nueva_contrasena" value="{{ ayudante.contraseña }}"required>
         
-        <button type="submit">Guardar Cambios</button>
+        <button type="submit" class="btn-volver">Guardar Cambios</button>
+
     </form>
+    <ul> <!-- Contenedor para el botón "Volver atrás" -->
+         
+        <a href="{% url 'login' %}" class="btn-volver">Volver atrás</a>
+          
+    </ul>
 </body>
 </html>

@@ -15,7 +15,12 @@ from .globals import contenido_actual
 from .formpubl import PublicacionForm
 from django.contrib import messages
 from django.views.decorators.csrf import csrf_exempt
+from django.shortcuts import render
+from django.contrib.auth.decorators import login_required
 
+from django.utils.decorators import method_decorator
+
+from django.views.decorators.http import require_http_methods
 #los css los restaure por las dudas por si llega a haber conflicto
 #estan al pedo, en deshuso
 #solo hay que mantener estilo.css y login-estilos.css
@@ -53,7 +58,7 @@ def home(request):
 #el template login es lo que se muestra antes de q se loguee
 @login_required
 def products(request):
-    publicaciones = Publicacion.objects.filter(estado=True)
+    publicaciones = Publicacion.objects.filter(estado=True,eliminada=False)
     return render(request, 'core/products.html',{'publicaciones': publicaciones})
 
 #funcion para salir
@@ -186,40 +191,31 @@ def enviar_correo_ayudante(ayudante):
     correo_destino = ayudante.email
     send_mail(asunto, mensaje, 'tucorreo@gmail.com', [correo_destino])
 
-#perfecto
 def formularioreg(request):
-    print("Ejecutando recibo de registro")
+    print("entro 1")
     if request.method == 'POST':
-        form = UsuarioForm(request.POST)
+        form = UsuarioForm(request.POST)  # Inicializa el formulario con los datos del POST
         if form.is_valid():
-            print("El formulario es válido")
+            print("es valido")
             usuario = form.save(commit=False)
-            
-            # Verificar si ya existe un usuario en la filial proporcionada
             if request.user.is_authenticated and request.user.tipo == "administrador":
                 filial = usuario.filial
                 if Usuario.objects.filter(filial=filial).exists():
-                    print("Ya existe un usuario registrado en esta filial")
-                    # Puedes mostrar un mensaje de error o tomar alguna otra acción aquí
                     messages.error(request, 'Ya existe un usuario registrado en esta filial')
-   
-                    # Por ejemplo, podrías redirigir al usuario a otra página o renderizar el formulario nuevamente con un mensaje de error
-                    return redirect('registro')
-            
-                
-                # Si el usuario autenticado es un administrador, cambiar el tipo de usuario a ayudante
+                    return render(request, 'registration/registro.html', {'form': form})
                 usuario.tipo = "ayudante"
-                enviar_correo_ayudante(usuario)# Envía correo al nuevo ayudante
+                enviar_correo_ayudante(usuario)
                 usuario.save()
                 return redirect('home')
-            else:  
-                usuario.save()  # Guardar el usuario en la base de datos
+            else:
+                usuario.save()
                 return redirect('login')
         else:
-            print("El formulario no es válido")
+            messages.error(request, 'Por favor, corrija los errores en el formulario.')
+            # Renderizar la página nuevamente con el formulario inválido y los datos ingresados por el usuario
+            return render(request, 'registration/registro.html', {'form': form})
     else:
-        print("El formulario es inválido")
-        form = UsuarioForm()
+        form = UsuarioForm()  # Si no hay datos POST, simplemente inicializa un formulario vacío
 
     return render(request, 'registration/registro.html', {'form': form})
 
@@ -335,9 +331,9 @@ def desbloquearUsuario(request, email):
 
 def mis_publicaciones(request):
     if request.user.tipo =="administrador":
-        publicaciones = Publicacion.objects.all()
+        publicaciones = Publicacion.objects.filter(estado=True,eliminada=False)
     else:
-        publicaciones = Publicacion.objects.filter(usuario=request.user)
+        publicaciones = Publicacion.objects.filter(usuario=request.user,estado=True,eliminada=False)
     return render(request, 'core/crearPublicacion/mis_publicaciones.html', {'publicaciones': publicaciones})
 
 @csrf_exempt
@@ -347,7 +343,28 @@ def eliminar_publicacion(request, publicacion_id):
         try:
             print("entra al try")
             publicacion = Publicacion.objects.get(pk=publicacion_id)
-            publicacion.delete()
+            if (request.user.tipo=="administrador"):
+                publicacion.estado=True
+                publicacion.save
+                publicacion.delete()
+
+            
+                # Enviar correo al creador de la publicación
+                asunto = f'Tu publicación "{publicacion.titulo}" ha sido eliminada'
+                mensaje_correo = f'Lamentamos informarte que tu publicación titulada "{publicacion.titulo}" ha sido eliminada por un administrador.'
+                remitente = 'tuemail@tudominio.com'
+                destinatario = publicacion.usuario.email
+                try:
+                    send_mail(asunto, mensaje_correo, remitente, [destinatario])
+                except Exception as e:
+                    return JsonResponse({'error': 'Error al enviar el correo: ' + str(e)}, status=500)
+            else:
+                publicacion.estado=True
+                publicacion.eliminada=True
+                publicacion.save()
+                return JsonResponse({'message': 'Publicación marcada como eliminada.'}, status=200)
+        
+           
             mensaje = 'La publicación ha sido eliminada correctamente.'
             return JsonResponse({'message': mensaje}, status=200)
         except Publicacion.DoesNotExist:
