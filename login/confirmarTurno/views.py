@@ -10,9 +10,11 @@ def confirmar_turno(request, trueque_id):
     token = request.GET.get('token')
 
     if trueque.solicitante != request.user or trueque.token != token:
+        messages.error(request, "Token inválido.")
         return redirect('inicio')
 
     if trueque.confirmado:
+        messages.error(request, "Ese turno ya fue confirmado/rechazado.")
         return redirect('inicio')
     
     if request.method == "POST":
