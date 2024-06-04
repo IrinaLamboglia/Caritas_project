@@ -18,6 +18,7 @@ from .views import home,products
 from log_out.views import exit
 #importo funcion exit
 from . import views
+from altaFilial.views import editar_filial,guardar_filial,listar_filiales,eliminar_filial
 from editarPerfil.views import editar_ayudante
 from agregarCategoria.views import agregar_categoria, mostrar_categorias
 from bajaCategoria.views import bajar_categoria
@@ -62,5 +63,14 @@ urlpatterns = [
     path('aceptarPublicacion/<int:id>/', aceptar_publicacion, name='aceptar_publicacion'),
     path('rechazarPublicacion/<int:id>/', rechazar_publicacion, name='rechazar_publicacion'),
     path('bloquearUsuario/<int:id>/', bloquear_usuario, name='bloquear_usuario'),
+    path('editar_filial/', editar_filial, name='editar_filial'),
+    path('guardar_filial/', guardar_filial, name='guardar_filial'),
+    path('listar_filiales/', listar_filiales, name='listar_filiales'),
+    path('eliminar_filial/<int:filial_id>/', eliminar_filial, name='eliminar_filial'),
+    path('mis_publicaciones1/', views.mis_publicaciones1, name='mis_publicaciones1'),
 
+
+    
+
+  
 ]

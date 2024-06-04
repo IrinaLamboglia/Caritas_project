@@ -31,4 +31,37 @@
     </a>    
     {% endif %}
 
+    
+    {% if user.is_authenticated %}
+    <h3 class="position-absolute" style="top: 43%; left: 50%; transform: translate(-50%, -50%); z-index: 1000;">
+        <span class="badge text-bg-info">Filiales</span>
+    </h3>
+    {% block mapita %}
+   
+
+    <div id="map-container" style="display: flex; align-items: center; justify-content: center;">
+        
+        <div style="position: relative;">
+            <div id="map" style="height: 500px; width: 600px;"></div>
+            {% if user.tipo == 'administrador' %}
+            <a href="{% url 'editar_filial' %}" class="btn btn-primary" id="alta-filial-btn" style="position: absolute; top: 10px; right: -60px;">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-pencil" viewBox="0 0 16 16">
+                    <path d="M12.146.146a.5.5 0 0 1 .708 0l3 3a.5.5 0 0 1 0 .708l-10 10a.5.5 0 0 1-.168.11l-5 2a.5.5 0 0 1-.65-.65l2-5a.5.5 0 0 1 .11-.168zM11.207 2.5 13.5 4.793 14.793 3.5 12.5 1.207zm1.586 3L10.5 3.207 4 9.707V10h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.293zm-9.761 5.175-.106.106-1.528 3.821 3.821-1.528.106-.106A.5.5 0 0 1 5 12.5V12h-.5a.5.5 0 0 1-.5-.5V11h-.5a.5.5 0 0 1-.468-.325"/>
+                </svg> 
+            </a>
+            {% endif %}
+        </div>
+    </div>
+    
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+    
+    <script src="{% static "js/map.js" %}"> </script>
+
+    
+    {% endblock %}
+    {% endif %}
+    
+
+
 {% endblock %}

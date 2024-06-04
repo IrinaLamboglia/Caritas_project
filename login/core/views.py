@@ -321,11 +321,13 @@ def desbloquearUsuario(request, email):
 
     return redirect('listadoBloqueados')
 
+def mis_publicaciones1(request):
+    publicaciones = Publicacion.objects.all()
+    return render(request, 'core/crearPublicacion/mis_publicaciones.html', {'publicaciones': publicaciones})
+
+
 def mis_publicaciones(request):
-    if request.user.tipo =="administrador":
-        publicaciones = Publicacion.objects.all()
-    else:
-        publicaciones = Publicacion.objects.filter(usuario=request.user)
+    publicaciones = Publicacion.objects.filter(usuario=request.user)
     return render(request, 'core/crearPublicacion/mis_publicaciones.html', {'publicaciones': publicaciones})
 
 @csrf_exempt
@@ -343,3 +345,4 @@ def eliminar_publicacion(request, publicacion_id):
             return JsonResponse({'error': mensaje}, status=404)
     else:
         return JsonResponse({'error': 'Método no permitido'}, status=405)
+    

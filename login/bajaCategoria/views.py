@@ -12,7 +12,7 @@ def bajar_categoria(request, categoria_id):
         # Establecer el estado de todos los publicacions de esta categoría en False
         publicaciones = Publicacion.objects.filter(categoria = categoria_id)
         for publicacion in publicaciones:
-            publicacion.estado = False
+            publicacion.estadoCategoria = False
             publicacion.categoria = None
             publicacion.save()
         
