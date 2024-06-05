@@ -50,6 +50,10 @@
                     {% endif %}
                     <li class="nav-item">
                         <a class="nav-link" href="#" onclick="confirmarSalida()">Salir</a>
+                        <!-- Formulario de cierre de sesión -->
+                        <form id="formularioSalida" method="post" action="{% url 'logout' %}" style="display: none;">
+                            {% csrf_token %}
+                        </form>
                     </li>
                 {% else %}
                     <li class="nav-item"><a class="nav-link" href="{% url 'login' %}">Ingresar</a></li>
@@ -66,7 +70,7 @@
         <div class="modal-dialog" role="document">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="errorModalLabel">Error</h5>
+                    <h5 class="modal-title" id="errorModalLabel">Mensaje</h5>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>
@@ -108,4 +112,3 @@
     </script>
 </body>
 </html>
-
