@@ -14,12 +14,13 @@ def elegir_turno(request, trueque_id):
 
     # Validación del token y del usuario
     if trueque.receptor != request.user or trueque.token != token:
-        messages.error(request, "Ese turno ya fue seleccionado o el token es inválido.")
+        messages.error(request, "Token invalido.")
         return redirect('inicio')
-
+    
     # Verificar si ya se ha elegido un turno
     if trueque.turno:
-        return redirect('misTrueques')
+        messages.error(request, "Ya se selecciono un turno.")
+        return redirect('inicio')
 
     if request.method == "POST":
         turno_id = request.POST.get("turno")

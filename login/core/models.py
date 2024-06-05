@@ -54,10 +54,11 @@ class Publicacion(models.Model):
     usuario = models.ForeignKey(Usuario, on_delete=models.CASCADE)
     categoria = models.ForeignKey(Categoria, on_delete=models.CASCADE, null = True)
     imagen = models.ImageField(upload_to='media/publicaciones/', null=True, blank=True)
+    trueque = models.BooleanField(default=True)
 
     def __str__(self):
         return self.titulo
-    
+
 email= models.EmailField(unique=True)
 
 
@@ -75,8 +76,8 @@ class Solicitud(models.Model):
     
     def aceptar(self):
         self.estado = True
-        self.publicacion.estado = False
-        self.publicacionOfrecida.estado = False
+        self.publicacion.trueque = True
+        self.publicacionOfrecida.trueque = True
         self.publicacion.save()
         self.publicacionOfrecida.save()
         self.save()  

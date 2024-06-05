@@ -20,10 +20,15 @@ def aceptar_trueque(request, solicitud_id):
         trueque.save()
 
         # Cancelar otras solicitudes para el mismo producto eliminándolas de la base de datos
-        otras_solicitudes = Solicitud.objects.filter(publicacion=solicitud.publicacion).exclude(id=solicitud_id)
-        for otra_solicitud in otras_solicitudes:
-            enviar_email_cancelacion(otra_solicitud)
-            otra_solicitud.delete()
+        solicitudesReseptor = Solicitud.objects.filter(publicacion=solicitud.publicacion).exclude(id=solicitud_id)
+        for solicitud in solicitudesReseptor:
+            enviar_email_cancelacion(solicitud)
+            solicitud.delete()
+
+        solicitudesReseptor = Solicitud.objects.filter(publicacion=solicitud.publicacionOfrecida).exclude(id=solicitud_id)
+        for solicitud in solicitudesReseptor:
+            enviar_email_cancelacion(solicitud)
+            solicitud.delete()    
 
         enviar_email_elegir_turno(trueque, request,solicitud)
         
