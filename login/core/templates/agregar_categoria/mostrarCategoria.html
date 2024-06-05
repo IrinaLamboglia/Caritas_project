@@ -1,6 +1,5 @@
 {% load static %}
 
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -204,7 +203,7 @@
              <span class="categoria-nombre">{{ categoria.nombre }}</span>
              <form id="formulario{{ categoria.id }}" method="POST" action="{% url 'desactivar_categoria' categoria.id %}">
                  {% csrf_token %}
-                 <button type="button" class="eliminar-btn" onclick="confirmarBaja({ categoria.id})">
+                 <button type="button" class="eliminar-btn" onclick="confirmarBaja({{ categoria.id }})">
                      {{ categoria.estado|yesno:"Desactivar,Activar" }}
                  </button>
                  <a href="{% url 'editar_categoria' categoria.id %}" class="editar-btn">Editar</a>  <!-- Botón de editar -->
@@ -266,5 +265,5 @@
      </script>
  </body>
  </html>
- 
+
  

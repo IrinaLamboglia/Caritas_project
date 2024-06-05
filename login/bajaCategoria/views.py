@@ -31,6 +31,7 @@ def desactivar_categoria(request, categoria_id):
     categorias_activas = Categoria.objects.filter(estado=True).count()
     
     if request.method == 'POST':
+        print("entra")
         nuevo_estado = not categoria.estado
 
         if not nuevo_estado and categorias_activas <= 1:

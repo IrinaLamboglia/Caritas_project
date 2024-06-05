@@ -62,7 +62,7 @@ def home(request):
 #el template login es lo que se muestra antes de q se loguee
 @login_required
 def products(request):
-    publicaciones = Publicacion.objects.filter(estado=True)
+    publicaciones = Publicacion.objects.filter(estado=True, trueque = False)
     return render(request, 'core/products.html',{'publicaciones': publicaciones})
 
 #funcion para salir
