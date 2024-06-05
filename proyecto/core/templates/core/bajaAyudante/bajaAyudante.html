@@ -1,0 +1,83 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" type="text/css" href="{% static 'css/estilo.css' %}">
+
+    <link rel="icon" type="image/png" href="{% static 'imagenes\logoCaritas.jpg' %}">
+    <title>Busqueda ayudante</title>
+
+
+</head>
+<body>
+    <h1>Buscador</h1>
+    
+    <!-- Formulario de búsqueda -->
+    <form method="POST" action="{% url 'mostrarBaja' %}">
+        {% csrf_token %}
+        <label for="buscar">Buscar:</label>
+        <input type="text" id="buscar" name="text">
+        <button type="submit">Buscar</button>
+    </form>
+    
+    <!-- Listado de elementos -->
+    <ul>
+        {% if sin == None %}
+            {% if elementos  %}
+                <div class="ayudante-info">
+                    <span>{{ elementos.email }}</span>
+                    <form id="eliminarForm" method="POST" action="{% url 'eliminarAyudante' elementos.email %}">
+                        {% csrf_token %}
+                        <button type="button" onclick="mostrarConfirmacion()">Dar de baja</button>
+                    </form>
+                     
+                </form>   
+                </div>
+                <form method="GET" action="{% url 'editar_ayudante' elementos.id %}">
+                <button type="submit">Editar perfil</button>
+                </form> 
+                <div id="confirmacionModal" class="confirmacion-modal" style="display: none;">
+                    <div class="modal-contenido">
+                        <h2>Confirmación de Baja</h2>
+                        <p>¿Estás seguro de que deseas dar de baja?</p>
+                        <button onclick="confirmarBaja()">Confirmar</button>
+                        <button onclick="cancelarBaja()">Cancelar</button>
+                    </div>
+                </div>
+              
+    
+            <script>
+                  function mostrarConfirmacion() {
+                      document.getElementById("confirmacionModal").style.display = "flex";
+                }
+
+                function confirmarBaja() {
+                     document.getElementById("eliminarForm").submit();
+                }
+
+                 function cancelarBaja() {
+                     document.getElementById("confirmacionModal").style.display = "none";
+                 }
+
+                </script>
+                
+                
+                
+            {% else %}
+                 {% if error_message == None %}
+                     <li>El ayudante no existe.</li>
+                 {% endif %}
+             {% endif %}   
+        {% endif %}
+        {% if error_message %}
+                <p>{{ error_message }}</p>
+         {% endif %}
+    </ul>
+    <li class="btn-container">
+        <a href="{% url 'inicio' %}" class="btn-volver">Volver al inicio</a>
+    </li>
+    
+</body>
+</html>
