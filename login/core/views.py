@@ -427,8 +427,13 @@ def mis_publicaciones1(request):
 
 
 def mis_publicaciones(request):
-    publicaciones = Publicacion.objects.filter(usuario=request.user)
-    return render(request, 'core/crearPublicacion/mis_publicaciones.html', {'publicaciones': publicaciones})
+    publicaciones_disponibles = Publicacion.objects.filter(usuario=request.user, estado=True, estadoCategoria=True, trueque=True)
+    publicaciones_no_disponibles = Publicacion.objects.filter(usuario=request.user).exclude(estado=True, estadoCategoria=True)
+    context = {
+        'publicaciones_disponibles': publicaciones_disponibles,
+        'publicaciones_no_disponibles': publicaciones_no_disponibles,
+    }
+    return render(request, 'core/crearPublicacion/mis_publicaciones.html', context)
 
 @csrf_exempt
 def eliminar_publicacion(request, publicacion_id):
@@ -436,12 +441,17 @@ def eliminar_publicacion(request, publicacion_id):
     print("fuera del try")
     if request.method == 'DELETE':
         try:
+            print("aca")
             print("entra al try")
+            
             publicacion = Publicacion.objects.get(pk=publicacion_id)
+            print("entrass")
             publicacion.delete()
+           
             mensaje = 'La publicación ha sido eliminada correctamente.'
             return JsonResponse({'message': mensaje}, status=200)
         except Publicacion.DoesNotExist:
+            
             mensaje = 'La publicación no existe.'
             return JsonResponse({'error': mensaje}, status=404)
     else:

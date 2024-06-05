@@ -61,7 +61,7 @@ class Publicacion(models.Model):
     estado = models.BooleanField(default=True)
     estadoCategoria = models.BooleanField(default=True)
     usuario = models.ForeignKey(Usuario, on_delete=models.CASCADE)
-    categoria = models.ForeignKey(Categoria, on_delete=models.CASCADE, null = True)
+    categoria = models.ForeignKey(Categoria, on_delete=models.CASCADE, default=True)
     imagen = models.ImageField(upload_to='media/publicaciones/', null=True, blank=True)
     trueque = models.BooleanField(default=False)
 
