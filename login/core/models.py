@@ -59,6 +59,7 @@ class Publicacion(models.Model):
     descripcion = models.CharField(max_length=400)
     nuevo = models.BooleanField(default=True)
     estado = models.BooleanField(default=True)
+    estadoCategoria = models.BooleanField(default=True)
     usuario = models.ForeignKey(Usuario, on_delete=models.CASCADE)
     categoria = models.ForeignKey(Categoria, on_delete=models.CASCADE, null = True)
     imagen = models.ImageField(upload_to='media/publicaciones/', null=True, blank=True)

@@ -1,4 +1,6 @@
 /* Estilos generales */
+
+
 body {
     font-family: Arial, sans-serif; /* Fuente legible */
     font-size: 16px; /* Tamaño de fuente predeterminado */
@@ -79,7 +81,7 @@ ul li {
         font-size: 14px; /* Reducir el tamaño de la fuente para pantallas pequeñas */
     }
 
-
+    
 
 
 }

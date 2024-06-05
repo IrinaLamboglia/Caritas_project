@@ -421,12 +421,14 @@ def desbloquearUsuario(request, email):
 
     return redirect('listadoBloqueados')
 
-def mis_publicaciones(request):
-    if request.user.tipo =="administrador":
-        publicaciones = Publicacion.objects.all()
-    else:
-        publicaciones = Publicacion.objects.filter(usuario=request.user)
+def mis_publicaciones1(request):
+    publicaciones = Publicacion.objects.all()
     return render(request, 'core/crearPublicacion/mis_publicaciones1.html', {'publicaciones': publicaciones})
+
+
+def mis_publicaciones(request):
+    publicaciones = Publicacion.objects.filter(usuario=request.user)
+    return render(request, 'core/crearPublicacion/mis_publicaciones.html', {'publicaciones': publicaciones})
 
 @csrf_exempt
 def eliminar_publicacion(request, publicacion_id):
@@ -515,12 +517,6 @@ def desbloquearUsuario(request, email):
 
     return redirect('listadoBloqueados')
 
-def mis_publicaciones(request):
-    if request.user.tipo =="administrador":
-        publicaciones = Publicacion.objects.filter(estado=True)
-    else:
-        publicaciones = Publicacion.objects.filter(usuario=request.user,estado=True)
-    return render(request, 'core/crearPublicacion/mis_publicaciones1.html', {'publicaciones': publicaciones})
 
 @csrf_exempt
 def eliminar_publicacion(request, publicacion_id):

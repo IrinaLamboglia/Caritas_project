@@ -13,7 +13,7 @@ from django.conf import settings
 #        # Establecer el estado de todos los publicacions de esta categoría en False
 #        publicaciones = Publicacion.objects.filter(categoria = categoria_id)
 #        for publicacion in publicaciones:
-#            publicacion.estado = False
+#            publicacion.estadoCategoria = False
 #            publicacion.categoria = None
 #            publicacion.save()
         
@@ -42,7 +42,7 @@ def desactivar_categoria(request, categoria_id):
             # Establecer el estado de todas las publicaciones de esta categoría
             publicaciones = Publicacion.objects.filter(categoria=categoria)
             for publicacion in publicaciones:
-                publicacion.estado = nuevo_estado
+                publicacion.estadoCategoria = nuevo_estado
                 publicacion.save()
 
                 # Enviar correo al propietario del producto si la categoría se desactiva
