@@ -147,10 +147,11 @@
                 <div class="filtro-section">
                     <label for="filtro">Filtrar:</label>
                     <select id="filtro" name="filtro" onchange="this.form.submit()">
+                        <option value="Todas" {% if filtro == 'Todas' %} selected {% endif %}>Todas</option>
                         <option value="Aceptadas" {% if filtro == 'Aceptadas' %} selected {% endif %}>Aceptadas</option>
                         <option value="Pendientes" {% if filtro == 'Pendientes' %} selected {% endif %}>Pendientes</option>
-                        <option value="Todas" {% if filtro == 'Todas' %} selected {% endif %}>Todas</option>
                     </select>
+                  <!--  <button type="submit">Filtrar</button> -->
                 </div>
                 {% if filtro == 'Pendientes' %}
                 <div class="search-container">
@@ -170,11 +171,11 @@
                         <img src="{{ elemento.publicacionOfrecida.imagen.url }}" alt="{{ elemento.publicacionOfrecida.titulo }}">
                     </div>
                     <div class="publicacion-info">
-                        <p><strong>Título de la publicación solicitada:</strong> {{ elemento.publicacion.titulo }}</p>
-                        <p><strong>Descripción:</strong> {{ elemento.publicacion.descripcion }}</p>
-                        <p><strong>Fecha de solicitud:</strong> {{ elemento.fecha_solicitud }}</p>
-                        <p><strong>Solicitante:</strong> {{ elemento.solicitante.email }}</p>
-                        <p><strong>Publicación ofrecida:</strong> {{ elemento.publicacionOfrecida.titulo }}</p>
+                        <p><strong>Título de la publicación solicitada: </strong> {{ elemento.publicacion.titulo }}</p>
+                        <p><strong>Solicitante: </strong> {{ elemento.solicitante.email }}</p>
+                        <p><strong>Publicación ofrecida: </strong> {{ elemento.publicacionOfrecida.titulo }}</p>
+                        <p><strong>Fecha de solicitud: </strong> {{ elemento.fecha_solicitud }}</p>
+                        
                         {% if not elemento.estado %}
                         <form action="{% url 'aceptar_trueque' elemento.id %}" method="post">
                             {% csrf_token %}
@@ -192,12 +193,12 @@
             {% endfor %}
         </ul>
         {% else %}
-        <p>No hay solicitudes de trueques en este momento.</p>
+           <p>Usted no cuenta con solicitudes de trueques</p>
         {% endif %}
+    </div>
 
-        <div class="btn-container">
-            <a href="{% url 'home' %}" class="btn-volver">Volver</a>
-        </div>
+    <div class="btn-container">
+        <a href="{% url 'inicio' %}" class="btn-volver">Volver al inicio</a>
     </div>
 </body>
 </html>

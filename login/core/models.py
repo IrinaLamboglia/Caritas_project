@@ -79,6 +79,7 @@ class Solicitud(models.Model):
     estado = models.BooleanField(default=False)
     publicacionOfrecida = models.ForeignKey(Publicacion, on_delete=models.CASCADE, related_name='ofrecimientos')
     rechazado = models.BooleanField(default=False)  # Nuevo campo
+    realizado= models.BooleanField(default=False)
 
 
     def rechazar(self):

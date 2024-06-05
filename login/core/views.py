@@ -3,7 +3,7 @@ from django.db.models import Q
 from django.http import JsonResponse
 from django.http import HttpResponseNotAllowed, JsonResponse
 from django.shortcuts import get_object_or_404, render, redirect
-from .models import FailedLoginAttempt, Publicacion, Solicitud, Usuario, UsuarioBloqueado, porDesbloquear, Categoria
+from .models import FailedLoginAttempt, Publicacion, Solicitud, Usuario, UsuarioBloqueado, porDesbloquear, Categoria,Trueque
 
 from django.contrib.auth import login
 from . formreg import UsuarioForm
@@ -62,8 +62,13 @@ def home(request):
 #el template login es lo que se muestra antes de q se loguee
 @login_required
 def products(request):
-    publicaciones = Publicacion.objects.filter(estado=True, trueque = False)
-    return render(request, 'core/products.html',{'publicaciones': publicaciones})
+    usuario_actual = request.user
+    publicaciones = Publicacion.objects.filter(estado=True).exclude(usuario=usuario_actual)
+    publicaciones_solicitadas_ids = Solicitud.objects.filter(solicitante=usuario_actual).values_list('publicacion_id', flat=True)
+    return render(request, 'core/products.html', {
+        'publicaciones': publicaciones,
+        'publicaciones_solicitadas_ids': list(publicaciones_solicitadas_ids)
+    })
 
 #funcion para salir
 ##def exit(request):
@@ -220,6 +225,31 @@ def formularioreg(request):
             return render(request, 'registration/registro.html', {'form': form})
     else:
         form = UsuarioForm()  # Si no hay datos POST, simplemente inicializa un formulario vacío
+     
+
+    return render(request, 'registration/registro.html', {'form': form})
+
+#def formularioreg(request):
+    print("Ejecutando recibo de registro")
+    if request.method == 'POST':
+        form = UsuarioForm(request.POST)
+        print("estoy en el primer if")
+        if form.is_valid():
+            print("El formulario es válido")
+            usuario = form.save()
+            
+            if (request.user.is_authenticated):
+                if (request.user.tipo == "administrador"):
+                     usuario.email = usuario.email  # Establecer el nombre de usuario como el correo electrónico
+                     usuario.tipo="ayudante"
+                     usuario.save()
+                     enviar_correo_ayudante(request.user)
+                     return redirect('home')
+            form.save()
+            return redirect('login')
+    else:
+        print("El formulario es inválido")
+        form = UsuarioForm()
 
     return render(request, 'registration/registro.html', {'form': form})
 
@@ -564,3 +594,39 @@ def eliminar_publicacion(request, publicacion_id):
             return JsonResponse({'error': mensaje}, status=404)
     else:
         return JsonResponse({'error': 'Método no permitido'}, status=405)
+def trueques_realizadosw(request):
+    elementos = Solicitud.objects.filter(realizado=True)
+    return render(request, 'core/listado/truequesAdmin.html', {'elementos': elementos})
+
+
+
+#este deberia ser, probar cuando se haga el merge y tenga trueques realizados
+def trueques_realizados(request):
+    solicitudes = Solicitud.objects.filter(realizado=True)
+    elementos = []
+
+    for solicitud in solicitudes:
+        trueque = Trueque.objects.filter(
+            solicitante_id=solicitud.solicitante.id,
+            receptor_id=solicitud.publicacion.usuario.id,
+            publicacion1_id=solicitud.publicacion.id,
+            publicacion2_id=solicitud.publicacionOfrecida.id
+        ).first()
+
+        if trueque:
+            elementos.append({
+                'publicacion': solicitud.publicacion,
+                'publicacionOfrecida': solicitud.publicacionOfrecida,
+                'fecha_solicitud': solicitud.fecha_solicitud,
+                'solicitante': solicitud.solicitante,
+                'filial': trueque.filial,
+                'turno': trueque.turno,
+                'receptor': solicitud.publicacion.usuario,  
+                'codigoReceptor' : trueque.codigo_confirmacion_receptor,
+                'codigoSolicitante' : trueque.codigo_confirmacion_solicitante,
+                'fechaTurno':trueque.fecha_efectivizacion,
+            })
+
+    return render(request, 'core/listado/truequesAdmin.html', {'elementos': elementos})
+
+    

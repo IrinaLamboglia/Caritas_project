@@ -104,5 +104,7 @@ urlpatterns = [
     
     
     path('eliminar_publicacion/<int:publicacion_id>/', views.eliminar_publicacion, name='eliminar_publicacion'),
+    
+    path('truequesAdmin/',views.trueques_realizados,name='trueques_realizados')
    
 ]
