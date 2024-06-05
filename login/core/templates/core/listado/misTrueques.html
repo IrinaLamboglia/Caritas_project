@@ -1,0 +1,191 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mis solicitudes de trueques</title>
+    <link rel="icon" type="image/png" href="{% static 'imagenes/logoCaritas.jpg' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'css/estilo.css' %}">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+        }
+        .container {
+            width: 80%;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            margin-top: 30px;
+        }
+        h1 {
+            text-align: center;
+            color: #333;
+        }
+        .filtro-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+        .filtro-container form {
+            display: flex;
+            align-items: center;
+            width: 100%;
+            flex-wrap: wrap;
+            justify-content: space-between;
+        }
+        .filtro-section {
+            display: flex;
+            align-items: center;
+            margin-right: 10px;
+            flex-grow: 1;
+        }
+        .filtro-container label {
+            font-weight: bold;
+            font-size: 20px;
+            color: #333;
+            margin-right: 10px;
+        }
+        .filtro-container select {
+            padding: 5px;
+            font-size: 16px;
+            margin-right: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        .search-container {
+            display: flex;
+            align-items: center;
+            flex-grow: 1;
+            justify-content: flex-end;
+        }
+        .search-container input[type="text"] {
+            padding: 5px;
+            font-size: 16px;
+            margin-right: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        .search-container button,
+        .filtro-container button[type="submit"] {
+            padding: 5px 10px;
+            font-size: 16px;
+            border: none;
+            border-radius: 5px;
+            background-color: #007bff;
+            color: white;
+            cursor: pointer;
+            margin-left: 10px;
+        }
+        .search-container button:hover,
+        .filtro-container button[type="submit"]:hover {
+            background-color: #0056b3;
+        }
+        ul {
+            list-style: none;
+            padding: 0;
+        }
+        li {
+            display: flex;
+            align-items: center;
+            padding: 20px 0;
+            border-bottom: 1px solid #ccc;
+        }
+        li:last-child {
+            border-bottom: none;
+        }
+        .publicacion-info {
+            flex: 1;
+            margin-left: 20px;
+        }
+        .publicacion-info p {
+            margin: 5px 0;
+        }
+        .imagen-container {
+            display: flex;
+            align-items: center;
+        }
+        .imagen-container img {
+            width: 100px;
+            height: 100px;
+            margin-right: 40px;
+            border: 2px solid #ccc;
+            border-radius: 5px;
+        }
+        .btn-container {
+            text-align: center;
+            margin-top: 20px;
+        }
+        .btn-volver {
+            padding: 10px 20px;
+            font-size: 16px;
+            border: none;
+            border-radius: 5px;
+            background-color: #007bff;
+            color: white;
+            cursor: pointer;
+            text-decoration: none;
+        }
+        .btn-volver:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Mis solicitudes de trueques</h1>
+        
+        <div class="filtro-container">
+            <form action="{% url 'filtro_trueques' %}" method="GET">
+                <div class="filtro-section">
+                    <label for="filtro">Filtrar:</label>
+                    <select id="filtro" name="filtro" onchange="this.form.submit()">
+                        <option value="Todas" {% if filtro == 'Todas' %} selected {% endif %}>Todas</option>
+                        <option value="Aceptadas" {% if filtro == 'Aceptadas' %} selected {% endif %}>Aceptadas</option>
+                        <option value="Pendientes" {% if filtro == 'Pendientes' %} selected {% endif %}>Pendientes</option>
+                    </select>
+                  <!--  <button type="submit">Filtrar</button> -->
+                </div>
+                {% if filtro == 'Pendientes' %}
+                <div class="search-container">
+                    <input type="text" name="search" placeholder="Buscar título..." value="{{ search_query }}">
+                    <button type="submit">Buscar</button>
+                </div>
+                {% endif %}
+            </form>
+        </div>
+
+        {% if elementos %}
+        <ul>
+            {% for elemento in elementos %}
+                <li>
+                    <div class="imagen-container">
+                        <img src="{{ elemento.publicacion.imagen.url }}" alt="{{ elemento.publicacion.titulo }}">
+                        <img src="{{ elemento.publicacionOfrecida.imagen.url }}" alt="{{ elemento.publicacionOfrecida.titulo }}">
+                    </div>
+                    <div class="publicacion-info">
+                        <p><strong>Título de la publicación solicitada: </strong> {{ elemento.publicacion.titulo }}</p>
+                        <p><strong>Solicitante: </strong> {{ elemento.solicitante.email }}</p>
+                        <p><strong>Publicación ofrecida: </strong> {{ elemento.publicacionOfrecida.titulo }}</p>
+                        <p><strong>Fecha de solicitud: </strong> {{ elemento.fecha_solicitud }}</p>
+                    </div>
+                </li>
+            {% endfor %}
+        </ul>
+        {% else %}
+           <p>Usted no cuenta con solicitudes de trueques</p>
+        {% endif %}
+    </div>
+
+    <div class="btn-container">
+        <a href="{% url 'inicio' %}" class="btn-volver">Volver al inicio</a>
+    </div>
+</body>
+</html>

@@ -1,0 +1,29 @@
+{% load static %} <!-- Agrega esta línea al principio para cargar las etiquetas de archivos estáticos -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Autenticación Ayudante</title>
+    <link rel="stylesheet" type="text/css" href="{% static 'css/estilo.css' %}">
+    <link rel="icon" type="image/png" href="{% static 'imagenes/logoCaritas.jpg' %}">
+</head>
+<body>
+    <div class="form-container">
+        <h2>Ingresar Clave</h2>
+        <form action="{% url 'login_ayudante' %}"  method="POST">
+            {% csrf_token %}
+            <input type="password" id="clave" name="clave" required><br><br>
+            <input type="submit" value="Aceptar">
+        </form>
+        {% if messages %}
+             <div class="alert alert-success" role="alert">
+                 {{ messages }}
+             </div>
+        {% endif %}
+        <div class="btn-container">
+            <a href="{% url 'inicio' %}" class="btn-volver">Volver al inicio</a>
+        </div>
+    </div>
+</body>
+</html>
