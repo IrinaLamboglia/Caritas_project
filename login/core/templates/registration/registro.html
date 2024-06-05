@@ -1,4 +1,5 @@
-{% load static %}
+{% load static %} <!-- Agrega esta línea al principio para cargar las etiquetas de archivos estáticos -->
+
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -6,178 +7,37 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Registrarse</title>
     <link rel="icon" type="image/png" href="{% static 'imagenes/logoCaritas.jpg' %}">
-    <link rel="stylesheet" type="text/css" href="{% static 'css/estilo.css' %}"> 
-
-    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
-
+    <link rel="stylesheet" type="text/css" href="{% static 'css/registro-estilos.css' %}"> 
 
 </head>
 <body>
     <h2>Registrarse</h2>
-    <div class="form-container"> <!-- Contenedor del formulario -->
-        <form action="{% url 'registro' %}" method="post" class="needs-validation" novalidate>
-            {% csrf_token %}
-
-
-
-            <div class="form-group">
-                <label for="email">Email:</label>
-                <input type="email" id="email" name="email" required class="form-control">
-                <div class="invalid-feedback">Por favor, ingrese un correo electrónico válido.</div>
-                <div class="invalid-feedback" id="email-taken-feedback" style="display: none;">Este correo electrónico ya está registrado.</div>
-                <span class="error-message">{{ form.email.errors }}</span>
-            </div>
-
-            <div class="form-group">
-                <label for="nombre">Nombre:</label>
-                <input type="text" id="nombre" name="nombre" required class="form-control">
-                <div class="invalid-feedback">Por favor, ingrese su nombre.</div>
-            </div>
-
-            <div class="form-group">
-                <label for="apellido">Apellido:</label>
-                <input type="text" id="apellido" name="apellido" required class="form-control">
-                <div class="invalid-feedback">Por favor, ingrese su apellido.</div>
-            </div>
-
-            <div class="form-group">
-                <label for="fecha_nacimiento">Fecha de nacimiento:</label>
-                <input type="date" id="fecha_nacimiento" name="fecha_nacimiento" required class="form-control">
-                <div class="invalid-feedback">Por favor, ingrese una fecha válida, debe ser mayor de 18 años para registrarse.</div>
-            </div>
-
-            <div class="form-group">
-                <label for="telefono">Teléfono:</label>
-                <input type="tel" id="telefono" name="telefono" required class="form-control">
-                <div class="invalid-feedback">Por favor, ingrese un número de teléfono válido.</div>
-            </div>
-
-            <div class="form-group">
-                <label for="password">Contraseña:</label>
-                <input type="password" id="password" name="contraseña" required class="form-control">
-                <div class="invalid-feedback">Por favor, ingrese una contraseña válida, debe tener al menos 6 caracteres.</div>
-                {% if form.errors.contraseña %}
-                <span class="error-message">{{ form.errors.contraseña }}</span>
-                {% endif %}
-            </div>
-
-            <div class="form-group">
-                <label for="dni">DNI:</label>
-                <input type="text" id="dni" name="dni" required class="form-control">
-                <div class="invalid-feedback">Por favor, ingrese su DNI.</div>
-            </div>
-
-
-
-
-
-
-
-
-            {% if user.is_authenticated %}
-                {% if user.tipo == "administrador" %}
-                    <label for="filial">FILIAL:</label><br>
-                    <input type="text" id="filial" name="filial" required><br>
-                    <span class="error-message">{{ form.filial.errors }}</span>
-                 {% endif %}
-            {% endif %}     
-
-            <!-- Botón de registro -->
-            
-           <!-- <input type="submit" value="Aceptar"> -->
-            <button type="submit" class="btn btn-primary">Aceptar</button>
-
-
-        </form>
-    </div>
+    <form action="{% url 'registro' %}" method="post">
+        {% csrf_token %}
+        <label for="email">Email:</label><br>
+        <input type="email" id="email" name="email" value="nombre@gmail.com" required><br>
+        
+        <label for="nombre">Nombre:</label><br>
+        <input type="text" id="nombre" name="nombre" required><br>
     
-    <ul> <!-- Contenedor para el botón "Volver atrás" -->
-
-        {% if user.is_authenticated %}
-                 {% if user.tipo == "administrador" %}
-                      <a href="{% url 'home' %}" class="btn-volver">Volver atrás</a>
-                 {% endif %}
-            {% else %}    
-
-            <a href="{% url 'login' %}" class="btn-volver">Volver atrás</a>
-            {% endif %}    
-    </ul>
-
-
-
-
-
-
-
-    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.3/dist/umd/popper.min.js"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
-    <script>
-        (function () {
-            'use strict';
-            window.addEventListener('load', function () {
-                var forms = document.getElementsByClassName('needs-validation');
-                var validation = Array.prototype.filter.call(forms, function (form) {
-                    form.addEventListener('submit', function (event) {
-                        var valid = true;
-                        var password = form.querySelector('#password');
-                        if (password.value.length < 6) {
-                            valid = false;
-                            password.setCustomValidity('La contraseña debe tener al menos 6 caracteres.');
-                        } else {
-                            password.setCustomValidity('');
-                        }
-                        var birthdate = new Date(form.querySelector('#fecha_nacimiento').value);
-                        var today = new Date();
-                        var age = today.getFullYear() - birthdate.getFullYear();
-                        var month = today.getMonth() - birthdate.getMonth();
-                        if (month < 0 || (month === 0 && today.getDate() < birthdate.getDate())) {
-                            age--;
-                        }
-                        if (age < 18) {
-                            valid = false;
-                            form.querySelector('#fecha_nacimiento').setCustomValidity('Debes tener al menos 18 años.');
-                        } else {
-                            form.querySelector('#fecha_nacimiento').setCustomValidity('');
-                        }
-                        if (form.checkValidity() === false || !valid) {
-                            event.preventDefault();
-                            event.stopPropagation();
-                        }
-                        form.classList.add('was-validated');
-                    }, false);
-                });
-            }, false);
-            $('#email').on('blur', function () {
-                var email = $(this).val();
-                if (email) {
-                    $.ajax({
-                        url: '{% url "check_email" %}',
-                        data: { 'email': email },
-                        dataType: 'json',
-                        success: function (data) {
-                            if (data.is_taken) {
-                                $('#email-taken-feedback').show();
-                                $('#email').addClass('is-invalid');
-                            } else {
-                                $('#email-taken-feedback').hide();
-                                $('#email').removeClass('is-invalid');
-                            }
-                        }
-                    });
-                }
-            });
-            $('#email').on('input', function () {
-                $('#email-taken-feedback').hide();
-                $('#email').removeClass('is-invalid');
-            });
-        })();
-    </script>
-
-
-
-
-
+        <label for="apellido">Apellido:</label><br>
+        <input type="text" id="apellido" name="apellido" required><br><br>
+    
+        <label for="fecha_nacimiento">Fecha de nacimiento:</label><br>
+        <input type="date" id="fecha_nacimiento" name="fecha_nacimiento" value="2003-05-06" required><br>
+    
+        <label for="telefono">Teléfono:</label><br>
+        <input type="tel" id="telefono" name="telefono" required><br>
+        
+        <label for="password">Contraseña:</label><br>
+        <input type="password" id="password" name="contraseña" required><br>
+       
+        <label for="dni">DNI:</label><br>
+        <input type="text" id="dni" name="dni" required><br>
+    
+        <input type="submit" value="Aceptar">
+    </form>
+    
 </body>
 </html>
 
