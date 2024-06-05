@@ -10,17 +10,19 @@ from django.urls import reverse
   
 def confirmar_turno(request, trueque_id):
     trueque = get_object_or_404(Trueque, id=trueque_id)
+    print(request.GET)
     token = request.GET.get('token')
     
     if trueque.solicitante != request.user or trueque.token != token:
-        messages.error(request, "Token inválido.")
+        messages.error(request, "user inválido.")
         return redirect('inicio')
-
+    
     if trueque.confirmado:
         messages.error(request, "Ese turno ya fue confirmado/rechazado.")
         return redirect('inicio')
     
     if request.method == "POST":
+        print ("entra post")
         confirmar = request.POST.get("confirmar")
         cancelar = request.POST.get("cancelar")
         
