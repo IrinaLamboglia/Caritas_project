@@ -63,7 +63,7 @@ class Publicacion(models.Model):
     usuario = models.ForeignKey(Usuario, on_delete=models.CASCADE)
     categoria = models.ForeignKey(Categoria, on_delete=models.CASCADE, null = True)
     imagen = models.ImageField(upload_to='media/publicaciones/', null=True, blank=True)
-    trueque = models.BooleanField(default=True)
+    trueque = models.BooleanField(default=False)
 
     def __str__(self):
         return self.titulo

@@ -1,9 +1,9 @@
 from django.shortcuts import render, redirect, get_object_or_404
-from core.models import Trueque, Usuario,Solicitud
+from core.models import Trueque,Solicitud
 from django.db.models import Q
 from django.contrib.auth import get_user_model
 
-from django.core.mail import send_mail, EmailMessage
+from django.core.mail import send_mail
 from django.contrib import messages
 from django.utils import timezone
 import datetime
@@ -52,8 +52,8 @@ def rechazar_efectivizacion(request, id):
     
     if solicitud:
         # Reactivar las publicaciones
-        solicitud.publicacion.estado = True
-        solicitud.publicacionOfrecida.estado = True
+        solicitud.publicacion.trueque = False
+        solicitud.publicacionOfrecida.estado = False
         solicitud.publicacion.save()
         solicitud.publicacionOfrecida.save()
 
@@ -75,14 +75,14 @@ def penalizar_trueque(request, trueque_id):
 
         # Penalizar al usuario asociado al trueque
         usuario = trueque.solicitante  # Obtener el usuario solicitante del trueque
-        usuario.puntuacion -= 3
+        usuario.puntuacion -= 1
         usuario.save()
 
         # Manejar la solicitud (reactivar publicaciones y eliminar solicitud)
         solicitud = Solicitud.objects.filter(solicitante=trueque.solicitante, publicacionOfrecida__usuario=trueque.receptor).first()
         if solicitud:
-            solicitud.publicacion.estado = True
-            solicitud.publicacionOfrecida.estado = True
+            solicitud.publicacion.trueque = False
+            solicitud.publicacionOfrecida.estado = False
             solicitud.publicacion.save()
             solicitud.publicacionOfrecida.save()
             solicitud.delete()
