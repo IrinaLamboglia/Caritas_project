@@ -13,6 +13,7 @@ class UsuarioForm(forms.ModelForm):
             'dni',
             'telefono',
             'contraseña',
+            'filial_nombre',
         ]
 
     def clean_email(self):
@@ -44,7 +45,9 @@ class UsuarioForm(forms.ModelForm):
         return usuario
     
     def clean_filial(self):
-        filial = self.cleaned_data['filial']
-        if Usuario.objects.filter(filial=filial).exists():
-            raise forms.ValidationError("Ya existe un usuario registrado en esta filial.")
+        filial = self.cleaned_data['filial_nombre']
+        # Validar la filial solo si se proporciona y el usuario es de tipo 'ayudante'
+        if filial and self.instance.tipo == 'administrador':
+            if Usuario.objects.filter(filial_nombre=filial).exists():
+                raise forms.ValidationError("Ya existe un usuario registrado en esta filial.")
         return filial

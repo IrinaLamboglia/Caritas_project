@@ -1,9 +1,10 @@
 from django.utils import timezone
 from django.db.models import Q
-
+from django.http import JsonResponse
 from django.http import HttpResponseNotAllowed, JsonResponse
 from django.shortcuts import get_object_or_404, render, redirect
 from .models import FailedLoginAttempt, Publicacion, Solicitud, Usuario, UsuarioBloqueado, porDesbloquear, Categoria
+
 from django.contrib.auth import login
 from . formreg import UsuarioForm
 import logging
@@ -18,7 +19,12 @@ from .globals import contenido_actual
 from .formpubl import PublicacionForm
 from django.contrib import messages
 from django.views.decorators.csrf import csrf_exempt
+from django.contrib.auth.decorators import login_required
 
+
+from django.utils.decorators import method_decorator
+
+from django.views.decorators.http import require_http_methods
 #los css los restaure por las dudas por si llega a haber conflicto
 #estan al pedo, en deshuso
 #solo hay que mantener estilo.css y login-estilos.css
@@ -189,34 +195,33 @@ def enviar_correo_ayudante(ayudante):
     correo_destino = ayudante.email
     send_mail(asunto, mensaje, 'tucorreo@gmail.com', [correo_destino])
 
-#perfecto
 def formularioreg(request):
-    print("Ejecutando recibo de registro")
+    print("entro 1")
     if request.method == 'POST':
-        form = UsuarioForm(request.POST)
-        print("estoy en el primer if")
+        form = UsuarioForm(request.POST)  # Inicializa el formulario con los datos del POST
         if form.is_valid():
-            print("El formulario es válido")
-            usuario = form.save()
-            
-            if (request.user.is_authenticated):
-                if (request.user.tipo == "administrador"):
-                    usuario.email = usuario.email  # Establecer el nombre de usuario como el correo electrónico
-                    usuario.tipo="ayudante"
-                    usuario.save()
-                    enviar_correo_ayudante(request.user)
-                    return redirect('home')
-            form.save()
-            return redirect('login')
+            print("es valido")
+            usuario = form.save(commit=False)
+            if request.user.is_authenticated and request.user.tipo == "administrador":
+                filial = usuario.filial_nombre
+                if Usuario.objects.filter(filial_nombre=filial).exists():
+                    messages.error(request, 'Ya existe un usuario registrado en esta filial')
+                    return render(request, 'registration/registro.html', {'form': form})
+                usuario.tipo = "ayudante"
+                enviar_correo_ayudante(usuario)
+                usuario.save()
+                return redirect('home')
+            else:
+                usuario.save()
+                return redirect('login')
+        else:
+            messages.error(request, 'Por favor, corrija los errores en el formulario.')
+            # Renderizar la página nuevamente con el formulario inválido y los datos ingresados por el usuario
+            return render(request, 'registration/registro.html', {'form': form})
     else:
-        print("El formulario es inválido")
-        form = UsuarioForm()
+        form = UsuarioForm()  # Si no hay datos POST, simplemente inicializa un formulario vacío
 
     return render(request, 'registration/registro.html', {'form': form})
-
-
-
-
 
 #perfecto
 def mostrarBaja(request):
@@ -256,6 +261,11 @@ def recuperarCuenta(request,email):
 
 #perfecto
 def listadoBloqueado(request):
+    #para probar
+    #email="g@gmail.com"
+    #porDesbloquear.objects.create(email=email) 
+    #email="yo@gmail.com"
+    #porDesbloquear.objects.create(email=email) 
     elementos = porDesbloquear.objects.all()
     return render(request, 'core/listado/bloqueadosListado.html', {'elementos': elementos})
 
@@ -297,6 +307,7 @@ def ver_producto(request, publicacion_id):
 #perfecto
 def solicitar_trueque(request, publicacion_id):
     #toma las publicaciones de la misma categoria q el producto q quiere 
+    print("entra")
     usu = request.user
     publicacion = get_object_or_404(Publicacion, id=publicacion_id) #tomo la publicacion
     categoria = publicacion.categoria
@@ -415,7 +426,7 @@ def mis_publicaciones(request):
         publicaciones = Publicacion.objects.all()
     else:
         publicaciones = Publicacion.objects.filter(usuario=request.user)
-    return render(request, 'core/crearPublicacion/mis_publicaciones.html', {'publicaciones': publicaciones})
+    return render(request, 'core/crearPublicacion/mis_publicaciones1.html', {'publicaciones': publicaciones})
 
 @csrf_exempt
 def eliminar_publicacion(request, publicacion_id):
@@ -441,7 +452,28 @@ def eliminar_publicacion(request, publicacion_id):
    # views.py
 
 
+@login_required
+def crear_publicacion(request):
+    categorias = Categoria.objects.all()
+    if request.method == 'POST':
+        formulario = PublicacionForm(request.POST, request.FILES)
+        if formulario.is_valid():
+            publicacion = formulario.save(commit=False)
+            publicacion.usuario = request.user
+            publicacion.estado = False
+            publicacion.save()
+            messages.success(request,'La publicación se registró correctamente, queda a la espera de validación')
+            return redirect('products')
+        else:
+            messages.error(request, 'Hubo un problema al cargar la publicación')
+    else:
+          formulario = PublicacionForm()
+    return render(request, 'core/crearPublicacion/crear_publicacion.html', {'categorias': categorias,'formulario': formulario}) 
 
+
+def ver_producto(request, publicacion_id):
+    publicacion = get_object_or_404(Publicacion, id=publicacion_id)
+    return render(request, 'core/crearPublicacion/ver_producto.html', {'publicacion': publicacion})
 
 
 
@@ -456,3 +488,73 @@ def check_email(request):
         is_taken = False  # Si no se proporciona un correo electrónico, no está tomado
     data = {'is_taken': is_taken}
     return JsonResponse(data)
+
+def desbloquearUsuario(request, email):
+    user = Usuario.objects.get(email=email)
+    nueva_contraseña = ''.join(random.choices(string.ascii_letters + string.digits, k=max(6, 10)))
+
+    user.contraseña = nueva_contraseña
+    user.save()
+
+    send_mail(
+        'Contraseña restablecida',
+        f'Su nueva contraseña es: {nueva_contraseña}',
+        settings.EMAIL_HOST_USER,
+        [email],
+        fail_silently=False,
+    )
+
+    # Eliminar al usuario de las tablas porDesbloquear y usuarioBloqueado
+    porDesbloquear.objects.filter(email=email).delete()
+    UsuarioBloqueado.objects.filter(email=email).delete()
+
+    # Restablecer los intentos fallidos a 0
+    FailedLoginAttempt.objects.filter(email=email).delete()
+   
+
+
+    return redirect('listadoBloqueados')
+
+def mis_publicaciones(request):
+    if request.user.tipo =="administrador":
+        publicaciones = Publicacion.objects.filter(estado=True)
+    else:
+        publicaciones = Publicacion.objects.filter(usuario=request.user,estado=True)
+    return render(request, 'core/crearPublicacion/mis_publicaciones1.html', {'publicaciones': publicaciones})
+
+@csrf_exempt
+def eliminar_publicacion(request, publicacion_id):
+    print("fuera del try")
+    if request.method == 'DELETE':
+        try:
+            print("entra al try")
+            publicacion = Publicacion.objects.get(pk=publicacion_id)
+            if (request.user.tipo=="administrador"):
+                publicacion.estado=True
+                publicacion.save
+                publicacion.delete()
+
+            
+                # Enviar correo al creador de la publicación
+                asunto = f'Tu publicación "{publicacion.titulo}" ha sido eliminada'
+                mensaje_correo = f'Lamentamos informarte que tu publicación titulada "{publicacion.titulo}" ha sido eliminada por un administrador.'
+                remitente = 'tuemail@tudominio.com'
+                destinatario = publicacion.usuario.email
+                try:
+                    send_mail(asunto, mensaje_correo, remitente, [destinatario])
+                except Exception as e:
+                    return JsonResponse({'error': 'Error al enviar el correo: ' + str(e)}, status=500)
+            else:
+                publicacion.estado=True
+                publicacion.eliminada=True
+                publicacion.save()
+                return JsonResponse({'message': 'Publicación marcada como eliminada.'}, status=200)
+        
+           
+            mensaje = 'La publicación ha sido eliminada correctamente.'
+            return JsonResponse({'message': mensaje}, status=200)
+        except Publicacion.DoesNotExist:
+            mensaje = 'La publicación no existe.'
+            return JsonResponse({'error': mensaje}, status=404)
+    else:
+        return JsonResponse({'error': 'Método no permitido'}, status=405)

@@ -21,7 +21,7 @@ from . import views
 from editarPerfil.views import editar_ayudante
 from agregarCategoria.views import agregar_categoria, mostrar_categorias
 from bajaCategoria.views import  desactivar_categoria
-from listarprod.views import mostrar_validacion,aceptar_publicacion,rechazar_publicacion,bloquear_usuario
+from listarprod.views import mostrar_validacion, aceptar_publicacion, rechazar_publicacion, bloquear_usuario
 from editarCategoria.views import editar_categoria
 
 from django.urls import path
@@ -31,7 +31,6 @@ from confirmarTurno.views import confirmar_turno
 from visualizarTrueques.views import visualizar_trueques_diarios
 from efectivizar_trueques.views import efectivizar_trueques,aceptacion_trueque,penalizar_trueque,rechazar_efectivizacion
 from rechazarTrueque.views import rechazar_trueque
-
 
 urlpatterns = [
     path('', home, name='home'),
@@ -63,7 +62,7 @@ urlpatterns = [
     
     path('crearPublicacion/',views.crear_publicacion, name='crear_publicacion'),
     path('ver/<int:publicacion_id>/',views.ver_producto, name='ver_producto'),
-    path('solicitar/<int:publicacion_id>/',views.solicitar_trueque, name='solicitar_trueque'),
+    
     path('desbloquear/<str:email>/', views.desbloquearUsuario, name='desbloquear_usuario'),
     path('mis_publicaciones/', views.mis_publicaciones, name='mis_publicaciones'),
     #ESTO ES NUEVO
@@ -95,4 +94,7 @@ urlpatterns = [
     path('penalizar_trueque/<int:trueque_id>/', penalizar_trueque, name='penalizar_trueque'),
     path('rechazar_trueque/<int:solicitud_id>/', rechazar_trueque, name='rechazar_trueque'),
     
+    
+    path('eliminar_publicacion/<int:publicacion_id>/', views.eliminar_publicacion, name='eliminar_publicacion'),
+   
 ]

@@ -29,6 +29,14 @@ class Usuario(AbstractUser):
     tipo= models.CharField(max_length=30, default="")
     puntuacion = models.DecimalField(max_digits=10, decimal_places=2)
 
+    # Campo filial solo para ayudantes
+    filial_nombre = models.CharField(max_length=100, null=True, blank=True)
+
+    def save(self, *args, **kwargs):
+        if self.tipo != "ayudante":
+            self.filial = None  # Resetear el valor de filial si el tipo no es ayudante
+        super().save(*args, **kwargs)
+
 
 
 class UsuarioBloqueado(models.Model):
