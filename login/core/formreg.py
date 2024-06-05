@@ -38,6 +38,7 @@ class UsuarioForm(forms.ModelForm):
     def save(self, commit=True):
         usuario = super().save(commit=False)
         usuario.username = self.cleaned_data['email']  # Establecer el correo electrónico como nombre de usuario
+        usuario.puntuacion=3
         if commit:
             usuario.save()
         return usuario

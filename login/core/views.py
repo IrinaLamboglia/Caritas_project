@@ -201,11 +201,11 @@ def formularioreg(request):
             
             if (request.user.is_authenticated):
                 if (request.user.tipo == "administrador"):
-                     usuario.email = usuario.email  # Establecer el nombre de usuario como el correo electrónico
-                     usuario.tipo="ayudante"
-                     usuario.save()
-                     enviar_correo_ayudante(request.user)
-                     return redirect('home')
+                    usuario.email = usuario.email  # Establecer el nombre de usuario como el correo electrónico
+                    usuario.tipo="ayudante"
+                    usuario.save()
+                    enviar_correo_ayudante(request.user)
+                    return redirect('home')
             form.save()
             return redirect('login')
     else:

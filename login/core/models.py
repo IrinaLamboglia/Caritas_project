@@ -69,8 +69,13 @@ class Solicitud(models.Model):
     fecha_solicitud = models.DateTimeField(default=timezone.now)
     estado = models.BooleanField(default=False)
     publicacionOfrecida = models.ForeignKey(Publicacion, on_delete=models.CASCADE, related_name='ofrecimientos')
+    rechazado = models.BooleanField(default=False)  # Nuevo campo
 
 
+    def rechazar(self):
+        self.rechazado = True
+        self.save()
+    
     def __str__(self):
         return f"{self.solicitante} solicita {self.publicacion}"
     
