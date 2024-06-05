@@ -60,7 +60,6 @@ def enviar_email_elegir_turno(trueque,request):
     Hola {trueque.receptor.username},
 
     Has aceptado una solicitud de trueque y el solicitante rechazo el turno del trueque. Por favor, elige un turno disponible haciendo clic en el siguiente enlace, nuevamente:
-
     {url}
     
     Contacta con {trueque.solicitante.username} para coordinar un turno para efectivizar el trueque.
