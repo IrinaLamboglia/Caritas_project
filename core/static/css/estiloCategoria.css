@@ -1,0 +1,36 @@
+
+
+body {
+    position: relative;
+}
+h1 {
+    text-align: center; /* Centra el título */
+    margin-bottom: 20px; /* Añade espacio entre el título y el contenido */
+}
+#volver {
+    position: fixed; /* Cambiamos a fixed para que permanezca en la misma posición al hacer scroll */
+    top: 10px;
+    left: 10px;
+    background-color: transparent;
+    border: none;
+    color: black;
+    font-size: 18px;
+    font-weight: bold;
+    cursor: pointer;
+}
+.button-container {
+    display: flex;
+    justify-content: center;
+}
+.button-container button {
+    margin: 5px;
+    padding: 10px 20px;
+    background-color: transparent;
+    border: 1px solid black;
+    color: black;
+    font-weight: bold;
+    cursor: pointer;
+}
+.button-container button:hover {
+    background-color: rgb(211, 211, 211);
+}

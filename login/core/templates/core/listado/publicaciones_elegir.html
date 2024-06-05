@@ -1,0 +1,135 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/png" href="{% static 'imagenes/logoCaritas.jpg' %}">
+
+    <title>Selecciona una Publicación</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+        }
+        .container {
+            width: 80%;
+            margin: 30px auto;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        h1 {
+            text-align: center;
+            color: #333;
+        }
+        ul {
+            list-style: none;
+            padding: 0;
+        }
+        li {
+            display: flex;
+            align-items: center;
+            padding: 15px;
+            border-bottom: 1px solid #ccc;
+        }
+        li:last-child {
+            border-bottom: none;
+        }
+        .publicacion-info {
+            flex-grow: 1;
+            margin-left: 10px;
+        }
+        .publicacion-img {
+            width: 100px;
+            height: 100px;
+            object-fit: cover;
+            border-radius: 5px;
+        }
+        input[type="radio"] {
+            margin-right: 10px;
+        }
+        label {
+            font-size: 18px;
+            color: #555;
+        }
+        .publicacion-titulo {
+            font-weight: bold;
+            color: #333;
+        }
+        .publicacion-descripcion {
+            margin-top: 5px;
+            color: #777;
+        }
+        button {
+            display: block;
+            width: 100%;
+            padding: 10px;
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            font-size: 18px;
+            cursor: pointer;
+            margin-top: 20px;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        .btn-container {
+            text-align: center;
+            margin-top: 20px;
+        }
+        .btn-volver {
+            padding: 10px 20px;
+            font-size: 16px;
+            border: none;
+            border-radius: 5px;
+            background-color: #007bff;
+            color: white;
+            cursor: pointer;
+            text-decoration: none;
+        }
+        .btn-volver:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        {% if messages %}
+        <ul class="messages">
+            {% for message in messages %}
+                <li class="{{ message.tags }}">{{ message }}</li>
+            {% endfor %}
+        </ul>
+    {% endif %}
+        <h1>Selecciona una Publicación para Trueque</h1>
+        <form method="post" action="{% url 'registrar_solicitud' publicacion_objetivo.id %}">
+            {% csrf_token %}
+            <ul>
+                {% for publicacion in publicaciones %}
+                    <li>
+                        <input type="radio" id="publicacion{{ publicacion.id }}" name="publicacionOfrecida" value="{{ publicacion.id }}">
+                        <img src="{{ publicacion.imagen.url }}" alt="{{ publicacion.titulo }}" class="publicacion-img">
+                        <div class="publicacion-info">
+                            <label for="publicacion{{ publicacion.id }}">
+                                <div class="publicacion-titulo">{{ publicacion.titulo }}</div>
+                                <div class="publicacion-descripcion">{{ publicacion.descripcion }}</div>
+                            </label>
+                        </div>
+                    </li>
+                {% endfor %}
+            </ul>
+            <button type="submit">Seleccionar publicación</button>
+        </form>
+    </div>
+
+    <div class="btn-container">
+        <a href="{% url 'products' %}" class="btn-volver">Volver</a>
+    </div>
+</body>
+</html>
