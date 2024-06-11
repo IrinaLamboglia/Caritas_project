@@ -1,0 +1,111 @@
+{% load static %} <!-- Agrega esta línea al principio para cargar las etiquetas de archivos estáticos -->
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Editar Ayudante</title>
+    <link rel="stylesheet" type="text/css" href="{% static 'css/registro-estilos.css' %}"> 
+    <style>
+        body{
+            background-color: rgba(168, 166, 166, 0.775);
+        }
+        .contenedor{
+            margin-bottom: 2%;
+            position: relative;
+            width: 100%; /* Ajusta el ancho según sea necesario */
+            height: 10%; /* Establece la altura al 100% del viewport */
+           
+            text-align: center;
+        }
+        /* Estilo para el botón de volver al inicio */
+        .btn-volver {
+            display: inline-block; /* Cambiado a inline-block para que se ajuste al ancho del contenido */
+            margin: 20px auto; /* Centra el botón horizontalmente */
+            padding: 10px 20px;
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            text-decoration: none; /* Elimina el subrayado del texto */
+            transition: background-color 0.3s; /* Agrega una transición suave para el cambio de color de fondo */
+        }
+        
+        .cartel {
+            text-align: center;
+            max-width: 500px;
+            padding: 0;
+            margin: 0;
+            background-color: rgb(255, 0, 0); /* Fondo semitransparente para los mensajes */
+            font-size: 20px;
+            color: rgb(7, 7, 7);
+            background-color: rgba(255, 0, 0, 0.2); /* Fondo semitransparente para los mensajes */
+            font-size: 20px;
+            color: red;
+            display: inline-block; /* Hace que el contenedor se ajuste automáticamente a su contenido */
+            border-radius: 5px; /* Añade esquinas redondeadas al contenedor */
+        }
+        #volver {
+             position: fixed; /* Cambiamos a fixed para que permanezca en la misma posición al hacer scroll */
+             top: 10px;
+             left: 10px;
+             background-color: transparent;
+             border: none;
+             color: black;
+             font-size: 18px;
+             font-weight: bold;
+             cursor: pointer;
+         }
+    </style>
+    <link rel="icon" type="image/png" href="{% static 'imagenes/logoCaritas.jpg' %}">
+   
+</head>
+<body>
+    
+    <h2>Editar Ayudante</h2>
+    
+    {% if messages %}
+        <div class="contenedor">
+        {% for message in messages %}
+            <div class="cartel">{{ message }}</div>
+        {% endfor %}
+        </div>
+    {% endif %}
+    <form method="post" action="{%url 'editar_ayudante' ayudante.id%}">
+        {% csrf_token %}
+        <label for="nuevo_email">Email:</label>
+        <input type="email" id="nuevo_email" name="nuevo_email" value="{{ ayudante.email}}" required>
+        
+        <label for="nuevo_nombre">Nombre:</label>
+        <input type="text" id="nuevo_nombre" name="nuevo_nombre" value="{{ayudante.nombre }}" required>
+        
+        <label for="nuevo_apellido">Apellido:</label>
+        <input type="text" id="nuevo_apellido" name="nuevo_apellido" value="{{ ayudante.apellido }}" required>
+        
+        <label for="nueva_filial">Filial:</label>
+        <input type="text" id="nueva_filial" name="nueva_filial" value="{{ ayudante.filial_nombre }}" required>
+        
+        <label for="nuevo_dni">DNI:</label>
+        <input type="text" id="nuevo_dni" name="nuevo_dni" value="{{ ayudante.dni }}" required>
+        
+        <label for="nueva_fecha_nacimiento">Fecha de Nacimiento:</label>
+        <input type="date" id="nueva_fecha_nacimiento" name="nueva_fecha_nacimiento" value="{{ ayudante.fecha_nacimiento|date:'Y-m-d' }}" required>
+        
+        <label for="nuevo_telefono">Teléfono:</label>
+        <input type="text" id="nuevo_telefono" name="nuevo_telefono" value="{{ ayudante.telefono }}" required>
+        
+        <label for="nueva_contrasena">Contraseña:</label>
+        <input type="password" id="nueva_contrasena" name="nueva_contrasena" value="{{ ayudante.contraseña }}"required>
+        
+        <button type="submit" class="btn-volver">Guardar Cambios</button>
+
+    </form>
+    <ul> <!-- Contenedor para el botón "Volver atrás" -->
+         
+        <a href="{% url 'login' %}" class="btn-volver">Volver atrás</a>
+          
+    </ul>
+</body>
+</html>

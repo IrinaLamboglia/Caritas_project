@@ -1,0 +1,42 @@
+orientacion {
+    margin-left: 100px; 
+}
+
+a.boton-crear {
+    display: inline-block;
+    padding: 10px 20px;
+    background-color: #007bff;
+    color: #ffffff;
+    border: none;
+    border-radius: 20px;
+    text-decoration: none;
+    margin-right: 20px; 
+    margin-top: 5px; 
+}
+
+
+/* Alinear el texto dentro del cuerpo de la tarjeta a la izquierda */
+.card-body {
+    text-align: left;
+}
+
+/* Ajustar el tamaño de la imagen dentro de la tarjeta */
+.card-img-top {
+    width: 100%;
+    height: auto;
+}
+
+/* Agregar un borde a las tarjetas y redondear las esquinas */
+.card {
+    border: 1px solid #ddd; /* Borde gris */
+    border-radius: 10px; /* Esquinas redondeadas */
+}
+
+/* Espaciado entre las tarjetas */
+.card {
+    margin-bottom: 20px; /* Espacio entre tarjetas */
+}
+<<<<<<< HEAD
+
+=======
+>>>>>>> origin/nuevo
