@@ -149,6 +149,8 @@
                     <select id="filtro" name="filtro" onchange="this.form.submit()">
                         <option value="Todas" {% if filtro == 'Todas' %} selected {% endif %}>Todas</option>
                         <option value="Aceptadas" {% if filtro == 'Aceptadas' %} selected {% endif %}>Aceptadas</option>
+                        <option value="Realizados" {% if filtro == 'Realizado' %} selected {% endif %}>Realizados</option>
+
                         <option value="Pendientes" {% if filtro == 'Pendientes' %} selected {% endif %}>Pendientes</option>
                     </select>
                   <!--  <button type="submit">Filtrar</button> -->

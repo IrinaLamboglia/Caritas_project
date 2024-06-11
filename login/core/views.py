@@ -396,6 +396,8 @@ def filtro_trueques(request):
         soli = Solicitud.objects.filter(publicacion__usuario=usu,estado=True)
     elif filtro == 'Pendientes':
         soli = Solicitud.objects.filter(publicacion__usuario=usu,estado=False)
+    elif filtro == 'Realizado':
+        soli= Solicitud.objects.filter(publicacion__usuario=usu,realizado=True)
         if search_query:
             soli = soli.filter(
                 Q(publicacion__titulo__icontains=search_query) |
