@@ -134,3 +134,14 @@ class Trueque(models.Model):
     def generar_token(self):
         self.token = secrets.token_hex(16)
         self.save()
+
+class BusquedaFavorita(models.Model):
+    usuario = models.ForeignKey(Usuario, on_delete=models.CASCADE)
+    termino_busqueda = models.CharField(max_length=255)
+    fecha_guardada = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        unique_together = ('usuario', 'termino_busqueda')
+
+    def __str__(self):
+        return f"{self.usuario.username} - {self.termino_busqueda}"

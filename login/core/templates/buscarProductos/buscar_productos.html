@@ -1,0 +1,116 @@
+{% extends 'products.html' %}
+{% load static %}
+
+{% block title %}Buscar Productos{% endblock %}
+
+{% block button %}
+{% endblock %}
+
+{% block content %}
+{% if user.tipo != 'ayudante' and user.tipo != 'administrador' %}
+    {% include 'core/crearPublicacion/mensajes.html' %}
+
+    <div class="album py-5 bg-body-tertiary">
+        <div class="container">
+            <div class="row">
+                <div class="col-6">
+                    <h2>Resultados de búsqueda para "{{ query }}"</h2>
+                </div>
+                <div class="col-6 text-right">
+                    <a href="{% url 'crear_publicacion' %}" class="boton-crear">Crear Publicación</a>
+                </div>
+            </div>
+
+            <!-- Barra de búsqueda -->
+            <div class="row my-4">
+                <div class="col-12">
+                    <form method="GET" action="{% url 'buscar_productos' %}" class="form-inline">
+                        <input type="text" name="q" class="form-control mr-2" value="{{ query }}" placeholder="Buscar productos...">
+                        <button type="submit" class="btn btn-primary">Buscar</button>
+                        <i class="fas fa-star favorite-icon {% if ya_favorita %}favorited{% endif %}" id="favorite-icon"></i>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Lista de búsquedas favoritas -->
+            <ul>
+                {% for favorita in favoritas %}
+                    <li>{{ favorita.termino_busqueda }}</li>
+                {% endfor %}
+            </ul>
+
+            <div class="album py-5 bg-body-tertiary">
+                <div class="container">
+                    <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-3">
+                        {% if resultados %}
+                            {% for publicacion in resultados %}
+                                <div class="col">
+                                    <div class="card shadow-sm">
+                                        {% if publicacion.imagen %}
+                                            <img src="{{ publicacion.imagen.url }}" class="card-img-top" alt="{{ publicacion.titulo }}">
+                                        {% else %}
+                                            <img src="{% static 'placeholder_image.jpg' %}" class="card-img-top" alt="Imagen no disponible">
+                                        {% endif %}
+                                        <div class="card-body">
+                                            <h5 class="card-title">{{ publicacion.titulo }}</h5>
+                                            <p class="card-text">{{ publicacion.descripcion }}</p>
+                                            <div class="d-flex justify-content-between align-items-center">
+                                                <a href="{% url 'ver_producto' publicacion.id %}" class="btn btn-outline-primary">Ver Detalles</a>
+                                                <a href="{% url 'solicitar_trueque' publicacion.id %}" class="btn btn-outline-primary solicitar-btn" data-publicacion-id="{{ publicacion.id }}">Solicitar trueque</a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            {% endfor %}
+                        {% else %}
+                            <div class="col">
+                                <p>No se encontraron productos.</p>
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+
+            {% if messages %}
+                <div id="messages-container" style="position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); z-index: 1000;">
+                    {% for message in messages %}
+                        <div class="alert" style="width: 300px; padding: 15px; margin-bottom: 20px; border-radius: 5px; font-size: 16px; text-align: center; background-color: {% if message.tags == 'success' %}#d4edda; color: #155724{% elif message.tags == 'info' %}#cce5ff; color: #007bff{% elif message.tags == 'warning' %}#fff3cd; color: #856404{% elif message.tags == 'error' %}#f8d7da; color: #721c24{% endif %};">
+                            {{ message }}
+                        </div>
+                    {% endfor %}
+                </div>
+
+                <script>
+                    setTimeout(function() {
+                        var messagesContainer = document.getElementById('messages-container');
+                        messagesContainer.style.display = 'none';
+                    }, 5000);
+                </script>
+            {% endif %}
+        </div>
+    </div>
+
+    <style>
+        .favorite-icon {
+            cursor: pointer;
+            color: grey;
+        }
+        .favorite-icon.favorited {
+            color: gold;
+        }
+    </style>
+
+    <script>
+        document.getElementById('favorite-icon').addEventListener('click', function() {
+            document.getElementById('favorite-form-button').click();
+        
+        });
+    </script>
+
+    <form method="post">
+        {% csrf_token %}
+        <input type="hidden" name="q" value="{{ query }}">
+        <button type="submit" style="display: none;" id="favorite-form-button"></button>
+    </form>
+{% endif %}
+{% endblock %}

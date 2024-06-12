@@ -28,6 +28,16 @@
                     </div>
                 </div>
 
+                <!-- Barra de búsqueda -->
+                <div class="row my-4">
+                    <div class="col-12">
+                        <form method="GET" action="{% url 'buscar_productos' %}" class="form-inline">
+                            <input type="text" name="q" class="form-control mr-2" placeholder="Buscar productos...">
+                            <button type="submit" class="btn btn-primary">Buscar</button>
+                        </form>
+                    </div>
+                </div>
+
                 <div class="album py-5 bg-body-tertiary">
                     <div class="container">
                         <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-3">
