@@ -51,6 +51,7 @@
                         <li class="nav-item"><a class="nav-link" href="{% url 'misTrueques' %}">Mis trueques</a></li>
                     {% endif %}
                     <li class="nav-item">
+                        <li class="nav-item"><a class="nav-link" href="{% url 'realizar_donacion' %}">Donar</a></li>
                         <a class="nav-link" href="#" onclick="confirmarSalida()">Salir</a>
                         <!-- Formulario de cierre de sesión -->
                         <form id="formularioSalida" method="post" action="{% url 'logout' %}" style="display: none;">
@@ -59,8 +60,8 @@
                     </li>
                 {% else %}
                     <li class="nav-item"><a class="nav-link" href="{% url 'login' %}">Ingresar</a></li>
+                    <li class="nav-item"><a class="nav-link" href="{% url 'realizar_donacion' %}">Donar</a></li>
                 {% endif %}
-                <li class="nav-item"><a class="nav-link" href="{% url 'realizar_donacion' %}">Donar</a></li>
             </ul>
         </div>
     </nav>
