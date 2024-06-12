@@ -12,6 +12,7 @@ https://docs.djangoproject.com/en/4.1/ref/settings/
 
 import os
 from pathlib import Path
+import mercadopago
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -163,3 +164,6 @@ LOGOUT_REDIRECT_URL = 'home'
 #Carpeta media para pillow
 MEDIA_URL = '/media/'
 MEIDA_ROOT = os.path.join(BASE_DIR,'media')
+
+
+MERCADO_PAGO_ACCESS_TOKEN = 'APP_USR-532683645064806-061023-0dfcd038408f1614d15efd6403155a09-606424946'

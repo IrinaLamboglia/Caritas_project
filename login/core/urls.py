@@ -32,6 +32,7 @@ from confirmarTurno.views import confirmar_turno
 from visualizarTrueques.views import visualizar_trueques_diarios
 from efectivizar_trueques.views import efectivizar_trueques,aceptacion_trueque,penalizar_trueque,rechazar_efectivizacion
 from rechazarTrueque.views import rechazar_trueque
+from realizarDonacion.views import realizar_donacion
 
 urlpatterns = [
     path('', home, name='home'),
@@ -105,6 +106,7 @@ urlpatterns = [
     
     path('eliminar_publicacion/<int:publicacion_id>/', views.eliminar_publicacion, name='eliminar_publicacion'),
     
-    path('truequesAdmin/',views.trueques_realizados,name='trueques_realizados')
+    path('truequesAdmin/',views.trueques_realizados,name='trueques_realizados'),
    
+    path('donar/', realizar_donacion, name='realizar_donacion'),
 ]
