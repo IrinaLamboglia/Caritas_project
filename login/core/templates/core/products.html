@@ -40,14 +40,25 @@
                                             {% else %}
                                                 <img src="{% static 'placeholder_image.jpg' %}" class="card-img-top" alt="Imagen no disponible">
                                             {% endif %}
+                                            
+
                                             <div class="card-body">
                                                 <h5 class="card-title">{{ publicacion.titulo }}</h5>
                                                 <p class="card-text">{{ publicacion.descripcion }}</p>
                                                 <div class="d-flex justify-content-between align-items-center">
-                                                    <a href="{% url 'ver_producto' publicacion.id %}" class="btn btn-outline-primary">Ver Detalles</a>
+
+                                                  <h5 class="card-title mb-0">
+                                                   <a href="{% url 'perfil_usuario' publicacion.usuario.id %}" class="btn btn-outline-primary solicitar-btn" data-publicacion-id="{{ publicacion.usuario.id }}">Perfil publicante</a>
+                                                   </h5>
+
                                                     <a href="{% url 'solicitar_trueque' publicacion.id %}" class="btn btn-outline-primary solicitar-btn" data-publicacion-id="{{ publicacion.id }}">Solicitar trueque</a>
                                                 </div>
                                             </div>
+
+
+
+
+
                                         </div>
                                     </div>
                                 {% endfor %}
@@ -61,41 +72,15 @@
                 </div>
 
                 {% if messages %}
-                    <div id="messages-container" style="position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); z-index: 1000;">
+                    <div >
                         {% for message in messages %}
-                            <div class="alert" style="width: 300px; padding: 15px; margin-bottom: 20px; border-radius: 5px; font-size: 16px; text-align: center; background-color: {% if message.tags == 'success' %}#d4edda; color: #155724{% elif message.tags == 'info' %}#cce5ff; color: #007bff{% elif message.tags == 'warning' %}#fff3cd; color: #856404{% elif message.tags == 'error' %}#f8d7da; color: #721c24{% endif %};">
                                 {{ message }}
-                            </div>
                         {% endfor %}
                     </div>
+                    {% endif %}
 
-                    <script>
-                        setTimeout(function() {
-                            var messagesContainer = document.getElementById('messages-container');
-                            messagesContainer.style.display = 'none';
-                        }, 5000);
-                    </script>
-                {% endif %}
-            </div>
-        </div>
 
-        <script>
-            document.addEventListener('DOMContentLoaded', function() {
-                const publicacionesSolicitadas = {{ publicaciones_solicitadas_ids|safe }};
-                const solicitarBtns = document.querySelectorAll('.solicitar-btn');
-
-                solicitarBtns.forEach(btn => {
-                    const publicacionId = btn.dataset.publicacionId;
-                    if (publicacionesSolicitadas.includes(parseInt(publicacionId))) {
-                        btn.classList.add('disabled');
-                        btn.textContent = 'Ya solicitado';
-                        btn.style.pointerEvents = 'none';
-                        btn.style.backgroundColor = '#ccc';
-                        btn.style.borderColor = '#ccc';
-                    }
-                });
-            });
-        </script>
+                  
     </body>
     </html>
 {% endif %}
