@@ -70,12 +70,28 @@ def products(request):
         'publicaciones_solicitadas_ids': list(publicaciones_solicitadas_ids)
     })
 
-#funcion para salir
-##def exit(request):
-##    logout(request)
-##    print("saliendo")
-##    return redirect('home')
 
+def verPerfil(request):
+    user = request.user
+    soli= Solicitud.objects.filter(publicacion__usuario=user,realizado=True)
+    publi = Solicitud.objects.filter(publicacion__usuario=user,estado=True)
+    return render(request, 'core\perfil\perfil.html', {'user' : user , 'elementos' : soli, 'publicaciones' : publi})
+
+def perfil_usuario(request, usuario_id, messages=None):
+    user = get_object_or_404(Usuario, id=usuario_id)
+    soli = Solicitud.objects.filter(publicacion__usuario=user, realizado=True)
+    publi = Solicitud.objects.filter(publicacion__usuario=user, estado=True)
+    
+    context = {
+        'user': user,
+        'elementos': soli,
+        'publicaciones': publi,
+    }
+
+    if messages:
+        context['messages'] = messages
+
+    return render(request, 'core/perfil/perfil.html', context)
 
 
 
@@ -351,6 +367,37 @@ def solicitar_trueque(request, publicacion_id):
          return redirect('products')
 
 
+#para cuando solicita desde el perfil
+#perfecto
+def solicitar_t(request, publicacion_id):
+    usu = request.user
+    publicacion = get_object_or_404(Publicacion, id=publicacion_id)
+    categoria = publicacion.categoria
+    mispublis = Publicacion.objects.filter(estado=True, categoria=categoria, usuario=usu)
+  
+    if mispublis.exists():
+        hoy = timezone.now().date()
+        solicitudes_hoy = Solicitud.objects.filter(solicitante=usu, fecha_solicitud__date=hoy)
+        
+        if usu.puntuacion >= 3 and solicitudes_hoy.count() < 5:
+            return render(request, 'core/listado/publicaciones_elegir.html', {'publicaciones': mispublis, 'publicacion_objetivo': publicacion})
+        else:
+            if usu.puntuacion < 3:
+                messages.error(request, 'No puede realizar esta acción porque no posee la calificación suficiente.')
+            else:
+                messages.error(request, 'No puede realizar esta acción porque alcanzó el límite de 5 trueques por día.')
+            
+            # Redirige al perfil correcto con los mensajes de error
+            return perfil_usuario(request, publicacion.usuario.id)
+    else:
+        messages.error(request, 'No puede realizar esta acción porque no cuenta con productos de la misma categoría para truequear.')
+        
+        # Redirige al perfil correcto con los mensajes de error
+        return perfil_usuario(request, publicacion.usuario.id)
+
+
+
+
 #perfecto
 def registrar_solicitud(request, publicacion_objetivo_id):
     if request.method == 'POST':
@@ -384,7 +431,7 @@ def registrar_solicitud(request, publicacion_objetivo_id):
 
 
 
-#perfecto
+#perfecto, se agrego trueques realizados para que puedan poner los botones de valorar aca 
 def filtro_trueques(request):
     filtro = request.GET.get('filtro')
     search_query = request.GET.get('search', '')
@@ -394,17 +441,19 @@ def filtro_trueques(request):
     # Filtrar las categorías según el valor del filtro
     if filtro == 'Aceptadas':
         soli = Solicitud.objects.filter(publicacion__usuario=usu,estado=True)
-    elif filtro == 'Pendientes':
-        soli = Solicitud.objects.filter(publicacion__usuario=usu,estado=False)
-    elif filtro == 'Realizado':
-        soli= Solicitud.objects.filter(publicacion__usuario=usu,realizado=True)
-        if search_query:
-            soli = soli.filter(
-                Q(publicacion__titulo__icontains=search_query) |
-                Q(publicacionOfrecida__titulo__icontains=search_query)
-            )
     else:
-        soli = Solicitud.objects.filter(publicacion__usuario=usu)
+         if filtro == 'Pendientes':
+            soli = Solicitud.objects.filter(publicacion__usuario=usu,estado=False)
+            if search_query:
+                  soli = soli.filter(
+                  Q(publicacion__titulo__icontains=search_query) |
+                  Q(publicacionOfrecida__titulo__icontains=search_query)
+                 )
+         else:
+             if filtro == 'Realizados':
+                 soli= Solicitud.objects.filter(publicacion__usuario=usu,realizado=True)
+             else:
+                soli = Solicitud.objects.filter(publicacion__usuario=usu)
 
     return render(request, 'listado/misTrueques.html', {'elementos': soli, 'filtro': filtro, 'search_query': search_query})
 

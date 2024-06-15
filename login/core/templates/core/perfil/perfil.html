@@ -1,0 +1,307 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Perfil</title>
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+    <link rel="icon" type="image/png" href="{% static 'imagenes/logoCaritas.jpg' %}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        .back-button {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            font-size: 24px;
+            color: #000;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            z-index: 10; /* Asegura que el botón de retroceso esté sobre las imágenes */
+        }
+        .back-button i {
+            margin-right: 8px;
+        }
+        .profile-container {
+            width: 80%;
+            margin: 0 auto;
+            padding: 20px;
+            position: relative; /* Permite posicionar elementos hijos relativos a este contenedor */
+        }
+        .cover-photo img {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+            border: 2px solid #cfe0ec;
+        }
+
+        .profile-header {
+            display: flex;
+            align-items: center;
+
+            align-self: baseline;
+
+            position: left;
+
+            bottom: 20px; /* Ajusta la posición vertical */
+            left: 20px; /* Ajusta la posición horizontal */
+            z-index: 20; /* Asegura que el perfil esté sobre el slideshow */
+            background-color: rgba(255, 255, 255, 0.8); /* Fondo semi-transparente para legibilidad */
+            padding: 10px;
+            border-radius: 8px;
+        }
+
+        .profile-picture {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            overflow: hidden;
+            border: 5px solid #4c8bb7;
+            margin-right: 20px;
+        }
+        .profile-picture img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        .profile-info h1 {
+            margin: 0;
+        }
+        .profile-details {
+            margin-top: 20px;
+        }
+        .profile-details h2 {
+            border-bottom: 2px solid #ddd;
+            padding-bottom: 10px;
+            margin-bottom: 20px;
+        }
+        .rating i {
+            color: #f39c12;
+        }
+        .columns {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+        .column {
+            flex: 1;
+            min-width: 300px;
+        }
+        .publication, .trade {
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        .publication img, .trade img {
+            width: 100px;
+            height: 100px;
+            object-fit: cover;
+            margin-right: 15px;
+        }
+        .publication-info, .trade-info {
+            flex: 1;
+        }
+        .publication, .trade {
+            display: flex;
+            align-items: center;
+        }
+        .slideshow-container {
+            max-width: 100%;
+            position: relative;
+            margin-top: 20px;
+            overflow: hidden;
+        }
+        .mySlides {
+            display: none;
+            width: 100%;
+            height: 400px; /* Ajusta la altura según tus necesidades */
+            object-fit: cover;
+        }
+
+
+    .solicitar-btn {
+        background-color: #4c8bb7;
+        color: #fff;
+        border: none;
+        padding: 10px 20px;
+        font-size: 16px;
+        border-radius: 5px;
+        transition: background-color 0.3s ease;
+        text-decoration: none;
+    }
+
+    .solicitar-btn:hover {
+        background-color: #357ca5;
+    }
+    .modal {
+            display: none; /* Ocultar inicialmente */
+            position: fixed;
+            z-index: 1000;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%);
+            background-color: rgba(0, 0, 0, 0.5); /* Fondo semitransparente */
+            padding: 20px;
+            border-radius: 8px;
+            color: white;
+            text-align: center;
+        }
+
+        .modal-content {
+            background-color: #f44336; /* Color de fondo rojo */
+            padding: 20px;
+            border-radius: 8px;
+        }
+
+        .close {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            color: white;
+            cursor: pointer;
+        }
+
+    </style>
+</head>
+<body>
+    <a href="{% url 'inicio' %}" class="back-button">
+        <i class="fas fa-arrow-left"></i> Inicio
+    </a>
+    <div class="profile-container">
+        <div class="slideshow-container">
+            <!-- Aquí se agregan las fotos dinámicamente -->
+            <img class="mySlides" src="{% static 'imagenes/Fondos.jpg' %}">
+            <img class="mySlides" src="{% static 'imagenes/foto1.jpg' %}">
+            <img class="mySlides" src="{% static 'imagenes/foto2.jpg' %}">
+            <img class="mySlides" src="{% static 'imagenes/foto3.jpg' %}">
+            <img class="mySlides" src="{% static 'imagenes/foto4.png' %}">
+        </div>
+
+        <div class="profile-header">
+            <div class="profile-picture">
+                <img src="{% static 'imagenes/logoCaritas.jpg' %}" alt="Profile Picture">
+            </div>
+            <div class="profile-info">
+                <h1>{{ user.nombre }}</h1>
+                <p>{{ "Usuario de Fundación cáritas" }}</p>
+            </div>
+        </div>
+
+
+        <div class="profile-details">
+            <h2>Información del Perfil</h2>
+            <p><strong>Apellido:</strong> {{ user.apellido }}</p>
+            <p><strong>Puntuación:</strong>
+                <span class="rating">
+                    {% for i in "12345" %}
+                        <i class="fa{% if user.puntuacion >= i|add:"0" %}s{% else %}r{% endif %} fa-star"></i>
+                    {% endfor %}
+                </span>
+            </p>
+            <p><strong>Última conexión:</strong> {{ user.last_login }}</p>
+            <p><strong>Fecha de Nacimiento:</strong> {{ user.fecha_nacimiento }}</p>
+        </div>
+        <div class="columns">
+            <div class="column">
+                <div class="profile-details">
+                    <h2>Trueques Realizados</h2>
+                    {% if elementos %}
+                        <ul>
+                            {% for elemento in elementos %}
+                                <li class="trade">
+                                    <img src="{{ elemento.publicacion.imagen.url }}" alt="{{ elemento.publicacion.titulo }}">
+                                    <div class="trade-info">
+                                        <p><strong>Título:</strong> {{ elemento.publicacion.titulo }}</p>
+                                        <p><strong>Solicitante:</strong> {{ elemento.solicitante.nombre }}</p>
+                                        <!-- Aquí debería ir la valoración de dicha solicitud -->
+                                    </div>
+                                </li>
+                            {% endfor %}
+                        </ul>
+                    {% else %}
+                        <p>No cuenta con trueques</p>
+                    {% endif %}
+                </div>
+            </div>
+            <div class="column">
+                <div class="profile-details">
+                    <h2>Publicaciones Activas</h2>
+                    {% if publicaciones %}
+                        <ul>
+                            {% for publicacion in publicaciones %}
+                                <li class="publication">
+                                    <img src="{{ publicacion.publicacion.imagen.url }}" alt="{{ publicacion.publicacion.titulo }}">
+                                    <div class="publication-info">
+                                        <p><strong>Título:</strong> {{ publicacion.publicacion.titulo }}</p>
+                                        <p><strong>Descripción:</strong> {{ publicacion.publicacion.descripcion }}</p>
+                                        <div class="d-flex justify-content-between align-items-center">
+                                            <a href="{% url 'solicitar_t' publicacion.publicacion.id %}" class="btn btn-outline-primary solicitar-btn" data-publicacion-id="{{ publicacion.publicacion.id }}">Solicitar trueque</a>
+                                        </div>
+                                    </div>
+                                </li>
+                            {% endfor %}
+                        </ul>
+                    {% else %}
+                        <p>No cuenta con publicaciones activas</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Asegúrate de que jQuery esté cargado -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        $(document).ready(function() {
+            var slideIndex = 0;
+            showSlides();
+
+            function showSlides() {
+                var slides = $(".mySlides");
+                for (var i = 0; i < slides.length; i++) {
+                    slides.eq(i).hide();
+                }
+                slideIndex++;
+                if (slideIndex > slides.length) { slideIndex = 1 }
+                slides.eq(slideIndex - 1).fadeIn(1000);
+                setTimeout(showSlides, 3000); // Cambia la imagen cada 3 segundos (3000 milisegundos)
+            }
+        });
+    </script>
+ {% if messages %}
+ <div id="myModal" class="modal">
+     <div class="modal-content">
+         {% for message in messages %}
+             <span class="close">&times;</span>
+             <p>{{ message }}</p>
+         {% endfor %}
+     </div>
+ </div>
+ {% endif %}
+
+ <script>
+     // Mostrar modal cuando hay mensajes
+     $(document).ready(function() {
+         {% if messages %}
+         $("#myModal").css("display", "block");
+         {% endif %}
+
+         // Cerrar modal al hacer clic en el botón de cerrar
+         $(".close").click(function() {
+             $("#myModal").css("display", "none");
+         });
+
+         // Cerrar modal si se hace clic fuera del contenido
+         $(window).click(function(event) {
+             if (event.target == $("#myModal")[0]) {
+                 $("#myModal").css("display", "none");
+             }
+         });
+     });
+ </script>
+
+</body>
+</html>

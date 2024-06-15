@@ -14,13 +14,49 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
     <!-- Custom CSS -->
     <link rel="stylesheet" type="text/css" href="{% static 'css/estilo.css' %}">
+    <style>
+        .profile-icon {
+            display: flex;
+            align-items: center;
+        }
+        .profile-icon .icon-circle {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background-color: #f8f9fa;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-left: 10px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        .profile-icon .icon-circle i {
+            font-size: 20px;
+            color: #343a40;
+        }
+    </style>
 </head>
 <body>
     <nav class="navbar navbar-expand-lg navbar-light bg-light">
+       
         <a class="navbar-brand" href="{% url 'home' %}">
             <img src="{% static 'imagenes/logoCaritas.jpg' %}" width="30" height="30" class="d-inline-block align-top" alt="Logo Fundación Cáritas">
             Fundación Cáritas
+            {% if user.is_authenticated %}
+            {% if user.tipo == "" %}
+                <div class="profile-icon">
+                    <a class="nav-link p-0 ml-3" href="{% url 'perfil' %}">
+                        <div class="icon-circle">
+                            <i class="fas fa-user"></i>
+                        </div>
+                    </a>
+                </div>
+                {% endif %}
+            {% endif %}
+
         </a>
+
+
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
         </button>
@@ -48,6 +84,9 @@
                         <li class="nav-item"><a class="nav-link" href="{% url 'mis_publicaciones' %}">Mis Publicaciones</a></li>
                         <li class="nav-item"><a class="nav-link" href="{% url 'products' %}">Productos</a></li>
                         <li class="nav-item"><a class="nav-link" href="{% url 'misTrueques' %}">Mis trueques</a></li>
+                       <!-- <li class="nav-item"><a class="nav-link" href="{% url 'perfil' %}">Perfil</a></li> -->
+                        
+
                     {% endif %}
                     <li class="nav-item">
                         <a class="nav-link" href="#" onclick="confirmarSalida()">Salir</a>
