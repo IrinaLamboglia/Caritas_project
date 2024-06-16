@@ -66,6 +66,8 @@
                     <a class="nav-link" href="{% url 'home' %}">Inicio</a>
                 </li>
                 {% if user.is_authenticated %}
+                  
+
                     {% if user.tipo == "administrador" %}
                         <li class="nav-item"><a class="nav-link" href="{% url 'agregar_categoria' %}">Agregar categoría</a></li>
                         <li class="nav-item"><a class="nav-link" href="{% url 'mostrarBaja' %}">Buscar ayudante</a></li>
@@ -73,18 +75,19 @@
                         <li class="nav-item"><a class="nav-link" href="{% url 'mostarCategoria' %}">Desactivar/Activar categorías</a></li>
                         <li class="nav-item"><a class="nav-link" href="{% url 'registro' %}">Alta Ayudante</a></li>
                         <li class="nav-item"><a class="nav-link" href="{% url 'mis_publicaciones1' %}">Eliminar Publicaciones</a></li>
-                        <li class="nav-item"><a class="nav-link" href={% url 'trueques_realizados' %}>Trueques realizados</a></li>
+                        <li class="nav-item"><a class="nav-link" href="{% url 'trueques_realizados' %}">Trueques realizados</a></li>
                     {% elif user.tipo == "ayudante" %}
                         <li class="nav-item"><a class="nav-link" href="{% url 'agregar_categoria' %}">Agregar categoría</a></li>
                         <li class="nav-item"><a class="nav-link" href="{% url 'mostarCategoria' %}">Desactivar/Activar categorías</a></li>
                         <li class="nav-item"><a class="nav-link" href="{% url 'mostrar_validacion' %}">Validar</a></li>
                         <li class="nav-item"><a class="nav-link" href="{% url 'visualizar_trueques_diarios' %}">Trueques diarios</a></li>
                         <li class="nav-item"><a class="nav-link" href="{% url 'efectivizar_trueque' %}">Efectivizar Trueques</a></li>
+                        <li class="nav-item"><a class="nav-link" href="{% url 'alta_producto' %}">Alta producto</a></li>
+
                     {% else %}
                         <li class="nav-item"><a class="nav-link" href="{% url 'mis_publicaciones' %}">Mis Publicaciones</a></li>
                         <li class="nav-item"><a class="nav-link" href="{% url 'products' %}">Productos</a></li>
                         <li class="nav-item"><a class="nav-link" href="{% url 'misTrueques' %}">Mis trueques</a></li>
-                       <!-- <li class="nav-item"><a class="nav-link" href="{% url 'perfil' %}">Perfil</a></li> -->
                         
 
                     {% endif %}

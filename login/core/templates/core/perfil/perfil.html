@@ -136,6 +136,18 @@
     .solicitar-btn:hover {
         background-color: #357ca5;
     }
+    
+    .solicitado{
+        background-color: #a5b0b9;
+        color: #fff;
+        border: none;
+        padding: 10px 20px;
+        font-size: 16px;
+        border-radius: 5px;
+        transition: background-color 0.3s ease;
+        text-decoration: none;
+    }
+    
     .modal {
             display: none; /* Ocultar inicialmente */
             position: fixed;
@@ -167,8 +179,8 @@
     </style>
 </head>
 <body>
-    <a href="{% url 'inicio' %}" class="back-button">
-        <i class="fas fa-arrow-left"></i> Inicio
+    <a href="{% url 'products' %}" class="back-button">
+        <i class="fas fa-arrow-left"></i> Volver
     </a>
     <div class="profile-container">
         <div class="slideshow-container">
@@ -233,12 +245,16 @@
                         <ul>
                             {% for publicacion in publicaciones %}
                                 <li class="publication">
-                                    <img src="{{ publicacion.publicacion.imagen.url }}" alt="{{ publicacion.publicacion.titulo }}">
+                                    <img src="{{ publicacion.imagen.url }}" alt="{{ publicacion.titulo }}">
                                     <div class="publication-info">
-                                        <p><strong>Título:</strong> {{ publicacion.publicacion.titulo }}</p>
-                                        <p><strong>Descripción:</strong> {{ publicacion.publicacion.descripcion }}</p>
+                                        <p><strong>Título:</strong> {{ publicacion.titulo }}</p>
+                                        <p><strong>Descripción:</strong> {{ publicacion.descripcion }}</p>
                                         <div class="d-flex justify-content-between align-items-center">
-                                            <a href="{% url 'solicitar_t' publicacion.publicacion.id %}" class="btn btn-outline-primary solicitar-btn" data-publicacion-id="{{ publicacion.publicacion.id }}">Solicitar trueque</a>
+                                            {% if publicacion.id in publicaciones_solicitadas_ids %}
+                                            <button class="solicitado" disabled>Ya solicitada</button>
+                                        {% else %}
+                                            <a href="{% url 'solicitar_t' publicacion.id %}" class="btn btn-outline-primary solicitar-btn" data-publicacion-id="{{ publicacion.id }}">Solicitar trueque</a>
+                                        {% endif %}
                                         </div>
                                     </div>
                                 </li>

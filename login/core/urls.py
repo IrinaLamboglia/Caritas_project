@@ -107,8 +107,14 @@ urlpatterns = [
     path('eliminar_publicacion/<int:publicacion_id>/', views.eliminar_publicacion, name='eliminar_publicacion'),
     
     path('truequesAdmin/',views.trueques_realizados,name='trueques_realizados'),
+
     path('perfil/',views.verPerfil,name='perfil'),
     path('perfil/<int:usuario_id>/',views.perfil_usuario,name='perfil_usuario'),
-    path('solicitar/<int:publicacion_id>/', views.solicitar_t, name='solicitar_t')
+    path('solicitar/<int:publicacion_id>/', views.solicitar_t, name='solicitar_t'),
+    path('alta/',views.alta_producto,name="alta_producto"),
+    path('filtro_publis/',views.filtro_publis,name="filtro_publis")
+
+
+
    
 ]

@@ -64,6 +64,7 @@ class Publicacion(models.Model):
     categoria = models.ForeignKey(Categoria, on_delete=models.CASCADE, default=True)
     imagen = models.ImageField(upload_to='media/publicaciones/', null=True, blank=True)
     trueque = models.BooleanField(default=False)
+    stock =models.IntegerField(default=0)
 
     def __str__(self):
         return self.titulo
@@ -116,9 +117,8 @@ class Solicitud(models.Model):
     fecha_solicitud = models.DateTimeField(default=timezone.now)
     estado = models.BooleanField(default=False)
     publicacionOfrecida = models.ForeignKey(Publicacion, on_delete=models.CASCADE, related_name='ofrecimientos')
-    rechazado = models.BooleanField(default=False)  # ESTO SE BORRA
     realizado= models.BooleanField(default=False)
-  
+    trueque = models.ForeignKey(Trueque, on_delete=models.CASCADE, null=True, blank=True, related_name='solicitudes') 
 
     def rechazar(self):
         self.realizado = True

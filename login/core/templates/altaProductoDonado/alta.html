@@ -1,0 +1,74 @@
+{% extends 'core/base.html' %}
+{% load static %}
+
+<link rel="stylesheet" type="text/css" href="{% static 'css/products-estilos.css' %}">
+
+
+{% block content %}
+
+{% if messages %}
+    {% for message in messages %}
+        <div class="alert alert-danger m-2" role="alert" style="background-color: #f8d7da; border-color: #f5c6cb; color: #721c24;">
+            {{ message }}
+        </div>
+    {% endfor %}
+{% endif %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Formulario de Publicación</title>
+    <!-- Enlazar el CSS de Bootstrap -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css">
+</head>
+<body>
+    <div class="container">
+        <h2>Alta producto</h2>
+        
+        <form action="{% url 'alta_producto' %}" method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+            <div class="form-group">
+                <label for="titulo">Título:</label>
+                <input type="text" class="form-control" id="titulo" name="titulo">
+            </div>
+            <div class="form-group">
+                <label for="descripcion">Descripción:</label>
+                <textarea class="form-control" id="descripcion" name="descripcion" rows="4"></textarea>
+            </div>
+            <div class="form-group">
+                <label for="nuevo">Estado:</label>
+                <select class="form-control" id="nuevo" name="nuevo">
+                    <option value="" disabled selected>Seleccione estado</option>
+                    <option value="True">Nuevo</option>
+                    <option value="False">Usado</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="categoria">Categoría:</label>
+                <select class="form-control" id="categoria" name="categoria">
+                    <option value="" disabled selected>Seleccione una categoría</option>
+                    {% for categoria in categorias %}
+                        {% if categoria.estado %}
+                            <option value="{{ categoria.id }}">{{ categoria.nombre }}</option>
+                        {% endif %}                    
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="stock">Stock:</label>
+                <input type="number" class="form-control" id="stock" name="stock" min="1" max="100" step="1">
+            </div>
+
+            <button type="submit" class="btn btn-primary">Publicar</button>
+        </form>
+    </div>
+</body>
+</html>
+
+
+  
+ 
+
+{% endblock %}
