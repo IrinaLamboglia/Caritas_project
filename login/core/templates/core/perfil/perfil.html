@@ -250,11 +250,15 @@
                                         <p><strong>Título:</strong> {{ publicacion.titulo }}</p>
                                         <p><strong>Descripción:</strong> {{ publicacion.descripcion }}</p>
                                         <div class="d-flex justify-content-between align-items-center">
+                                           {%if user != request.user %}
                                             {% if publicacion.id in publicaciones_solicitadas_ids %}
                                             <button class="solicitado" disabled>Ya solicitada</button>
                                         {% else %}
+
                                             <a href="{% url 'solicitar_t' publicacion.id %}" class="btn btn-outline-primary solicitar-btn" data-publicacion-id="{{ publicacion.id }}">Solicitar trueque</a>
-                                        {% endif %}
+                                        
+                                            {% endif %}
+                                            {% endif %}
                                         </div>
                                     </div>
                                 </li>

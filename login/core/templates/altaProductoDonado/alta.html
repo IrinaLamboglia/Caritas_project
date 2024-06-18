@@ -22,12 +22,21 @@
     <title>Formulario de Publicación</title>
     <!-- Enlazar el CSS de Bootstrap -->
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css">
+    <style>
+
+  .container{
+    background-color: #d5e5f8;
+    rotate: calc();
+ }
+
+
+    </style>
 </head>
-<body>
+<body>  
     <div class="container">
         <h2>Alta producto</h2>
         
-        <form action="{% url 'alta_producto' %}" method="post" enctype="multipart/form-data">
+        <form action="{% url 'alta_producto' %}" method="post" enctype="multipart/form-data" class="form">
             {% csrf_token %}
             <div class="form-group">
                 <label for="titulo">Título:</label>
