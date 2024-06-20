@@ -1,0 +1,468 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Estadísticas de Trueques</title>
+    <style>
+        h1{
+            text-align: center;
+            margin-top: 20px;
+        }
+        body{
+            align-items: center;
+            justify-content: center;
+            align-items: center;
+            background: #dddddd5f;
+        }
+        .porcentage{
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: 30vh;
+        
+    }
+    .porcentage h4{
+        font-size: 1.8rem;
+        font-family: inherit;
+    }
+    .porcentage hr{
+        margin-top: 0.5rem;
+        margin-bottom: 1rem;
+        border: 0;
+        border-top: 1px solid rgba(226, 9, 9, 0.51);
+        width: 200px;
+        border: 2px solid rgba(198, 12, 12, 0.729);
+    
+    }
+    .container2 {
+        position: relative;
+        width: 960px;
+        display: flex;
+        justify-content: space-around;
+    }
+    .container2 .card {
+        position: relative;
+        width: 250px;
+        background-color: rgba(0, 0, 0, 0.5);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 330px;
+        border-radius: 10px;
+        cursor: pointer;
+        text-align: center;
+        transition: 0.5s ;
+        margin-top: 23px;
+        }
+
+    .container2 .card:hover {
+        transform: translateY(-10px);
+        box-shadow: 0 15px 35px rgba(0, 0, 0, .5);
+        }
+
+    .container2 .card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -50;
+        width: 100%;
+        height: 100%;
+        background: rgba(226, 222, 222, 0.896);
+        pointer-events: none;
+        z-index: 1;
+    }   
+
+    .percent{
+        position: relative;
+        width: 150px;
+        height: 150px;
+        border-radius: 50%;
+        box-shadow: inset 0 0 50px #ffffff;
+        
+        z-index: 1000;
+    }
+
+        .percent.aceptados {
+            background-color: #4caf4f8a; /* Color de fondo para los trueques aceptados */
+        }
+        .percent.rechazados {
+            background-color: #f4433697; /* Color de fondo para los trueques rechazados */
+        }
+        .percent.penalizados {
+            background-color: #076eff7a; /* Color de fondo para los trueques penalizados */
+        }
+        .percent.categoria {
+            background-color: #ea07ff6f; /* Color de fondo para los trueques penalizados */
+        }
+        .percent.usuario {
+            background-color: #ff079c6f; /* Color de fondo para los trueques penalizados */
+        }
+        .percent.total_trueques{
+            background-color: #500ef66f; /* Color de fondo para los trueques penalizados */
+        
+        }
+    .percent .number{
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        border-radius: 50%;
+
+    }
+    .percent .number h2{
+        color: #000000;
+        font-weight: 700;
+        font-size: 40px;
+        transition: 0.5s;
+    }
+
+    .card:hover .percent .number h2{
+        color: rgb(0, 0, 0);
+        font-size: 60px;
+    }
+
+    .percent .number h2 span{
+        font-size: 24px;
+        color: #0f0e0e;
+    }
+
+    .card:hover .percent .number h2 span{
+        color: rgb(0, 0, 0);
+    }
+
+
+    .text{
+        position: relative;
+        color: white;
+        margin-top: 20px;
+        font-weight: 700;
+        font-size: 18px;
+        letter-spacing: 2px;
+        text-transform: uppercase;
+        transition: 0.5s ;
+    }
+    svg {
+        position: relative;
+        width: 150px;
+        height: 150px;
+        transform: rotate(-85deg)!important;
+    }
+
+    svg circle{
+        width: 100%;
+        height: 100%;
+        fill: none;
+        stroke: #fffffffc;
+        stroke-width: 10;
+        stroke-linecap: round !important;
+        transform: translate(5px, 5px);
+    }
+
+    svg circle:nth-child(2){
+        stroke-dasharray:440;
+        stroke-dashoffset: 440;
+    }
+
+    .card:nth-child(1) svg circle:nth-child(2){
+        stroke-dashoffset: calc(440 - (440 * 10) / 100);
+        stroke: rgb(255, 0, 0);
+    }
+    .card:nth-child(2) svg circle:nth-child(2){
+        stroke-dashoffset: calc(440 - (440 * 60) / 100);
+        stroke: rgb(255, 0, 0);
+    }
+    .card:nth-child(3) svg circle:nth-child(2){
+        stroke-dashoffset: calc(440 - (440 * 1) / 100);
+        stroke: rgb(255, 0, 0);
+    }
+    
+    @media only screen and (max-width:600px)
+    {
+        .porcentage{
+            height: auto;
+            margin-left: 30px;
+            flex-flow: row wrap;
+        }
+    } 
+
+    @media screen and(max-width: 1068px){
+        .container2{
+            max-width: 80rem;
+            min-width: 70rem;
+        }
+        .blog-post_img{
+            min-width: 30rem;
+            max-width: 30rem;
+        }
+    }
+
+    @media screen and (max-width: 868px){
+
+        .container2{
+            max-width: 80rem;
+        }
+    }
+    @media screen and (max-width: 768px){
+
+        .container2{
+            padding: 2.5rem;
+            flex-direction: column;
+            margin-top: 20px;
+        }
+
+        .blog-post_img{
+            min-width: 100%;
+            max-width: 100%;
+            transform: translate(0,-2rem);
+        }
+        .estadisticas {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            margin-top: 30px;
+        }
+        .estadisticas p {
+            font-size: 1.2rem;
+            margin-bottom: 10px;
+        }
+    }
+    .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            border: 2px solid #ddd;
+            border-radius: 10px;
+            background-color: #f5f5f5;
+            margin-bottom: 20px;
+        }
+        .btn {
+            margin: 2px; /* Añade margen a los botones para asegurar el espaciado */
+            padding: 10px 15px;
+            border: none;
+            border-radius: 4px;
+            background-color: #007bff;
+            color: white;
+            cursor: pointer;
+        }
+        .search-container input[type="text"] {
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            margin-right: 10px;
+        }
+
+        .search-container button[type="submit"] {
+            padding: 10px 15px;
+            border: none;
+            border-radius: 4px;
+            background-color: #007bff;
+            color: white;
+            cursor: pointer;
+        }
+
+        .search-container button[type="submit"]:hover {
+            background-color: #0056b3;
+        }
+        .search-container {
+            display: flex;
+            justify-content: flex-end;
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="todo">
+        <a href="{% url 'home' %}" class="btn btn-primary">Volver atrás</a>
+        <h1>Estadísticas</h1>
+        <div class="container">
+        <div class="porcentage">
+            <center>
+                <h4>Efectivizacion de Trueques para el {{ fecha_seleccionada_trueques  }}</h4>
+                <hr>
+                <form id="truequesForm" method="get">
+                   
+                    <label for="fecha_trueques">Selecciona una fecha para Trueques:</label>
+                    <input type="date" id="fecha_trueques" name="fecha_trueques" value="{{ fecha_seleccionada_trueques }}">
+                    <input type="hidden" name="fecha_usuarios" value="{{ fecha_seleccionada_usuarios }}">
+                    {% if categoria_seleccionada %}
+                            <input type="hidden" name="categoria" value="{{ categoria_seleccionada.id }}">
+                        {% else %}
+                            <input type="hidden" name="categoria" value="">
+                        {% endif %}
+                    <button type="submit">Actualizar estadísticas de Trueques</button>
+                </form>
+                <div class="container2">
+                    <div class="card">
+                        <div class="box">
+                            <div class="percent total_trueques">
+                                <svg>
+                                    <circle cx="70" cy="70" r="70"></circle>
+                                </svg>
+                                <div class="number">
+                                    <h2>{{ total_trueques | floatformat:"1" }}<span></span></h2>
+                                </div>
+                                <h3>Total de Trueques en Total:</h3>
+                            </div>
+                        </div>
+                    </div>
+                </div>    
+                <div class="container2">
+                    
+                    <div class="card">
+                        <div class="box">
+                            <div class="percent aceptados">
+                                <svg>
+                                    <circle cx="70" cy="70" r="70"></circle>
+                                </svg>
+                                <div class="number">
+                                    <h2>{{ porcentaje_aceptados | floatformat:"1" }}<span>%</span></h2>
+                                </div>
+                                <h3>Aceptados</h3>
+                            </div>
+                        </div>
+                    </div>
+    
+                    <div class="card">
+                        <div class="box">
+                            <div class="percent rechazados">
+                                <svg>
+                                    <circle cx="70" cy="70" r="70"></circle>
+                                </svg>
+                                <div class="number">
+                                    <h2>{{ porcentaje_rechazados | floatformat:"1" }}<span>%</span></h2>
+                                </div>
+                                <h3>Rechazados</h3>
+                            </div>
+                        </div>
+                    </div>
+            
+                    <div class="card">
+                        <div class="box">
+                            <div class="percent penalizados">
+                                <svg>
+                                    <circle cx="70" cy="70" r="70"></circle>
+                                </svg>
+                                <div class="number">
+                                    <h2>{{ porcentaje_penalizados | floatformat:"1" }}<span>%</span></h2>
+                                </div>
+                                <h3>Penalizados</h3>
+                            </div>
+                        </div>
+                    
+                    </div>
+                                
+                
+            </center>
+            </div>
+            </div>
+            <!-- Selección de categoría -->
+            <div class="container">
+            <div class="porcentage">
+                    <center>
+                        <h4>Publicaciones por categoria</h4>
+                        <hr>
+                    <form id="categoriaForm" method="get">
+                        <input type="hidden" name="fecha_trueques" value="{{ fecha_seleccionada_trueques }}">
+                        <input type="hidden" name="fecha_usuarios" value="{{ fecha_seleccionada_usuarios }}">
+                        
+                        <label for="categoria">Selecciona una categoría:</label>
+                        <select id="categoria" name="categoria">
+                            <option value="">...</option>
+                            {% for categoria in categorias %}
+                                <option value="{{ categoria.id }}" {% if categoria_seleccionada and categoria.id == categoria_seleccionada.id %} selected {% endif %}>
+                                    {{ categoria.nombre }}
+                                </option>
+                            {% endfor %}
+                        </select>
+                        <button type="submit">Filtrar</button>
+                    </form>
+                    
+                    <div class="container2">
+                        <div class="card">
+                            <div class="box">
+                                <div class="percent categoria">
+                                    <svg>
+                                        <circle cx="70" cy="70" r="70"></circle>
+                                    </svg>
+                                    <div class="number"> 
+                                        <h2>{{  total_publicaciones | floatformat:"1" }}<span></span></h2>
+                                    </div>
+                                    <h3>Total de Publicaciones </h3>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card">
+                            <div class="box">
+                                <div class="percent categoria">
+                                    <svg>
+                                        <circle cx="70" cy="70" r="70"></circle>
+                                    </svg>
+                                    <div class="number"> 
+                                        <h2>{{  porcentaje_publicaciones_categoria | floatformat:"1" }}<span>%</span></h2>
+                                    </div>
+                                    <h3>Total de Publicaciones categoria</h3>
+                                </div>
+                            </div>
+                        </div>
+                </div>
+                </center>
+            </div>
+        </div> 
+            <!--seleccion de usuarios registrados-->
+                            
+            <div class="container">
+                <div class="porcentage">
+                        <center>
+                            <h4>Usuarios registrados</h4>
+                            <hr>
+                            <form id="usuariosForm" method="get">
+                                <label for="fecha_usuarios">Selecciona una fecha para Usuarios:</label>
+                                <input type="date" id="fecha_usuarios" name="fecha_usuarios" value="{{ fecha_seleccionada_usuarios }}">
+                                <input type="hidden" name="fecha_trueques" value="{{ fecha_seleccionada_trueques }}">
+                                {% if categoria_seleccionada %}
+                                <input type="hidden" name="categoria" value="{{ categoria_seleccionada.id }}">
+                                {% else %}
+                                    <input type="hidden" name="categoria" value="">
+                                {% endif %}
+                                <button type="submit">Actualizar estadísticas de Usuarios</button>
+                            </form>
+                            <div class="container2"> 
+                                <div class="card">
+                                    <div class="percent usuario">
+                                        
+                                        <svg>
+                                            <circle cx="70" cy="70" r="70"></circle>
+                                            <circle cx="70" cy="70" r="70"></circle>
+                                        </svg>
+                                        <div class="number">
+                                            <h2>{{ total_usuarios_registrados}}<span></span></h2>
+                                        </div>
+                                        <h3>Usuarios Registrados</h3>
+                                    </div>
+                                </div>
+                                <div class="card">
+                                    <div class="percent usuario">
+                                        
+                                        <svg>
+                                            <circle cx="70" cy="70" r="70"></circle>
+                                            <circle cx="70" cy="70" r="70"></circle>
+                                        </svg>
+                                        <div class="number">
+                                            <h2>{{ porcentaje_usuarios_registrados }}<span>%</span></h2>
+                                        </div>
+                                        <h3>Usuarios Registrados</h3>
+                                    </div>
+                                </div>
+                            </div>
+                        </center>
+        </div>
+    
+    </div>
+</body>
+</html>
+

@@ -18,13 +18,13 @@ def efectivizar_trueques(request):
     filial_usuario = usuario_actual.filial_nombre
     
     # Obtener la fecha actual
-    today = "08/06/2024"
+    today = timezone.now().date() 
 
     # Inicializar trueques con una lista vacía
     trueques = []
 
     # Filtrar los turnos basados en la fecha y la filial del usuario
-    turnos = Turno.objects.filter( filial__nombre=filial_usuario)
+    turnos = Turno.objects.filter( filial__nombre=filial_usuario,fecha=today)
 
     # Verificar si se encontraron turnos para la fecha y la filial del usuario
     if turnos.exists():
@@ -41,7 +41,7 @@ def efectivizar_trueques(request):
             if not trueques.exists():
                 messages.error(request, 'No se encontró ningún trueque con el código proporcionado.')
         else:
-            trueques = Trueque.objects.filter(turno=turno_actual, aceptado=False, confirmado=True)
+            trueques = Trueque.objects.filter(turno=turno_actual, aceptado=False, confirmado=True,estado='pendiente')
     else:
         # Si no se encontraron turnos para la fecha y la filial del usuario, manejar la situación apropiadamente
         messages.error(request, 'No se encontraron turnos para la fecha y la filial especificadas.')
@@ -59,9 +59,14 @@ def aceptacion_trueque(request, id):
     print("estoty")
     trueque = Trueque.objects.get(id=id)
     trueque.aceptado = True
+    trueque.estado = 'aceptado'
     trueque.fecha_efectivizacion = timezone.now().date() # Asigna la fecha y hora actual
-    solicitud = Solicitud.objects.filter(solicitante=trueque.solicitante, publicacion__usuario=trueque.receptor).first()
-
+    # Encontrar la solicitud asociada al trueque basándose en solicitante y receptor
+    solicitud = Solicitud.objects.filter(
+        solicitante=trueque.solicitante,
+        publicacionOfrecida__usuario=trueque.receptor,
+        trueque=trueque
+    ).first()
     if solicitud:
         solicitud.realizado = True
         print("entro")
@@ -85,8 +90,12 @@ def rechazar_efectivizacion(request, id):
         messages.error(request, 'El Trueque no existe.')
         return redirect('efectivizar_trueque')
     
-    solicitud = Solicitud.objects.filter(solicitante=trueque.solicitante, publicacionOfrecida__usuario=trueque.receptor).first()
-
+    # Encontrar la solicitud asociada al trueque basándose en solicitante y receptor
+    solicitud = Solicitud.objects.filter(
+        solicitante=trueque.solicitante,
+        publicacionOfrecida__usuario=trueque.receptor,
+        trueque=trueque
+    ).first()
     if solicitud:
         # Reactivar las publicaciones
         solicitud.estado = False
@@ -100,8 +109,9 @@ def rechazar_efectivizacion(request, id):
         # Eliminar la solicitud
         solicitud.delete()
 
-    # Eliminar el Trueque
-    trueque.delete()
+    trueque.fecha_efectivizacion = timezone.now().date() 
+    trueque.estado = 'rechazado'
+    trueque.save()
 
     messages.success(request, 'El trueque ha sido rechazado y las publicaciones reactivadas.')
     return redirect('efectivizar_trueque')
@@ -118,7 +128,12 @@ def penalizar_trueque(request, trueque_id):
         usuario.save()
 
         # Manejar la solicitud (reactivar publicaciones y eliminar solicitud)
-        solicitud = Solicitud.objects.filter(solicitante=trueque.solicitante, publicacionOfrecida__usuario=trueque.receptor).first()
+        # Encontrar la solicitud asociada al trueque basándose en solicitante y receptor
+        solicitud = Solicitud.objects.filter(
+            solicitante=trueque.solicitante,
+            publicacionOfrecida__usuario=trueque.receptor,
+            trueque=trueque
+        ).first()
         if solicitud:
             solicitud.estado=False
             solicitud.publicacion.trueque = False
@@ -130,8 +145,9 @@ def penalizar_trueque(request, trueque_id):
             # Eliminar la solicitud
             solicitud.delete()
 
-        # Eliminar el trueque
-        trueque.delete()
+        trueque.fecha_efectivizacion = timezone.now().date() 
+        trueque.estado = 'penalizado'
+        trueque.save()
 
         # Mensaje de éxito
         messages.success(request, 'El usuario ha sido penalizado y las publicaciones reactivadas.')

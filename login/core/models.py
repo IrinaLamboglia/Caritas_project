@@ -28,7 +28,7 @@ class Usuario(AbstractUser):
     last_login = models.DateTimeField(verbose_name='last login', blank=True, null=True)
     tipo= models.CharField(max_length=30, default="")
     puntuacion = models.DecimalField(max_digits=10, decimal_places=2)
-
+    fecha = models.DateTimeField(null=True, blank=True) #para las estadisticas
     # Campo filial solo para ayudantes
     filial_nombre = models.CharField(max_length=100, null=True, blank=True)
 
@@ -90,6 +90,13 @@ class Turno(models.Model):
         super(Turno, self).save(*args, **kwargs)
 
 class Trueque(models.Model):
+    ESTADO_CHOICES = [
+        ('aceptado', 'Aceptado'),
+        ('penalizado', 'Penalizado'),
+        ('rechazado', 'Rechazado'),
+        ('pendiente', 'Pendiente'), 
+    ]
+    estado = models.CharField(max_length=10, choices=ESTADO_CHOICES, default='pendiente')#es para las estadisticas de trueques 
     solicitante = models.ForeignKey(Usuario, related_name='solicitante', on_delete=models.CASCADE)
     receptor = models.ForeignKey(Usuario, related_name='receptor', on_delete=models.CASCADE)
     turno = models.ForeignKey(Turno, on_delete=models.SET_NULL, null=True, blank=True)

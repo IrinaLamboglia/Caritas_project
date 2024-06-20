@@ -238,6 +238,7 @@ def formularioreg(request):
             print("es valido")
             usuario = form.save(commit=False)
             usuario.puntuacion=5
+            usuario.fecha= timezone.now().date() 
             if request.user.is_authenticated and request.user.tipo == "administrador":
                 filial_nombre = request.POST.get('filial')
                 
