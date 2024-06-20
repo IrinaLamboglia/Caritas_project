@@ -478,7 +478,7 @@ def filtro_trueques(request):
     usu = request.user 
 
 
-    # Filtrar las categorías según el valor del filtro
+   
     if filtro == 'Aceptadas':
         soli = Solicitud.objects.filter(publicacion__usuario=usu,estado=True)
     else:

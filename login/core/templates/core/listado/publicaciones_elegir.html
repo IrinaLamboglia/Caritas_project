@@ -107,7 +107,7 @@
             {% endfor %}
         </ul>
     {% endif %}
-        <h1>Selecciona una Publicación para Trueque</h1>
+        <h1>Selecciona una publicación para truequear</h1>
         <form method="post" action="{% url 'registrar_solicitud' publicacion_objetivo.id %}">
             {% csrf_token %}
             <ul>

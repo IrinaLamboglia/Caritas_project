@@ -127,6 +127,8 @@
                                             <div class="card-body">
                                                 <h5 class="card-title"><strong>Titulo: </strong> {{ publicacion.titulo }}</h5>
                                                 <p class="card-text"><strong>Descripción: </strong> {{ publicacion.descripcion }}</p>
+                                                <p class="card-text"><strong>Categoria: </strong> {{ publicacion.categoria.nombre}}</p>
+
                                                 {% if publicacion.stock != 0 %}
                                                 <p><strong>Stock: </strong> {{publicacion.stock }}</p>
                                                 {% endif %}
