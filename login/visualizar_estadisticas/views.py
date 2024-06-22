@@ -19,11 +19,11 @@ def estadisticas_trueques(request):
     trueques_penalizados = Trueque.objects.filter(estado='penalizado', fecha_efectivizacion__date=fecha_trueques).count()
     
     #saco el total de trueques que tenemos 
-    trueques_aceptados = Trueque.objects.filter(estado='aceptado').count()
-    trueques_penalizados = Trueque.objects.filter(estado='penalizado').count()
-    trueques_rechazados = Trueque.objects.filter(estado='rechazado').count()
+    trueques_aceptados2 = Trueque.objects.filter(estado='aceptado').count()
+    trueques_penalizados2 = Trueque.objects.filter(estado='penalizado').count()
+    trueques_rechazados2 = Trueque.objects.filter(estado='rechazado').count()
 
-    total = trueques_aceptados + trueques_penalizados + trueques_rechazados
+    total = trueques_aceptados2 + trueques_penalizados2 + trueques_rechazados2
 
     
     # Calcular porcentajes

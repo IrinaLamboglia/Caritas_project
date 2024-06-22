@@ -30,7 +30,7 @@ def efectivizar_trueques(request):
     if turnos.exists():
         # Si se encontraron turnos, obtener el primero
         turno_actual = turnos.first()
-        
+        print(turno_actual)
         # Filtrar los Trueques basados en el turno actual y otros criterios
         query = request.GET.get('q')
         if query:
@@ -41,6 +41,7 @@ def efectivizar_trueques(request):
             if not trueques.exists():
                 messages.error(request, 'No se encontró ningún trueque con el código proporcionado.')
         else:
+            print("entro")
             trueques = Trueque.objects.filter(turno=turno_actual, aceptado=False, confirmado=True,estado='pendiente')
     else:
         # Si no se encontraron turnos para la fecha y la filial del usuario, manejar la situación apropiadamente
@@ -56,101 +57,81 @@ def enviar_correo_ayudante(ayudante):
     send_mail(asunto, mensaje, 'tucorreo@gmail.com', [correo_destino])
 
 def aceptacion_trueque(request, id):
-    print("estoty")
-    trueque = Trueque.objects.get(id=id)
+    trueque = get_object_or_404(Trueque, id=id)
     trueque.aceptado = True
     trueque.estado = 'aceptado'
-    trueque.fecha_efectivizacion = timezone.now().date() # Asigna la fecha y hora actual
-    # Encontrar la solicitud asociada al trueque basándose en solicitante y receptor
-    solicitud = Solicitud.objects.filter(
-        solicitante=trueque.solicitante,
-        publicacionOfrecida__usuario=trueque.receptor,
-        trueque=trueque
-    ).first()
+    trueque.fecha_efectivizacion = timezone.now().date()
+    
+    solicitud = Solicitud.objects.filter(trueque=id ).first()
+    
     if solicitud:
+        print("entro acep")
         solicitud.realizado = True
-        print("entro")
-        solicitud.publicacion.estado=False
+        solicitud.estado = True
+        solicitud.publicacion.estado = False
+        solicitud.trueque=trueque
         solicitud.save()
 
     trueque.save()
     enviar_correo_ayudante(trueque.solicitante)
     enviar_correo_ayudante(trueque.receptor)
 
-
     return redirect('efectivizar_trueque')
 
 
+
+
 def rechazar_efectivizacion(request, id):
-    print(id)
     try:
         trueque = Trueque.objects.get(id=id)
     except Trueque.DoesNotExist:
-        # Manejar el caso en que no se encuentre el Trueque con el ID proporcionado
         messages.error(request, 'El Trueque no existe.')
         return redirect('efectivizar_trueque')
     
-    # Encontrar la solicitud asociada al trueque basándose en solicitante y receptor
     solicitud = Solicitud.objects.filter(
         solicitante=trueque.solicitante,
         publicacionOfrecida__usuario=trueque.receptor,
         trueque=trueque
     ).first()
     if solicitud:
-        # Reactivar las publicaciones
         solicitud.estado = False
-        solicitud.publicacion.trueque = False
-        solicitud.publicacionOfrecida.trueque = False
-
-        solicitud.publicacionOfrecida.estado = False
+        solicitud.publicacion.estado = True
+        solicitud.publicacionOfrecida.estado = True
         solicitud.publicacion.save()
         solicitud.publicacionOfrecida.save()
-         
-        # Eliminar la solicitud
         solicitud.delete()
 
-    trueque.fecha_efectivizacion = timezone.now().date() 
+    trueque.fecha_efectivizacion = timezone.now().date()
     trueque.estado = 'rechazado'
     trueque.save()
 
     messages.success(request, 'El trueque ha sido rechazado y las publicaciones reactivadas.')
     return redirect('efectivizar_trueque')
 
-# views.py
 def penalizar_trueque(request, trueque_id):
     if request.method == 'POST':
-        # Obtener el trueque a penalizar
         trueque = get_object_or_404(Trueque, id=trueque_id)
-
-        # Penalizar al usuario asociado al trueque
-        usuario = trueque.solicitante  # Obtener el usuario solicitante del trueque
+        usuario = trueque.solicitante
         usuario.puntuacion -= 1
         usuario.save()
 
-        # Manejar la solicitud (reactivar publicaciones y eliminar solicitud)
-        # Encontrar la solicitud asociada al trueque basándose en solicitante y receptor
         solicitud = Solicitud.objects.filter(
             solicitante=trueque.solicitante,
             publicacionOfrecida__usuario=trueque.receptor,
             trueque=trueque
         ).first()
         if solicitud:
-            solicitud.estado=False
-            solicitud.publicacion.trueque = False
-            solicitud.publicacionOfrecida.trueque = False
-
-            solicitud.publicacionOfrecida.estado = False
+            solicitud.estado = False
+            solicitud.publicacion.estado = True
+            solicitud.publicacionOfrecida.estado = True
             solicitud.publicacion.save()
             solicitud.publicacionOfrecida.save()
-            # Eliminar la solicitud
             solicitud.delete()
 
-        trueque.fecha_efectivizacion = timezone.now().date() 
+        trueque.fecha_efectivizacion = timezone.now().date()
         trueque.estado = 'penalizado'
         trueque.save()
 
-        # Mensaje de éxito
         messages.success(request, 'El usuario ha sido penalizado y las publicaciones reactivadas.')
 
-    # Redireccionar a la página de efectivizar_trueques independientemente del método de solicitud
     return redirect('efectivizar_trueque')

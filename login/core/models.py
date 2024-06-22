@@ -4,6 +4,7 @@ from django.contrib.auth.models import AbstractUser
 from django.utils import timezone
 import secrets
 
+from django.conf import settings
 
 # Create your models here.
 
@@ -141,4 +142,23 @@ class Solicitud(models.Model):
         self.publicacion.save()
         self.publicacionOfrecida.save()
         self.save()  
-    
+
+
+class Valoracion(models.Model):
+    ESTRELLAS_CHOICES = [
+        (1, '1 estrella'),
+        (2, '2 estrellas'),
+        (3, '3 estrellas'),
+        (4, '4 estrellas'),
+        (5, '5 estrellas'),
+    ]
+
+    trueque = models.ForeignKey(Trueque, on_delete=models.CASCADE, related_name='valoraciones')
+    solicitud = models.ForeignKey(Solicitud, on_delete=models.CASCADE, related_name='valoraciones')
+    usuario = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    estrellas = models.IntegerField(choices=ESTRELLAS_CHOICES)
+    comentario = models.TextField(blank=True, null=True)
+    fecha_valoracion = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f'{self.trueque} - {self.usuario} - {self.estrellas} estrellas'

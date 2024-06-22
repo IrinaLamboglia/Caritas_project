@@ -472,29 +472,33 @@ def registrar_solicitud(request, publicacion_objetivo_id):
 
 
 
-#perfecto, se agrego trueques realizados para que puedan poner los botones de valorar aca 
+
 def filtro_trueques(request):
     filtro = request.GET.get('filtro')
     search_query = request.GET.get('search', '')
-    usu = request.user 
+    usu = request.user
 
-
-    # Filtrar las categorías según el valor del filtro
     if filtro == 'Aceptadas':
-        soli = Solicitud.objects.filter(publicacion__usuario=usu,estado=True)
+        soli = Solicitud.objects.filter(publicacion__usuario=usu, estado=True)
+    elif filtro == 'Pendientes':
+        soli = Solicitud.objects.filter(publicacion__usuario=usu, estado=False)
+        if search_query:
+            soli = soli.filter(
+                Q(publicacion__titulo__icontains=search_query) |
+                Q(publicacionOfrecida__titulo__icontains=search_query)
+            )
+    elif filtro == 'Pendientes en valoración':
+        # Filtrar por solicitudes aceptadas y pendientes de valoración por ambos usuarios
+        soli = Solicitud.objects.filter(
+            Q(publicacion__usuario=usu) | Q(publicacionOfrecida__usuario=usu),  # Usuario es solicitante o receptor
+            estado=True,  # Estado aceptado
+            realizado=True,  # Solicitud realizada
+            trueque__isnull=False,
+            trueque__valoraciones__isnull=True  # Sin valoraciones para este trueque
+        ).distinct() 
+
     else:
-         if filtro == 'Pendientes':
-            soli = Solicitud.objects.filter(publicacion__usuario=usu,estado=False)
-            if search_query:
-                  soli = soli.filter(
-                  Q(publicacion__titulo__icontains=search_query) |
-                  Q(publicacionOfrecida__titulo__icontains=search_query)
-                 )
-         else:
-             if filtro == 'Realizados':
-                 soli= Solicitud.objects.filter(publicacion__usuario=usu,realizado=True)
-             else:
-                soli = Solicitud.objects.filter(publicacion__usuario=usu)
+        soli = Solicitud.objects.filter(publicacion__usuario=usu)
 
     return render(request, 'listado/misTrueques.html', {'elementos': soli, 'filtro': filtro, 'search_query': search_query})
 
