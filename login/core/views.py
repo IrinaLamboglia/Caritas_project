@@ -77,6 +77,10 @@ def verPerfil(request):
     publi = Solicitud.objects.filter(publicacion__usuario=user,estado=True)
     return render(request, 'core\perfil\perfil.html', {'user' : user , 'elementos' : soli, 'publicaciones' : publi})
 
+def listarBusqueda(request, user_id):
+    user = get_object_or_404(Usuario, id=user_id)
+    return render(request, 'core/perfil/perfil.html', {'user': user})
+
 def perfil_usuario(request, usuario_id, messages=None):
     user = get_object_or_404(Usuario, id=usuario_id)
     soli = Solicitud.objects.filter(publicacion__usuario=user, realizado=True)
@@ -672,5 +676,11 @@ def trueques_realizados(request):
 
 
 
+def buscar_perfil(request):
+    query = request.GET.get('query')
+    results = []
 
-
+    if query:
+        results = Usuario.objects.filter(username__icontains=query).exclude(tipo__in=['ayudante', 'administrador'])    
+    
+    return render(request, 'core/perfil/buscar_perfil.html', {'query': query, 'results': results})

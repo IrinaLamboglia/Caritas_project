@@ -72,3 +72,5 @@ def editar_ayudante(request, id):
                 return redirect('home')
         
     return render(request, 'admin/editar_ayudante.html', {'ayudante': ayudante})
+
+

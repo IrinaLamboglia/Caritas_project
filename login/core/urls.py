@@ -109,6 +109,9 @@ urlpatterns = [
     path('truequesAdmin/',views.trueques_realizados,name='trueques_realizados'),
     path('perfil/',views.verPerfil,name='perfil'),
     path('perfil/<int:usuario_id>/',views.perfil_usuario,name='perfil_usuario'),
-    path('solicitar/<int:publicacion_id>/', views.solicitar_t, name='solicitar_t')
+    path('solicitar/<int:publicacion_id>/', views.solicitar_t, name='solicitar_t'),
+    path('buscar_perfil/',views.buscar_perfil, name='buscar_perfil'),
+    path('perfil/<int:user_id>/', views.listarBusqueda, name='listarBusqueda'),  # Ruta para el perfil del usuario específico
+
    
 ]
