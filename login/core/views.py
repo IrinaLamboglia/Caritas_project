@@ -106,6 +106,31 @@ def perfil_usuario(request, usuario_id, messages=None):
 
     return render(request, 'core/perfil/perfil.html', context)
 
+def verPerfil(request):
+    user = request.user
+    soli= Solicitud.objects.filter(publicacion__usuario=user,realizado=True)
+    publi = Solicitud.objects.filter(publicacion__usuario=user,estado=True)
+    return render(request, 'core\perfil\perfil.html', {'user' : user , 'elementos' : soli, 'publicaciones' : publi})
+
+def listarBusqueda(request, user_id):
+    user = get_object_or_404(Usuario, id=user_id)
+    return render(request, 'core/perfil/perfil.html', {'user': user})
+
+def perfil_usuario(request, usuario_id, messages=None):
+    user = get_object_or_404(Usuario, id=usuario_id)
+    soli = Solicitud.objects.filter(publicacion__usuario=user, realizado=True)
+    publi = Solicitud.objects.filter(publicacion__usuario=user, estado=True)
+    
+    context = {
+        'user': user,
+        'elementos': soli,
+        'publicaciones': publi,
+    }
+
+    if messages:
+        context['messages'] = messages
+
+    return render(request, 'core/perfil/perfil.html', context)
 
 
 
@@ -400,9 +425,9 @@ def solicitar_trueque(request, publicacion_id):
 #para cuando solicita desde el perfil
 #perfecto
 def solicitar_t(request, publicacion_id):
-    usu = request.user #yo
-    publicacion = get_object_or_404(Publicacion, id=publicacion_id) #la public q solicite 
-    categoria = publicacion.categoria 
+    usu = request.user
+    publicacion = get_object_or_404(Publicacion, id=publicacion_id)
+    categoria = publicacion.categoria
     mispublis = Publicacion.objects.filter(estado=True, categoria=categoria, usuario=usu)
   
     if mispublis.exists():
@@ -730,3 +755,11 @@ def trueques_realizados(request):
 
 
 
+def buscar_perfil(request):
+    query = request.GET.get('query')
+    results = []
+
+    if query:
+        results = Usuario.objects.filter(username__icontains=query).exclude(tipo__in=['ayudante', 'administrador'])    
+    
+    return render(request, 'core/perfil/buscar_perfil.html', {'query': query, 'results': results})

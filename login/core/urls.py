@@ -112,9 +112,9 @@ urlpatterns = [
     path('perfil/<int:usuario_id>/',views.perfil_usuario,name='perfil_usuario'),
     path('solicitar/<int:publicacion_id>/', views.solicitar_t, name='solicitar_t'),
     path('alta/',views.alta_producto,name="alta_producto"),
-    path('filtro_publis/',views.filtro_publis,name="filtro_publis")
-
-
+    path('filtro_publis/',views.filtro_publis,name="filtro_publis"),
+    path('buscar_perfil/',views.buscar_perfil, name='buscar_perfil'),
+    path('perfil/<int:user_id>/', views.listarBusqueda, name='listarBusqueda'),  # Ruta para el perfil del usuario específico
 
    
-]
+    ]

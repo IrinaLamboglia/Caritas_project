@@ -7,6 +7,7 @@
     <title>{% block title %}Cáritas Argentina{% endblock %}</title>
     <link rel="icon" type="image/png" href="{% static 'imagenes/logoCaritas.jpg' %}">
     <!-- Bootstrap CSS -->
+     
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
     <!-- Leaflet CSS -->
     <link rel="stylesheet" href="{% static 'leaflet/leaflet.css' %}">
@@ -14,31 +15,10 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
     <!-- Custom CSS -->
     <link rel="stylesheet" type="text/css" href="{% static 'css/estilo.css' %}">
-    <style>
-        .profile-icon {
-            display: flex;
-            align-items: center;
-        }
-        .profile-icon .icon-circle {
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            background-color: #f8f9fa;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin-left: 10px;
-            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
-        }
-        .profile-icon .icon-circle i {
-            font-size: 20px;
-            color: #88bcf0;
-        }
-    </style>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" integrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W6A==" crossorigin="anonymous" referrerpolicy="no-referrer" />
 </head>
 <body>
-    <nav class="navbar navbar-expand-lg navbar-light bg-light">
-       
+    <nav class="navbar navbar-expand-lg navbar-light bg-light border-bottom border-body">
         <a class="navbar-brand" href="{% url 'home' %}">
             <img src="{% static 'imagenes/logoCaritas.jpg' %}" width="30" height="30" class="d-inline-block align-top" alt="Logo Fundación Cáritas">
             Fundación Cáritas
@@ -60,37 +40,72 @@
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
         </button>
+
         <div class="collapse navbar-collapse" id="navbarNav">
             <ul class="navbar-nav ml-auto">
                 <li class="nav-item">
                     <a class="nav-link" href="{% url 'home' %}">Inicio</a>
                 </li>
+
                 {% if user.is_authenticated %}
                   
 
                     {% if user.tipo == "administrador" %}
-                        <li class="nav-item"><a class="nav-link" href="{% url 'agregar_categoria' %}">Agregar categoría</a></li>
-                        <li class="nav-item"><a class="nav-link" href="{% url 'mostrarBaja' %}">Buscar ayudante</a></li>
-                        <li class="nav-item"><a class="nav-link" href="{% url 'listadoBloqueados' %}">Ver bloqueados</a></li>
-                        <li class="nav-item"><a class="nav-link" href="{% url 'mostarCategoria' %}">Desactivar/Activar categorías</a></li>
-                        <li class="nav-item"><a class="nav-link" href="{% url 'registro' %}">Alta Ayudante</a></li>
-                        <li class="nav-item"><a class="nav-link" href="{% url 'mis_publicaciones1' %}">Eliminar Publicaciones</a></li>
-                        <li class="nav-item"><a class="nav-link" href="{% url 'trueques_realizados' %}">Trueques realizados</a></li>
+                    <div class="dropdown">
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownAdmin" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                Administrador
+                            </a>
+                            <div class="dropdown-menu" aria-labelledby="navbarDropdownAdmin">
+                                <a class="dropdown-item" href="{% url 'agregar_categoria' %}">Agregar categoría</a>
+                                <a class="dropdown-item" href="{% url 'mostrarBaja' %}">Buscar ayudante</a>
+                                <a class="dropdown-item" href="{% url 'listadoBloqueados' %}">Ver bloqueados</a>
+                                <a class="dropdown-item" href="{% url 'mostarCategoria' %}">Desactivar/Activar categorías</a>
+                                <a class="dropdown-item" href="{% url 'registro' %}">Alta Ayudante</a>
+                                <a class="dropdown-item" href="{% url 'mis_publicaciones1' %}">Eliminar Publicaciones</a>
+                                <a class="dropdown-item" href="{% url 'trueques_realizados' %}">Trueques realizados</a>
+                            </div>
+                        </li>
+                    </div>
                     {% elif user.tipo == "ayudante" %}
-                        <li class="nav-item"><a class="nav-link" href="{% url 'agregar_categoria' %}">Agregar categoría</a></li>
-                        <li class="nav-item"><a class="nav-link" href="{% url 'mostarCategoria' %}">Desactivar/Activar categorías</a></li>
-                        <li class="nav-item"><a class="nav-link" href="{% url 'mostrar_validacion' %}">Validar</a></li>
-                        <li class="nav-item"><a class="nav-link" href="{% url 'visualizar_trueques_diarios' %}">Trueques diarios</a></li>
-                        <li class="nav-item"><a class="nav-link" href="{% url 'efectivizar_trueque' %}">Efectivizar Trueques</a></li>
-                        <li class="nav-item"><a class="nav-link" href="{% url 'alta_producto' %}">Alta producto</a></li>
+                    <div class="dropdown">
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownAyudante" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                Ayudante
+                            </a>
+                            <div class="dropdown-menu" aria-labelledby="navbarDropdownAyudante">
+                                <a class="dropdown-item" href="{% url 'agregar_categoria' %}">Agregar categoría</a>
+                                <a class="dropdown-item" href="{% url 'mostarCategoria' %}">Desactivar/Activar categorías</a>
+                                <a class="dropdown-item" href="{% url 'mostrar_validacion' %}">Validar</a>
+                                <a class="dropdown-item" href="{% url 'visualizar_trueques_diarios' %}">Trueques diarios</a>
+                                <a class="dropdown-item" href="{% url 'efectivizar_trueque' %}">Efectivizar Trueques</a>
+                                <a class="dropdown-item" href="{% url 'alta_producto' %}">Alta producto</a></li>
 
+                         </div>
+                        </li>
+                    </div>
                     {% else %}
-                        <li class="nav-item"><a class="nav-link" href="{% url 'mis_publicaciones' %}">Mis Publicaciones</a></li>
-                        <li class="nav-item"><a class="nav-link" href="{% url 'products' %}">Productos</a></li>
-                        <li class="nav-item"><a class="nav-link" href="{% url 'misTrueques' %}">Mis trueques</a></li>
-                        
+                    <div class="dropdown">
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownAdmin" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                Usuario
+                            </a>
+                            <div class="dropdown-menu" aria-labelledby="navbarDropdownUsuario">
+                                <a class="dropdown-item" href="{% url 'mis_publicaciones' %}">Mis Publicaciones</a>
+                                <a class="dropdown-item" href="{% url 'products' %}">Productos</a>
+                                <a class="dropdown-item" href="{% url 'misTrueques' %}">Mis trueques</a>
+                            </div>
+                        </li>
+                    </div>
 
+                    <li class="nav-item">
+                        <form class="form-inline my-2 my-lg-0 ml-lg-2" method="GET" action="{% url 'buscar_perfil' %}" role="search">
+                            <input class="form-control mr-sm-2" type="search" name="query" placeholder="Buscar" aria-label="Search">
+                            <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Buscar</button>
+                        </form>
+                    </li>
                     {% endif %}
+
                     <li class="nav-item">
                         <a class="nav-link" href="#" onclick="confirmarSalida()">Salir</a>
                         <!-- Formulario de cierre de sesión -->
@@ -98,47 +113,32 @@
                             {% csrf_token %}
                         </form>
                     </li>
+        
                 {% else %}
-                    <li class="nav-item"><a class="nav-link" href="{% url 'login' %}">Ingresar</a></li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'login' %}">Ingresar</a>
+                    </li>
                 {% endif %}
             </ul>
         </div>
     </nav>
+
     <div class="container mt-5">
         {% block content %}{% endblock %}
     </div>
 
     <!-- Error Modal -->
-    <div class="modal fade" id="errorModal" tabindex="-1" role="dialog" aria-labelledby="errorModalLabel" aria-hidden="true">
-        <div class="modal-dialog" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="errorModalLabel">Mensaje</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-                <div class="modal-body">
-                    {% if messages %}
-                        {% for message in messages %}
-                            <div class="alert alert-{{ message.tags }}">
-                                {{ message }}
-                            </div>
-                        {% endfor %}
-                    {% endif %}
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
-                </div>
-            </div>
-        </div>
-    </div>
+    {% include 'error_modal.html' %}
+
+    {% include "footer.html"%} 
+
 
     <!-- Scripts -->
     <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
     <script src="{% static 'leaflet/leaflet.js' %}"></script>
+
     <script>
         function confirmarSalida() {
             var confirmacion = confirm("¿Estás seguro de que deseas cerrar sesión?");
@@ -151,6 +151,8 @@
             {% if messages %}
                 $('#errorModal').modal('show');
             {% endif %}
+            // Este script activa los dropdowns de Bootstrap
+            $('.dropdown-toggle').dropdown();
         });
     </script>
 </body>
