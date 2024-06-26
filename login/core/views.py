@@ -68,8 +68,6 @@ def products(request):
     #parece q setean trueque en false cuando no esta disponible 
     publicaciones = Publicacion.objects.filter(estado=True, estadoCategoria=True, trueque=False, stock=0).exclude(usuario=usuario_actual)
     publicaciones_solicitadas_ids = Solicitud.objects.filter(solicitante=usuario_actual).values_list('publicacion_id', flat=True)
-    print(f"Publicaciones encontradas: {publicaciones.count()}")
-    print(list(publicaciones.values('id', 'titulo', 'trueque', 'stock')))  # Añadir esto para verificar las publicaciones devueltas
 
     return render(request, 'core/products.html', {
         'publicaciones': publicaciones,
@@ -760,6 +758,6 @@ def buscar_perfil(request):
     results = []
 
     if query:
-        results = Usuario.objects.filter(username__icontains=query).exclude(tipo__in=['ayudante', 'administrador'])    
+        results = Usuario.objects.filter(username__istartswith=query).exclude(tipo__in=['ayudante', 'administrador'])    
     
     return render(request, 'core/perfil/buscar_perfil.html', {'query': query, 'results': results})
