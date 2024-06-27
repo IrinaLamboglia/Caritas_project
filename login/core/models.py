@@ -145,3 +145,13 @@ class BusquedaFavorita(models.Model):
 
     def __str__(self):
         return f"{self.usuario.username} - {self.termino_busqueda}"
+
+
+class Donation(models.Model):
+    monto = models.DecimalField(max_digits=10, decimal_places=2)
+    date = models.DateTimeField(auto_now_add=True)
+    status = models.CharField(max_length=20)
+    date = models.DateTimeField(default=timezone.now)
+
+    def __str__(self):
+        return f"Donation {self.id} - {self.monto} - {self.status}"

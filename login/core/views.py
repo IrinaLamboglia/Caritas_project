@@ -628,5 +628,3 @@ def trueques_realizados(request):
             })
 
     return render(request, 'core/listado/truequesAdmin.html', {'elementos': elementos})
-
-    

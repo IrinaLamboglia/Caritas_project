@@ -34,6 +34,7 @@ from efectivizar_trueques.views import efectivizar_trueques,aceptacion_trueque,p
 from rechazarTrueque.views import rechazar_trueque
 from realizarDonacion.views import realizar_donacion
 from buscarProductos.views import buscar_productos, toggle_favorito
+from listaDonacion.views import donation_list, receive_donation
 
 urlpatterns = [
     path('', home, name='home'),
@@ -114,4 +115,7 @@ urlpatterns = [
     path('buscar/', buscar_productos, name='buscar_productos'),
 
     path('toggle-favorito/', toggle_favorito, name='toggle_favorito'),
+
+    path('donaciones/', donation_list, name='donation_list'),
+    path('receive_donation/', receive_donation, name='receive_donation'),
 ]
