@@ -5,7 +5,7 @@ from django.http import HttpResponseNotAllowed, JsonResponse
 from django.shortcuts import get_object_or_404, render, redirect
 
 from core.formProdDonado import ProductoDonadoForm
-from .models import FailedLoginAttempt, Publicacion, Solicitud, Usuario, UsuarioBloqueado, porDesbloquear, Categoria,Trueque,Filial
+from .models import FailedLoginAttempt, Publicacion, Solicitud, Usuario, UsuarioBloqueado, porDesbloquear, Categoria,Trueque,Filial,Valoracion
 
 from django.contrib.auth import login
 from . formreg import UsuarioForm
@@ -22,6 +22,9 @@ from .formpubl import PublicacionForm
 from django.contrib import messages
 from django.views.decorators.csrf import csrf_exempt
 from django.contrib.auth.decorators import login_required
+from django.db.models import Q
+
+
 
 
 from django.utils.decorators import method_decorator
@@ -68,44 +71,115 @@ def products(request):
     #parece q setean trueque en false cuando no esta disponible 
     publicaciones = Publicacion.objects.filter(estado=True, estadoCategoria=True, trueque=False, stock=0).exclude(usuario=usuario_actual)
     publicaciones_solicitadas_ids = Solicitud.objects.filter(solicitante=usuario_actual).values_list('publicacion_id', flat=True)
-    print(f"Publicaciones encontradas: {publicaciones.count()}")
-    print(list(publicaciones.values('id', 'titulo', 'trueque', 'stock')))  # Añadir esto para verificar las publicaciones devueltas
 
     return render(request, 'core/products.html', {
         'publicaciones': publicaciones,
         'publicaciones_solicitadas_ids': list(publicaciones_solicitadas_ids)
     })
 
-
+#agregue valoraciones
 def verPerfil(request):
     user = request.user
-    soli= Solicitud.objects.filter(publicacion__usuario=user,realizado=True)
-   #para q este activa tiene q tener categoria valida , al parecer trueque tiene q estar en false
-    publi = Publicacion.objects.filter(usuario=user,estado=True, estadoCategoria=True, trueque=False)
-    return render(request, 'core\perfil\perfil.html', {'user' : user , 'elementos' : soli, 'publicaciones' : publi})
 
+# Filtrar solicitudes donde publicacion__usuario=user OR solicitante=user
+    soli = Solicitud.objects.filter(Q(publicacion__usuario=user) | Q(solicitante=user), realizado=True)
+
+    elementos = []
+    for solicitud in soli:
+        try:
+            #me tengo que quedar con la valoracion q no es mia 
+            valoracion = Valoracion.objects.exclude(usuario=user).get(solicitud=solicitud)
+        except Valoracion.DoesNotExist:
+            valoracion = None
+
+
+        elementos.append({
+             'publicacion': solicitud.publicacion,
+             'solicitante': solicitud.solicitante,
+              'valoracion': valoracion,
+             })
+   #para q este activa tiene q tener categoria valida , al parecer trueque tiene q estar en false
+    publi = Publicacion.objects.filter(usuario=user,estado=True, estadoCategoria=True, trueque=False) #publicaciones activas
+    return render(request, 'core\perfil\perfil.html', {'user' : user , 'elementos' : elementos, 'publicaciones' : publi})
+
+
+
+
+#agregue valoraciones
 #corregido por el tema de las solis solicitadas
 def perfil_usuario(request, usuario_id, messages=None):
     user = get_object_or_404(Usuario, id=usuario_id) # el usuario del q quiero ver el perfil
-    soli = Solicitud.objects.filter(publicacion__usuario=user, realizado=True) #trueques 
 
+    soli = Solicitud.objects.filter(Q(publicacion__usuario=user) | Q(solicitante=user), realizado=True)
+
+    elementos = []
+    for solicitud in soli:
+        try:
+            #tengo que distinguir la valoracion, osea quedarme con el q me la realizo
+            valoracion = Valoracion.objects.exclude(usuario=user).get(solicitud=solicitud)
+        except Valoracion.DoesNotExist:
+            valoracion = None
+            print("no encunetro la valoracion")
+
+        print(valoracion)
+        print(valoracion.estrellas)
+        elementos.append({
+                'publicacion': solicitud.publicacion,
+                'solicitante': solicitud.solicitante,
+                'valoracion': valoracion,
+            })
+        
     publi = Publicacion.objects.filter(usuario=user, estado=True, estadoCategoria=True, trueque=False) #public activas
     print(publi.count())
     publicaciones_solicitadas_ids = Solicitud.objects.filter(solicitante=request.user).values_list('publicacion_id', flat=True) #mis publis solicitadas
 
     context = {
         'user': user,
-        'elementos': soli,
+        'elementos': elementos,
         'publicaciones': publi,
         'publicaciones_solicitadas_ids': list(publicaciones_solicitadas_ids)
 
     }
-
     if messages:
         context['messages'] = messages
 
     return render(request, 'core/perfil/perfil.html', context)
 
+
+
+
+def filtro_truequesperfil(request, usuario_id):
+    user = get_object_or_404(Usuario, id=usuario_id)  # Obtener el usuario del perfil
+
+    filtro = request.GET.get('filtro', 'default')
+
+    if filtro == 'Trueques donde fui solicitante':
+        soli = Solicitud.objects.filter(solicitante=user, realizado=True)
+    elif filtro == 'Trueques donde fui receptor':
+        soli = Solicitud.objects.filter(publicacion__usuario=user, realizado=True)
+    else:
+        soli = Solicitud.objects.filter(Q(publicacion__usuario=user) | Q(solicitante=user), realizado=True)
+
+    elementos = []
+    for solicitud in soli:
+        try:
+            valoracion = Valoracion.objects.exclude(usuario=user).get(solicitud=solicitud)
+        except Valoracion.DoesNotExist:
+            valoracion = None
+
+        elementos.append({
+            'publicacion': solicitud.publicacion,
+            'solicitante': solicitud.solicitante,
+            'valoracion': valoracion,
+        })
+
+    context = {
+        'user': user,
+        'elementos': elementos,
+        'filtro': filtro
+    }
+
+    return render(request, 'core/perfil/perfil.html', context)
 
 
 

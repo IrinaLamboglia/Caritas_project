@@ -116,6 +116,7 @@ urlpatterns = [
     path('perfil/<int:usuario_id>/',views.perfil_usuario,name='perfil_usuario'),
     path('solicitar/<int:publicacion_id>/', views.solicitar_t, name='solicitar_t'),
     path('alta/',views.alta_producto,name="alta_producto"),
-    path('filtro_publis/',views.filtro_publis,name="filtro_publis")
+    path('filtro_publis/',views.filtro_publis,name="filtro_publis"),
+    path('filtro_truquesperfil/<int:usuario_id>/',views.filtro_truequesperfil,name="filtro_truequesperfil")
     
 ]

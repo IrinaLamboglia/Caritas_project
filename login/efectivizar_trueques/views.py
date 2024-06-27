@@ -50,19 +50,22 @@ def efectivizar_trueques(request):
 
     return render(request, 'efectivizar_trueque/efectivizar_trueque.html', {'trueques': trueques})
 
+
 def enviar_correo_ayudante(ayudante):
     asunto = "No olvides de calificar el producto"
     mensaje = f"¡Hola {ayudante.nombre} {ayudante.apellido}! Recuerda califica el producto una vez terminado el trueque, Saludos."
     correo_destino = ayudante.email
     send_mail(asunto, mensaje, 'tucorreo@gmail.com', [correo_destino])
 
+
+#aca no se deberia sumar uno a las estrellas de los usuarios?
 def aceptacion_trueque(request, id):
     trueque = get_object_or_404(Trueque, id=id)
     trueque.aceptado = True
     trueque.estado = 'aceptado'
     trueque.fecha_efectivizacion = timezone.now().date()
     
-    solicitud = Solicitud.objects.filter(trueque=id ).first()
+    solicitud = Solicitud.objects.filter(trueque=id)
     
     if solicitud:
         print("entro acep")
@@ -73,6 +76,7 @@ def aceptacion_trueque(request, id):
         solicitud.save()
 
     trueque.save()
+    #aca tenia entendido q solo valoraba el solicitante pero a chequear 
     enviar_correo_ayudante(trueque.solicitante)
     enviar_correo_ayudante(trueque.receptor)
 
