@@ -76,6 +76,8 @@
                         <li class="nav-item"><a class="nav-link" href="{% url 'registro' %}">Alta Ayudante</a></li>
                         <li class="nav-item"><a class="nav-link" href="{% url 'mis_publicaciones1' %}">Eliminar Publicaciones</a></li>
                         <li class="nav-item"><a class="nav-link" href="{% url 'trueques_realizados' %}">Trueques realizados</a></li>
+
+                        <li class="nav-item"><a class="nav-link" href="{% url 'estadisticas_trueques' %}">Estadisticas</a></li>
                     {% elif user.tipo == "ayudante" %}
                         <li class="nav-item"><a class="nav-link" href="{% url 'agregar_categoria' %}">Agregar categoría</a></li>
                         <li class="nav-item"><a class="nav-link" href="{% url 'mostarCategoria' %}">Desactivar/Activar categorías</a></li>
