@@ -77,6 +77,8 @@ def products(request):
         'publicaciones_solicitadas_ids': list(publicaciones_solicitadas_ids)
     })
 
+
+
 #agregue valoraciones
 def verPerfil(request):
     user = request.user
@@ -94,6 +96,7 @@ def verPerfil(request):
 
 
         elementos.append({
+             'solicitud': solicitud,
              'publicacion': solicitud.publicacion,
              'solicitante': solicitud.solicitante,
               'valoracion': valoracion,
@@ -121,9 +124,9 @@ def perfil_usuario(request, usuario_id, messages=None):
             valoracion = None
             print("no encunetro la valoracion")
 
-        print(valoracion)
-        print(valoracion.estrellas)
+ 
         elementos.append({
+                'solicitud' :solicitud ,
                 'publicacion': solicitud.publicacion,
                 'solicitante': solicitud.solicitante,
                 'valoracion': valoracion,
@@ -168,10 +171,11 @@ def filtro_truequesperfil(request, usuario_id):
             valoracion = None
 
         elementos.append({
-            'publicacion': solicitud.publicacion,
-            'solicitante': solicitud.solicitante,
-            'valoracion': valoracion,
-        })
+                'solicitud' :solicitud ,
+                'publicacion': solicitud.publicacion,
+                'solicitante': solicitud.solicitante,
+                'valoracion': valoracion,
+            })
 
     context = {
         'user': user,
