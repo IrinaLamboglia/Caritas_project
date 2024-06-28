@@ -28,6 +28,7 @@ class Usuario(AbstractUser):
     last_login = models.DateTimeField(verbose_name='last login', blank=True, null=True)
     tipo= models.CharField(max_length=30, default="")
     puntuacion = models.DecimalField(max_digits=10, decimal_places=2)
+    puntos = models.IntegerField(default=0)  
 
     # Campo filial solo para ayudantes
     filial_nombre = models.CharField(max_length=100, null=True, blank=True)
@@ -49,6 +50,8 @@ class porDesbloquear(models.Model):
 class Categoria(models.Model):
     nombre = models.CharField(max_length=100, unique=True)
     estado = models.BooleanField(default=True)
+    puntuacion = models.IntegerField(default=0)  # Nuevo campo añadido
+
     def __str__(self):
         return self.nombre
 
@@ -135,3 +138,9 @@ class Solicitud(models.Model):
         self.publicacionOfrecida.save()
         self.save()  
     
+class Canje(models.Model):
+    usuario = models.ForeignKey(Usuario, on_delete=models.CASCADE)
+    publicacion = models.ForeignKey(Publicacion, on_delete=models.CASCADE)
+    estado = models.BooleanField(default=False)
+    codigo_retiro = models.CharField(max_length=20, default='')
+

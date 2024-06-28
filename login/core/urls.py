@@ -33,7 +33,8 @@ from visualizarTrueques.views import visualizar_trueques_diarios
 from efectivizar_trueques.views import efectivizar_trueques,aceptacion_trueque,penalizar_trueque,rechazar_efectivizacion
 from rechazarTrueque.views import rechazar_trueque
 from rechazarTurno.views import rechazar_turno
-from canjearPuntos.views import listarProductosDonados
+from canjearPuntos.views import listarProductosDonados,canjear_producto, generar_pdf,misCanjes
+
 urlpatterns = [
     path('', home, name='home'),
     path('products/', products,name='products'),
@@ -117,6 +118,9 @@ urlpatterns = [
     path('buscar_perfil/',views.buscar_perfil, name='buscar_perfil'),
     path('perfil/<int:user_id>/', views.listarBusqueda, name='listarBusqueda'),  # Ruta para el perfil del usuario específico
     path('listadoProductosDonados/', listarProductosDonados, name='listadoProductosDonados'),
+    path('canjear/<int:publicacion_id>/', canjear_producto, name='canjear_producto'),
+    path('generar_pdf/', generar_pdf, name='generar_pdf'),
+    path('misCanjes/', misCanjes, name='misCanjes'),
 
    
     ]

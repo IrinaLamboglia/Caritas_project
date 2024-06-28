@@ -38,3 +38,11 @@ a.boton-crear {
 }
 
 
+.info {
+    display: flex;
+    gap: 20px; /* Espacio entre los elementos */
+}
+
+.info-item {
+    margin: 0; /* Elimina el margen predeterminado */
+}
