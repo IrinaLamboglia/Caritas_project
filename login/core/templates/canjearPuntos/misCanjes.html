@@ -5,12 +5,12 @@
 <a href="{% url 'listadoProductosDonados' %}" class="btn btn-primary">Volver</a>
 
 <div class="caja">
-    <h2 class="titulo">Mis canjes </h2>
+    <h2 class="titulo">Mis canjes</h2>
     {% if canjes %}
         <ul class="list-group list-group-flush">
             {% for canje in canjes %}
                 <li class="list-group-item">
-                    <d<div class="row">
+                    <div class="row">
                         <div class="col-md-8">
                             <h4>{{ canje.publicacion.titulo }}</h4>
                             <p style="margin-bottom: 5px;">Código de retiro: {{ canje.codigo_retiro }}</p>
@@ -20,20 +20,16 @@
                                 <span class="badge badge-pill badge-danger">Pendiente</span>
                             {% endif %}
                         </div>
-                    
-                        
                         <div class="col-md-4 text-md-center">
                             <a href="/generar_pdf/?codigo_retiro={{ canje.codigo_retiro }}" class="btn btn-outline-primary">Imprimir comprobante</a>
                         </div>
                     </div>
-                    
                 </li>
             {% endfor %}
         </ul>
     {% else %}
-        <div class="no-canjes text-center">
-            <p style="font-size: 24px; font-family: 'Arial', sans-serif;">Aún no has realizado ningún canje.</p>
-        </div>
+        <p>No tienes canjes realizados.</p>
     {% endif %}
 </div>
+
 {% endblock %}
