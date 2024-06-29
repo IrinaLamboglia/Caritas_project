@@ -1,17 +1,14 @@
 {% extends 'core/base.html' %}
 {% load static %}
+{% block content %}
 
 <link rel="stylesheet" type="text/css" href="{% static 'css/products-estilos.css' %}">
-
-{% block content %}
-{% if user.tipo != 'ayudante' and user.tipo != 'administrador' %}
-    {% include 'core/crearPublicacion/mensajes.html' %}
 
     <html lang="en">
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Publicación</title>
+        <title>Publicaciónes fundación</title>
         <link rel="stylesheet" href="{% static 'css/products-estilos.css' %}">
    <style>
 .solicitado {
@@ -54,11 +51,11 @@
             <div class="container">
                 <div class="row">
                     <div class="col-6">
-                        <h2>Productos Disponibles</h2>
+                        <h2>Productos fundación</h2>
                     </div>
                     <div class="col-6 text-right">
                         {% block button %}
-                        <a href="{% url 'crear_publicacion' %}" class="boton-crear">Crear Publicación</a>
+                        <a href="{% url 'alta_producto' %}" class="boton-crear">Alta producto</a>
                         {% endblock button %}
                     </div>
                 </div>
@@ -70,26 +67,12 @@
                                 {% for publicacion in publicaciones %}
                                     <div class="col">
                                         <div class="card shadow-sm">
-                                                <img src="{{ publicacion.imagen.url }}" class="card-img-top" alt="{{ publicacion.titulo }}">
-                                                <img src="{% static 'placeholder_image.jpg' %}" class="card-img-top" alt="Imagen no disponible">
-
                                             <div class="card-body">
                                                 <h5 class="card-title"><strong>Titulo: </strong> {{ publicacion.titulo }}</h5>
                                                 <p class="card-text"><strong>Descripción: </strong> {{ publicacion.descripcion }}</p>
                                                 <p class="card-text"><strong>Categoria: </strong> {{ publicacion.categoria.nombre}}</p>
+                                                <p class="card-text"><strong>Stock: </strong> {{ publicacion.stock}}</p>
 
-
-                                                <div class="d-flex justify-content-between align-items-center">
-                                                    <h5 class="card-title mb-0">
-                                                            <a href="{% url 'perfil_usuario' publicacion.usuario.id %}" class="btn btn-outline-primary" data-publicacion-id="{{ publicacion.usuario.id }}">Perfil publicante</a>
-                                                        </h5>
-                                                        {% if publicacion.id in publicaciones_solicitadas_ids %}
-                                                            <button class="solicitado">Ya solicitada</button>
-                                                        {% else %}
-                                                            <a href="{% url 'solicitar_trueque' publicacion.id %}" class="btn btn-outline-primary solicitar-btn" data-publicacion-id="{{ publicacion.id }}">Solicitar trueque</a>
-                                                        {% endif %}
-                                                    </h5>
-                                                </div>
                                             </div>
 
 
@@ -115,8 +98,9 @@
                     {% endif %}
 
 
-                  
+    
+
     </body>
+
     </html>
-{% endif %}
 {% endblock %}

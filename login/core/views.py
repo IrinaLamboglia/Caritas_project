@@ -25,18 +25,9 @@ from django.contrib.auth.decorators import login_required
 from django.db.models import Q
 
 
-
-
 from django.utils.decorators import method_decorator
 
 from django.views.decorators.http import require_http_methods
-#los css los restaure por las dudas por si llega a haber conflicto
-#estan al pedo, en deshuso
-#solo hay que mantener estilo.css y login-estilos.css
-
-
-
-
 
 
 #con esto estoy diciendo que me tengo que loguear para acceder
@@ -62,6 +53,8 @@ def home(request):
     }
     return render(request, 'home.html', context)
 
+
+
 #estoy aplicando la restrinccion de que si no esta logueado
 #no puude ver los productos
 #el template login es lo que se muestra antes de q se loguee
@@ -69,7 +62,7 @@ def home(request):
 def products(request):
     usuario_actual = request.user
     #parece q setean trueque en false cuando no esta disponible 
-    publicaciones = Publicacion.objects.filter(estado=True, estadoCategoria=True, trueque=False, stock=0).exclude(usuario=usuario_actual)
+    publicaciones = Publicacion.objects.filter(estado=True, estadoCategoria=True, trueque=False, stock=-1).exclude(usuario=usuario_actual)
     publicaciones_solicitadas_ids = Solicitud.objects.filter(solicitante=usuario_actual).values_list('publicacion_id', flat=True)
 
     return render(request, 'core/products.html', {
@@ -78,7 +71,7 @@ def products(request):
     })
 
 
-
+#perfecto
 #agregue valoraciones
 def verPerfil(request):
     user = request.user
@@ -107,7 +100,7 @@ def verPerfil(request):
 
 
 
-
+#perfecto
 #agregue valoraciones
 #corregido por el tema de las solis solicitadas
 def perfil_usuario(request, usuario_id, messages=None):
@@ -150,7 +143,7 @@ def perfil_usuario(request, usuario_id, messages=None):
 
 
 
-
+#perfecto
 def filtro_truequesperfil(request, usuario_id):
     user = get_object_or_404(Usuario, id=usuario_id)  # Obtener el usuario del perfil
 
@@ -186,11 +179,20 @@ def filtro_truequesperfil(request, usuario_id):
     return render(request, 'core/perfil/perfil.html', context)
 
 
+#perfecto
+#que onda con la cate inactiva?
+def listado_ayudante(request):
+     publicaciones = Publicacion.objects.filter(estadoCategoria=True).exclude(stock=-1)
+     return render(request, 'listado/listado_ayudante.html', {
+        'publicaciones': publicaciones})
+
 
 def generar_codigo_aleatorio(longitud):
     caracteres = string.ascii_letters + string.digits
     codigo = ''.join(random.choice(caracteres) for _ in range(longitud))
     return codigo
+
+
 
 
 #perfecto
@@ -424,7 +426,7 @@ def crear_publicacion(request):
     return render(request, 'core/crearPublicacion/crear_publicacion.html', {'categorias': categorias,'formulario': formulario}) 
 
 
-
+#perfecto
 def alta_producto(request):
     categorias = Categoria.objects.all()
     if request.method == 'POST':
@@ -583,19 +585,6 @@ def filtro_trueques(request):
 
 #filtro para productos donados 
 
-def filtro_publis(request):
-    filtro = request.GET.get('filtro', 'default')
-
-    if filtro == 'publicacionesUsuarios':
-        publi = Publicacion.objects.filter(estado=True, estadoCategoria=True, trueque=False, stock=0).exclude(usuario=request.user)
-    else:
-        publi = Publicacion.objects.exclude(stock=0)
-
-    print(f"Filtro: {filtro}")
-    print(f"Publicaciones encontradas: {publi.count()}")
-    print(list(publi.values('id', 'titulo', 'trueque', 'stock')))  # Añadir esto para verificar las publicaciones devueltas
-
-    return render(request, 'core/products.html', {'publicaciones': publi, 'filtro': filtro})
 
 
 

@@ -54,7 +54,7 @@ class Categoria(models.Model):
         return self.nombre
 
 
-
+#EL STOCK PARA DISTINGUIRLAS DE PUBLIC NORMALES EN -1
 class Publicacion(models.Model):
     titulo = models.CharField(max_length=200)
     descripcion = models.CharField(max_length=400)
@@ -65,7 +65,7 @@ class Publicacion(models.Model):
     categoria = models.ForeignKey(Categoria, on_delete=models.CASCADE, default=True)
     imagen = models.ImageField(upload_to='media/publicaciones/', null=True, blank=True)
     trueque = models.BooleanField(default=False)
-    stock =models.IntegerField(default=0)
+    stock =models.IntegerField(default=-1)
 
     def __str__(self):
         return self.titulo
