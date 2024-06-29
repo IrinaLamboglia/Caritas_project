@@ -1,67 +1,79 @@
-from django.shortcuts import render
-from django.http import JsonResponse
+from django.shortcuts import render, redirect
+from django.http import JsonResponse, HttpResponse
 import mercadopago
 from django.urls import reverse
+import logging
+from django.utils import timezone
+from core.models import Donation
 
 mp = mercadopago.SDK("APP_USR-532683645064806-061023-0dfcd038408f1614d15efd6403155a09-606424946")
 
+logger = logging.getLogger(__name__)
+
 def realizar_donacion(request):
+    status = request.GET.get('status')
     if request.method == 'POST':
         nombre_usuario = request.POST.get('nombre_usuario', 'Anónimo')
-        monto = request.POST.get('monto')
+        monto = float(request.POST.get('monto', 0))
 
-        # Crear preferencia de Mercado Pago
-        preference_data = {
+        preference = {
             "items": [
                 {
-                    "title": "Donación",
+                    "title": f"Donación de {nombre_usuario}",
                     "quantity": 1,
-                    "unit_price": float(monto)
+                    "currency_id": "ARS",
+                    "unit_price": monto
                 }
             ],
-            "payer": {
-                "name": nombre_usuario if nombre_usuario else "Anónimo"
-            },
             "back_urls": {
-                "success": request.build_absolute_uri(reverse('home')),
-                "failure": request.build_absolute_uri(reverse('home')),
-                "pending": request.build_absolute_uri(reverse('home'))
+                "success": request.build_absolute_uri(reverse('donacion_success')),
+                "failure": request.build_absolute_uri(reverse('donacion_failure')),
+                "pending": request.build_absolute_uri(reverse('donacion_pending'))
             },
-            "auto_return": "approved",
+            "auto_return": "approved"
         }
 
         try:
-            preference_response = mp.preference().create(preference_data)
-            init_point = preference_response["response"]["init_point"]
-            qr_code = generate_qr_code(init_point)
+            preference_result = mp.preference().create(preference)
+            init_point = preference_result['response']['init_point']
+            preference_id = preference_result['response']['id']
 
-            return JsonResponse({
-                'init_point': init_point,
-                'qr_code': qr_code
-            })
+            return JsonResponse({'init_point': init_point, 'preference_id': preference_id})
         except Exception as e:
-            print(f"Error al crear la preferencia de Mercado Pago: {e}")
-            return JsonResponse({'error': str(e)}, status=400)
+            return JsonResponse({'error': str(e)}, status=500)
+    else:
+        return render(request, 'realizarDonacion/realizar_donacion.html', {'status': status})
 
-    return render(request, 'realizarDonacion/realizar_donacion.html')
 
-def generate_qr_code(url):
-    import qrcode
-    import base64
-    from io import BytesIO
+def donacion_success(request):
+    payment_id = request.GET.get('payment_id')
+    if payment_id:
+        try:
+            payment_info = mp.payment().get(payment_id)
+            logger.info(f"Payment info response: {payment_info}")
 
-    qr = qrcode.QRCode(
-        version=1,
-        error_correction=qrcode.constants.ERROR_CORRECT_L,
-        box_size=10,
-        border=4,
-    )
-    qr.add_data(url)
-    qr.make(fit=True)
+            if 'response' in payment_info:
+                payment_status = payment_info['response']['status']
+                monto = payment_info['response']['transaction_amount']
+                preference_id = payment_info['response']['order']['id']
 
-    img = qr.make_image(fill_color="black", back_color="white")
-    buffer = BytesIO()
-    img.save(buffer, format="PNG")
-    img_str = base64.b64encode(buffer.getvalue()).decode('utf-8')
-    
-    return img_str
+                if payment_status == 'approved':
+                    Donation.objects.create(monto=monto, status='approved', preference_id=preference_id, date=timezone.now())
+                    return redirect(reverse('realizar_donacion') + '?status=success')
+                else:
+                    logger.error(f"Estado del pago no es 'approved': {payment_status}")
+                    return redirect(reverse('realizar_donacion') + '?status=failure')
+            else:
+                logger.error(f"Respuesta no encontrada en la información del pago de Mercado Pago: {payment_info}")
+                return redirect(reverse('realizar_donacion') + '?status=failure')
+        except Exception as e:
+            logger.error(f"Error al procesar la donación exitosa: {e}")
+            return redirect(reverse('realizar_donacion') + '?status=failure')
+    return redirect(reverse('realizar_donacion') + '?status=failure')
+
+def donacion_failure(request):
+    return redirect(reverse('realizar_donacion') + '?status=failure')
+
+def donacion_pending(request):
+    return redirect(reverse('realizar_donacion') + '?status=pending')
+

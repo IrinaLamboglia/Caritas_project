@@ -149,9 +149,9 @@ class BusquedaFavorita(models.Model):
 
 class Donation(models.Model):
     monto = models.DecimalField(max_digits=10, decimal_places=2)
-    date = models.DateTimeField(auto_now_add=True)
-    status = models.CharField(max_length=20)
+    status = models.CharField(max_length=20)    
     date = models.DateTimeField(default=timezone.now)
+    preference_id = models.CharField(max_length=100, unique=True, null=True)
 
     def __str__(self):
         return f"Donation {self.id} - {self.monto} - {self.status}"

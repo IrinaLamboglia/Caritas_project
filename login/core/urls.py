@@ -32,9 +32,9 @@ from confirmarTurno.views import confirmar_turno
 from visualizarTrueques.views import visualizar_trueques_diarios
 from efectivizar_trueques.views import efectivizar_trueques,aceptacion_trueque,penalizar_trueque,rechazar_efectivizacion
 from rechazarTrueque.views import rechazar_trueque
-from realizarDonacion.views import realizar_donacion
+from realizarDonacion.views import realizar_donacion, donacion_failure, donacion_pending, donacion_success
 from buscarProductos.views import buscar_productos, toggle_favorito
-from listaDonacion.views import donation_list, receive_donation
+from listaDonacion.views import donation_list
 
 urlpatterns = [
     path('', home, name='home'),
@@ -117,5 +117,7 @@ urlpatterns = [
     path('toggle-favorito/', toggle_favorito, name='toggle_favorito'),
 
     path('donaciones/', donation_list, name='donation_list'),
-    path('receive_donation/', receive_donation, name='receive_donation'),
+    path('donacion/success/', donacion_success, name='donacion_success'),
+    path('donacion/failure/', donacion_failure, name='donacion_failure'),
+    path('donacion/pending/', donacion_pending, name='donacion_pending'),
 ]

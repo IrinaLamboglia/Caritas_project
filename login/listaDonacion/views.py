@@ -4,6 +4,7 @@ from core.models import Donation
 from django.db.models import Sum
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
+from django.utils import timezone
 import json
 import mercadopago
 import logging
@@ -25,38 +26,41 @@ def donation_list(request):
     return render(request, 'listarDonacion/donation_list.html', context)
 
 @csrf_exempt
-def receive_donation(request):
+def notificaciones(request):
     if request.method == 'POST':
         try:
-            # Procesar los datos del body (JSON)
             data = json.loads(request.body)
-            payment_id = data.get('data', {}).get('id')
-            payment_type = data.get('type')
+            logger.info(f"Notificación recibida: {data}")
 
-            if not payment_id or payment_type != 'payment':
-                return JsonResponse({'error': 'Datos inválidos'}, status=400)
+            # Obtener los datos relevantes de la notificación
+            preference_id = data.get('data', {}).get('id')
+            topic = data.get('type')
+            if topic == 'payment':
+                # Llamar a la API de Mercado Pago para obtener los detalles del pago
+                payment_info = mp.payment().get(preference_id)
+                payment_data = payment_info.get('response', {})
 
-            # Usar SDK de Mercado Pago para obtener detalles del pago
-            payment_info = mp.payment().get(payment_id)
-            payment = payment_info.get('response', {})
+                if payment_data.get('status') == 'approved':
+                    monto = payment_data.get('transaction_amount')
+                    status = payment_data.get('status')
 
-            amount = payment.get('transaction_amount', 0.0)
-            collection_status = payment.get('status', '')
+                    # Buscar la donación por el preference_id
+                    donation, created = Donation.objects.get_or_create(
+                        preference_id=preference_id,
+                        defaults={'monto': monto, 'status': status, 'date': timezone.now()}
+                    )
 
+                    if not created:
+                        # Si ya existe, actualizar la donación
+                        donation.monto = monto
+                        donation.status = status
+                        donation.date = timezone.now()
+                        donation.save()
 
-            # Guardar en la base de datos
-            donation = Donation.objects.create(monto=amount, status=collection_status)
-
-            return JsonResponse({'message': 'Donación recibida correctamente', 'donation_id': donation.id}, status=200)
-
-        except json.JSONDecodeError:
-            return JsonResponse({'error': 'JSON no válido'}, status=400)
-
-        except KeyError as e:
-            return JsonResponse({'error': f'Campo requerido faltante: {e}'}, status=400)
-
+                    return JsonResponse({'status': 'success'})
+            return JsonResponse({'status': 'ignored'}, status=200)
         except Exception as e:
-            logger.error(f"Error al procesar donación: {e}")
-            return JsonResponse({'error': str(e)}, status=500)
+            logger.error(f"Error al procesar la notificación: {e}")
+            return JsonResponse({'status': 'error', 'message': str(e)}, status=500)
 
-    return JsonResponse({'error': 'Método no permitido'}, status=405)
+    return JsonResponse({'status': 'only POST allowed'}, status=405)
