@@ -5,7 +5,7 @@ from django.http import HttpResponseNotAllowed, JsonResponse
 from django.shortcuts import get_object_or_404, render, redirect
 
 from core.formProdDonado import ProductoDonadoForm
-from .models import FailedLoginAttempt, Publicacion, Solicitud, Usuario, UsuarioBloqueado, porDesbloquear, Categoria,Trueque,Filial
+from .models import FailedLoginAttempt, Publicacion, Solicitud, Usuario, UsuarioBloqueado, porDesbloquear, Categoria,Trueque,Filial,Valoracion
 
 from django.contrib.auth import login
 from . formreg import UsuarioForm
@@ -22,18 +22,12 @@ from .formpubl import PublicacionForm
 from django.contrib import messages
 from django.views.decorators.csrf import csrf_exempt
 from django.contrib.auth.decorators import login_required
+from django.db.models import Q
 
 
 from django.utils.decorators import method_decorator
 
 from django.views.decorators.http import require_http_methods
-#los css los restaure por las dudas por si llega a haber conflicto
-#estan al pedo, en deshuso
-#solo hay que mantener estilo.css y login-estilos.css
-
-
-
-
 
 
 #con esto estoy diciendo que me tengo que loguear para acceder
@@ -59,6 +53,8 @@ def home(request):
     }
     return render(request, 'home.html', context)
 
+
+
 #estoy aplicando la restrinccion de que si no esta logueado
 #no puude ver los productos
 #el template login es lo que se muestra antes de q se loguee
@@ -66,7 +62,7 @@ def home(request):
 def products(request):
     usuario_actual = request.user
     #parece q setean trueque en false cuando no esta disponible 
-    publicaciones = Publicacion.objects.filter(estado=True, estadoCategoria=True, trueque=False, stock=0).exclude(usuario=usuario_actual)
+    publicaciones = Publicacion.objects.filter(estado=True, estadoCategoria=True, trueque=False, stock=-1).exclude(usuario=usuario_actual)
     publicaciones_solicitadas_ids = Solicitud.objects.filter(solicitante=usuario_actual).values_list('publicacion_id', flat=True)
 
     return render(request, 'core/products.html', {
@@ -75,30 +71,71 @@ def products(request):
     })
 
 
+#perfecto
+#agregue valoraciones
 def verPerfil(request):
     user = request.user
-    soli= Solicitud.objects.filter(publicacion__usuario=user,realizado=True)
-   #para q este activa tiene q tener categoria valida , al parecer trueque tiene q estar en false
-    publi = Publicacion.objects.filter(usuario=user,estado=True, estadoCategoria=True, trueque=False)
-    return render(request, 'core\perfil\perfil.html', {'user' : user , 'elementos' : soli, 'publicaciones' : publi})
 
+# Filtrar solicitudes donde publicacion__usuario=user OR solicitante=user
+    soli = Solicitud.objects.filter(Q(publicacion__usuario=user) | Q(solicitante=user), realizado=True)
+
+    elementos = []
+    for solicitud in soli:
+        try:
+            #me tengo que quedar con la valoracion q no es mia 
+            valoracion = Valoracion.objects.exclude(usuario=user).get(solicitud=solicitud)
+        except Valoracion.DoesNotExist:
+            valoracion = None
+
+
+        elementos.append({
+             'solicitud': solicitud,
+             'publicacion': solicitud.publicacion,
+             'solicitante': solicitud.solicitante,
+              'valoracion': valoracion,
+             })
+   #para q este activa tiene q tener categoria valida , al parecer trueque tiene q estar en false
+    publi = Publicacion.objects.filter(usuario=user,estado=True, estadoCategoria=True, trueque=False) #publicaciones activas
+    return render(request, 'core\perfil\perfil.html', {'user' : user , 'elementos' : elementos, 'publicaciones' : publi})
+
+
+
+#perfecto
+#agregue valoraciones
 #corregido por el tema de las solis solicitadas
 def perfil_usuario(request, usuario_id, messages=None):
     user = get_object_or_404(Usuario, id=usuario_id) # el usuario del q quiero ver el perfil
-    soli = Solicitud.objects.filter(publicacion__usuario=user, realizado=True) #trueques 
 
+    soli = Solicitud.objects.filter(Q(publicacion__usuario=user) | Q(solicitante=user), realizado=True)
+
+    elementos = []
+    for solicitud in soli:
+        try:
+            #tengo que distinguir la valoracion, osea quedarme con el q me la realizo
+            valoracion = Valoracion.objects.exclude(usuario=user).get(solicitud=solicitud)
+        except Valoracion.DoesNotExist:
+            valoracion = None
+            print("no encunetro la valoracion")
+
+ 
+        elementos.append({
+                'solicitud' :solicitud ,
+                'publicacion': solicitud.publicacion,
+                'solicitante': solicitud.solicitante,
+                'valoracion': valoracion,
+            })
+        
     publi = Publicacion.objects.filter(usuario=user, estado=True, estadoCategoria=True, trueque=False) #public activas
     print(publi.count())
     publicaciones_solicitadas_ids = Solicitud.objects.filter(solicitante=request.user).values_list('publicacion_id', flat=True) #mis publis solicitadas
 
     context = {
         'user': user,
-        'elementos': soli,
+        'elementos': elementos,
         'publicaciones': publi,
         'publicaciones_solicitadas_ids': list(publicaciones_solicitadas_ids)
 
     }
-
     if messages:
         context['messages'] = messages
 
@@ -131,11 +168,56 @@ def perfil_usuario(request, usuario_id, messages=None):
     return render(request, 'core/perfil/perfil.html', context)
 
 
+#perfecto
+def filtro_truequesperfil(request, usuario_id):
+    user = get_object_or_404(Usuario, id=usuario_id)  # Obtener el usuario del perfil
+
+    filtro = request.GET.get('filtro', 'default')
+
+    if filtro == 'Trueques donde fui solicitante':
+        soli = Solicitud.objects.filter(solicitante=user, realizado=True)
+    elif filtro == 'Trueques donde fui receptor':
+        soli = Solicitud.objects.filter(publicacion__usuario=user, realizado=True)
+    else:
+        soli = Solicitud.objects.filter(Q(publicacion__usuario=user) | Q(solicitante=user), realizado=True)
+
+    elementos = []
+    for solicitud in soli:
+        try:
+            valoracion = Valoracion.objects.exclude(usuario=user).get(solicitud=solicitud)
+        except Valoracion.DoesNotExist:
+            valoracion = None
+
+        elementos.append({
+                'solicitud' :solicitud ,
+                'publicacion': solicitud.publicacion,
+                'solicitante': solicitud.solicitante,
+                'valoracion': valoracion,
+            })
+
+    context = {
+        'user': user,
+        'elementos': elementos,
+        'filtro': filtro
+    }
+
+    return render(request, 'core/perfil/perfil.html', context)
+
+
+#perfecto
+#que onda con la cate inactiva?
+def listado_ayudante(request):
+     publicaciones = Publicacion.objects.filter(estadoCategoria=True).exclude(stock=-1)
+     return render(request, 'listado/listado_ayudante.html', {
+        'publicaciones': publicaciones})
+
 
 def generar_codigo_aleatorio(longitud):
     caracteres = string.ascii_letters + string.digits
     codigo = ''.join(random.choice(caracteres) for _ in range(longitud))
     return codigo
+
+
 
 
 #perfecto
@@ -261,6 +343,7 @@ def formularioreg(request):
             print("es valido")
             usuario = form.save(commit=False)
             usuario.puntuacion=5
+            usuario.fecha= timezone.now().date() 
             if request.user.is_authenticated and request.user.tipo == "administrador":
                 filial_nombre = request.POST.get('filial')
                 
@@ -368,7 +451,7 @@ def crear_publicacion(request):
     return render(request, 'core/crearPublicacion/crear_publicacion.html', {'categorias': categorias,'formulario': formulario}) 
 
 
-
+#perfecto
 def alta_producto(request):
     categorias = Categoria.objects.all()
     if request.method == 'POST':
@@ -494,48 +577,39 @@ def registrar_solicitud(request, publicacion_objetivo_id):
 
 
 
-#perfecto, se agrego trueques realizados para que puedan poner los botones de valorar aca 
+
 def filtro_trueques(request):
     filtro = request.GET.get('filtro')
     search_query = request.GET.get('search', '')
-    usu = request.user 
+    usu = request.user
 
-
-   
     if filtro == 'Aceptadas':
-        soli = Solicitud.objects.filter(publicacion__usuario=usu,estado=True)
+        soli = Solicitud.objects.filter(publicacion__usuario=usu, estado=True)
+    elif filtro == 'Pendientes':
+        soli = Solicitud.objects.filter(publicacion__usuario=usu, estado=False)
+        if search_query:
+            soli = soli.filter(
+                Q(publicacion__titulo__icontains=search_query) |
+                Q(publicacionOfrecida__titulo__icontains=search_query)
+            )
+    elif filtro == 'Pendientes en valoración':
+        # Filtrar por solicitudes aceptadas y pendientes de valoración por ambos usuarios
+        soli = Solicitud.objects.filter(
+            Q(publicacion__usuario=usu) | Q(publicacionOfrecida__usuario=usu),  # Usuario es solicitante o receptor
+            estado=True,  # Estado aceptado
+            realizado=True,  # Solicitud realizada
+            trueque__isnull=False,
+            trueque__valoraciones__isnull=True  # Sin valoraciones para este trueque
+        ).distinct() 
+
     else:
-         if filtro == 'Pendientes':
-            soli = Solicitud.objects.filter(publicacion__usuario=usu,estado=False)
-            if search_query:
-                  soli = soli.filter(
-                  Q(publicacion__titulo__icontains=search_query) |
-                  Q(publicacionOfrecida__titulo__icontains=search_query)
-                 )
-         else:
-             if filtro == 'Realizados':
-                 soli= Solicitud.objects.filter(publicacion__usuario=usu,realizado=True)
-             else:
-                soli = Solicitud.objects.filter(publicacion__usuario=usu)
+        soli = Solicitud.objects.filter(publicacion__usuario=usu)
 
     return render(request, 'listado/misTrueques.html', {'elementos': soli, 'filtro': filtro, 'search_query': search_query})
 
 
 #filtro para productos donados 
 
-def filtro_publis(request):
-    filtro = request.GET.get('filtro', 'default')
-
-    if filtro == 'publicacionesUsuarios':
-        publi = Publicacion.objects.filter(estado=True, estadoCategoria=True, trueque=False, stock=0).exclude(usuario=request.user)
-    else:
-        publi = Publicacion.objects.exclude(stock=0)
-
-    print(f"Filtro: {filtro}")
-    print(f"Publicaciones encontradas: {publi.count()}")
-    print(list(publi.values('id', 'titulo', 'trueque', 'stock')))  # Añadir esto para verificar las publicaciones devueltas
-
-    return render(request, 'core/products.html', {'publicaciones': publi, 'filtro': filtro})
 
 
 

@@ -35,6 +35,8 @@ from rechazarTrueque.views import rechazar_trueque
 from rechazarTurno.views import rechazar_turno
 from canjearPuntos.views import listarProductosDonados,canjear_producto, generar_pdf,misCanjes
 
+from visualizar_estadisticas.views import estadisticas_trueques
+from valorar_trueque.views import valorar_trueque
 urlpatterns = [
     path('', home, name='home'),
     path('products/', products,name='products'),
@@ -100,12 +102,14 @@ urlpatterns = [
 
     path('trueques_diarios/', visualizar_trueques_diarios, name='visualizar_trueques_diarios'),
     path('efectivizar_trueques/', efectivizar_trueques, name='efectivizar_trueque'),
-    path('aceptacion_trueque/<int:id>', aceptacion_trueque, name='aceptacion_trueque'),
+    path('aceptacion_trueque/<int:id>/', aceptacion_trueque, name='aceptacion_trueque'),
     path('rechazar_efectivizacion/<int:id>', rechazar_efectivizacion, name='rechazar_efectivizacion'),
     path('penalizar_trueque/<int:trueque_id>/', penalizar_trueque, name='penalizar_trueque'),
     path('rechazar_trueque/<int:solicitud_id>/', rechazar_trueque, name='rechazar_trueque'),
-    
-    
+    path('valorar_trueque/<int:solicitud_id>/', valorar_trueque, name='valorar_trueque'),
+   
+    path('estadisticas_trueques/',estadisticas_trueques, name='estadisticas_trueques'),   
+
     path('eliminar_publicacion/<int:publicacion_id>/', views.eliminar_publicacion, name='eliminar_publicacion'),
     
     path('truequesAdmin/',views.trueques_realizados,name='trueques_realizados'),
@@ -114,7 +118,6 @@ urlpatterns = [
     path('perfil/<int:usuario_id>/',views.perfil_usuario,name='perfil_usuario'),
     path('solicitar/<int:publicacion_id>/', views.solicitar_t, name='solicitar_t'),
     path('alta/',views.alta_producto,name="alta_producto"),
-    path('filtro_publis/',views.filtro_publis,name="filtro_publis"),
     path('buscar_perfil/',views.buscar_perfil, name='buscar_perfil'),
     path('perfil/<int:user_id>/', views.listarBusqueda, name='listarBusqueda'),  # Ruta para el perfil del usuario específico
     path('listadoProductosDonados/', listarProductosDonados, name='listadoProductosDonados'),
@@ -123,4 +126,7 @@ urlpatterns = [
     path('misCanjes/', misCanjes, name='misCanjes'),
 
    
-    ]
+    
+    path('filtro_truquesperfil/<int:usuario_id>/',views.filtro_truequesperfil,name="filtro_truequesperfil"),
+    path('/listado_ayudante',views.listado_ayudante,name='listado_ayudante')
+]
