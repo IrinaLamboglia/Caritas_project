@@ -35,6 +35,8 @@ from rechazarTrueque.views import rechazar_trueque
 from rechazarTurno.views import rechazar_turno
 from visualizar_estadisticas.views import estadisticas_trueques
 from valorar_trueque.views import valorar_trueque
+from canjearPuntos.views import listarProductosDonados
+
 urlpatterns = [
     path('', home, name='home'),
     path('products/', products,name='products'),
@@ -116,6 +118,13 @@ urlpatterns = [
     path('perfil/<int:usuario_id>/',views.perfil_usuario,name='perfil_usuario'),
     path('solicitar/<int:publicacion_id>/', views.solicitar_t, name='solicitar_t'),
     path('alta/',views.alta_producto,name="alta_producto"),
-    path('filtro_truquesperfil/<int:usuario_id>/',views.filtro_truequesperfil,name="filtro_truequesperfil"),
-    path('/listado_ayudante',views.listado_ayudante,name='listado_ayudante')
-]
+   
+    path('filtro_publis/',views.filtro_publis,name="filtro_publis"),
+    path('buscar_perfil/',views.buscar_perfil, name='buscar_perfil'),
+    path('perfil/<int:user_id>/', views.listarBusqueda, name='listarBusqueda'),  # Ruta para el perfil del usuario específico
+    path('listadoProductosDonados/', listarProductosDonados, name='listadoProductosDonados'),
+
+    path('filtro_truquesperfil/<int:usuario_id>/',views.filtro_truequesperfil,name="filtro_truequesperfil"), #mio
+    path('/listado_ayudante',views.listado_ayudante,name='listado_ayudante')  ##mio
+   
+    ]
