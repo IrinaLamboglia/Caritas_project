@@ -1,0 +1,51 @@
+{% extends 'base.html' %}
+{% load static %}
+
+<link rel="stylesheet" type="text/css" href="{% static 'css/styles.css' %}">
+
+{% block content %}
+<div class="container">
+    <h2>Registrar Retiro de Producto</h2>
+    <form action="{% url 'codigo_retiro' %}" method="get">
+        <label for="codigo">Buscar Código de Retiro:</label>
+        <input type="text" id="codigo" name="query" placeholder="Ingrese el código" required>
+        <button type="submit">Buscar</button>
+    </form>
+
+    {% if results %}
+    <div class="result" id="resultado">
+        <form action="{% url 'registrar_producto' results.0.codigo_retiro  %}" method="get">
+        <p ><strong>Código: </strong>   {{ results.0.codigo_retiro }}</p>
+        <p><strong>Solicitante: </strong> {{ results.0.usuario.email }}</p>
+        <p><strong>Producto solicitado: </strong> {{ results.0.publicacion.titulo }}</p>            
+        <button type="submit">Registrar</button>
+    </form>
+
+    </div>
+{% endif %}
+
+
+</div>
+
+
+
+<script src="{% static 'js/boton_confirmar.js' %}"></script>
+{% if messages %}
+  {% for message in messages %}
+    <script>
+      document.addEventListener('DOMContentLoaded', function() {
+        Swal.fire({
+          title: '{% if message.tags == "success" %}¡Éxito!{% else %}Error{% endif %}',
+          html: "{{ message|safe }}",
+          icon: '{% if message.tags == "success" %}success{% else %}error{% endif %}',
+          showCloseButton: true,
+          focusConfirm: false,
+          confirmButtonText: 'OK'
+        });
+      });
+    </script>
+  {% endfor %}
+{% endif %}
+
+
+{% endblock %}

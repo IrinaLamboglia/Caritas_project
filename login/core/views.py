@@ -5,7 +5,7 @@ from django.http import HttpResponseNotAllowed, JsonResponse
 from django.shortcuts import get_object_or_404, render, redirect
 
 from core.formProdDonado import ProductoDonadoForm
-from .models import FailedLoginAttempt, Publicacion, Solicitud, Usuario, UsuarioBloqueado, porDesbloquear, Categoria,Trueque,Filial,Valoracion
+from .models import FailedLoginAttempt, Publicacion, Solicitud, Usuario, UsuarioBloqueado, porDesbloquear, Categoria,Trueque,Filial,Valoracion,Canje
 
 from django.contrib.auth import login
 from . formreg import UsuarioForm
@@ -141,31 +141,11 @@ def perfil_usuario(request, usuario_id, messages=None):
 
     return render(request, 'core/perfil/perfil.html', context)
 
-def verPerfil(request):
-    user = request.user
-    soli= Solicitud.objects.filter(publicacion__usuario=user,realizado=True)
-    publi = Solicitud.objects.filter(publicacion__usuario=user,estado=True)
-    return render(request, 'core\perfil\perfil.html', {'user' : user , 'elementos' : soli, 'publicaciones' : publi})
 
 def listarBusqueda(request, user_id):
     user = get_object_or_404(Usuario, id=user_id)
     return render(request, 'core/perfil/perfil.html', {'user': user})
 
-def perfil_usuario(request, usuario_id, messages=None):
-    user = get_object_or_404(Usuario, id=usuario_id)
-    soli = Solicitud.objects.filter(publicacion__usuario=user, realizado=True)
-    publi = Solicitud.objects.filter(publicacion__usuario=user, estado=True)
-    
-    context = {
-        'user': user,
-        'elementos': soli,
-        'publicaciones': publi,
-    }
-
-    if messages:
-        context['messages'] = messages
-
-    return render(request, 'core/perfil/perfil.html', context)
 
 
 #perfecto
@@ -184,9 +164,10 @@ def filtro_truequesperfil(request, usuario_id):
     elementos = []
     for solicitud in soli:
         try:
-            valoracion = Valoracion.objects.exclude(usuario=user).get(solicitud=solicitud)
+            valoracion = Valoracion.objects.exclude(usuario=user).get(solicitud=solicitud) #valoracion no hecha por "mi"
         except Valoracion.DoesNotExist:
             valoracion = None
+            print("no encontre la valoracion ")
 
         elementos.append({
                 'solicitud' :solicitud ,
@@ -194,11 +175,13 @@ def filtro_truequesperfil(request, usuario_id):
                 'solicitante': solicitud.solicitante,
                 'valoracion': valoracion,
             })
-
+    
+    publi = Publicacion.objects.filter(usuario=user,estado=True, estadoCategoria=True, trueque=False) #publicaciones activas
     context = {
         'user': user,
         'elementos': elementos,
-        'filtro': filtro
+        'filtro': filtro,
+        'publicaciones':publi
     }
 
     return render(request, 'core/perfil/perfil.html', context)
@@ -210,6 +193,37 @@ def listado_ayudante(request):
      publicaciones = Publicacion.objects.filter(estadoCategoria=True).exclude(stock=-1)
      return render(request, 'listado/listado_ayudante.html', {
         'publicaciones': publicaciones})
+
+
+#perfecto 
+##registrar retiro
+def registrar_retiro(request):
+    return render(request,'registrar_retiro/registrar_retiro.html')
+
+def codigo_retiro(request):
+    query = request.GET.get('query')
+    results = []
+
+    if query:
+        results = Canje.objects.filter(codigo_retiro__istartswith=query)  
+        if not results:
+            messages.error(request, "Error: Código de retiro inválido.")
+
+    return render(request, 'registrar_retiro/registrar_retiro.html', {'query': query, 'results': results})
+
+
+def registrar(request,codigo_r):
+    print(codigo_r)
+    canje = get_object_or_404(Canje, codigo_retiro=codigo_r)
+    canje.estado = True
+    canje.codigo_retiro =''
+    canje.save()
+    messages.success(request, "Registro exitoso.")
+    return redirect('registrar_retiro')
+
+  
+#-------------------
+
 
 
 def generar_codigo_aleatorio(longitud):
