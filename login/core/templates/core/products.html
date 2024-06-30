@@ -28,7 +28,7 @@
                     </div>
                 </div>
 
-                <!-- Barra de búsqueda unificada -->
+                <!-- Barra de búsqueda -->
 <div class="row my-4">
     <div class="col-12">
         <form method="GET" action="{% url 'buscar_productos' %}" class="form-inline">
@@ -112,8 +112,7 @@
             document.addEventListener('DOMContentLoaded', function() {
                 const publicacionesSolicitadas = {{ publicaciones_solicitadas_ids|safe }};
                 const solicitarBtns = document.querySelectorAll('.solicitar-btn');
-                const favoritasList = document.getElementById('favoritas-list');
-                const options = favoritasList.querySelectorAll('option');
+                
                 solicitarBtns.forEach(btn => {
                     const publicacionId = btn.dataset.publicacionId;
                     if (publicacionesSolicitadas.includes(parseInt(publicacionId))) {
@@ -123,9 +122,6 @@
                         btn.style.backgroundColor = '#ccc';
                         btn.style.borderColor = '#ccc';
                     }
-                });
-                options.forEach(option => {
-                    console.log(option.value);  // Verifica los términos favoritos
                 });
             });
         </script>

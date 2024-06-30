@@ -14,18 +14,23 @@ def buscar_productos(request):
     favoritas = BusquedaFavorita.objects.filter(usuario=request.user)
     
     resultados = Publicacion.objects.filter(
-        Q(titulo__icontains=query) | Q(descripcion__icontains=query)
-    ) if query else Publicacion.objects.all()
-
+    Q(titulo__icontains=query) | Q(descripcion__icontains=query),
+    estado=True,
+    estadoCategoria=True,
+    trueque=False
+    ).exclude(usuario=request.user) if query else Publicacion.objects.filter(
+    estado=True,
+    estadoCategoria=True,
+    trueque=False
+    ).exclude(usuario=request.user)
+    
     if request.method == 'POST':
         if ya_favorita:
             BusquedaFavorita.objects.filter(usuario=request.user, termino_busqueda=query).delete()
             ya_favorita = False
-            messages.success(request, 'Búsqueda eliminada de favoritos.')
         else:
             BusquedaFavorita.objects.create(usuario=request.user, termino_busqueda=query)
             ya_favorita = True
-            messages.success(request, 'Búsqueda añadida a favoritos.')
 
     context = {
         'query': query,
