@@ -35,19 +35,13 @@ def buscar_productos(request):
     }
     return render(request, 'buscarProductos/buscar_productos.html', context)
 
-@csrf_exempt
 @login_required
-def toggle_favorito(request):
-    if request.method == 'POST':
-        data = json.loads(request.body)
-        query = data.get('query')
-        usuario = request.user
+def products(request):
+    favoritas = BusquedaFavorita.objects.filter(usuario=request.user)
+    publicaciones = Publicacion.objects.all()
 
-        try:
-            favorito, created = BusquedaFavorita.objects.get_or_create(usuario=usuario, termino_busqueda=query)
-            if not created:
-                favorito.delete()
-                return JsonResponse({'favorited': False})
-            return JsonResponse({'favorited': True})
-        except Exception as e:
-            return JsonResponse({'error': str(e)}, status=500)
+    context = {
+        'favoritas': favoritas,
+        'publicaciones': publicaciones,
+    }
+    return render(request, 'products.html', context)

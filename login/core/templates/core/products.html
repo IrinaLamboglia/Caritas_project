@@ -28,15 +28,34 @@
                     </div>
                 </div>
 
-                <!-- Barra de búsqueda -->
-                <div class="row my-4">
-                    <div class="col-12">
-                        <form method="GET" action="{% url 'buscar_productos' %}" class="form-inline">
-                            <input type="text" name="q" class="form-control mr-2" placeholder="Buscar productos...">
-                            <button type="submit" class="btn btn-primary">Buscar</button>
-                        </form>
-                    </div>
+                <!-- Barra de búsqueda unificada -->
+<div class="row my-4">
+    <div class="col-12">
+        <form method="GET" action="{% url 'buscar_productos' %}" class="form-inline">
+            <div class="input-group">
+                <input 
+                    type="text" 
+                    id="busqueda-texto" 
+                    name="q" 
+                    class="form-control" 
+                    placeholder="Buscar productos..." 
+                    list="favoritas-list"
+                    aria-label="Buscar productos" 
+                    aria-describedby="boton-buscar"
+                    autocomplete="off"
+                />
+                <datalist id="favoritas-list">
+                    {% for favorita in favoritas %}
+                        <option value="{{ favorita.termino_busqueda }}"></option>
+                    {% endfor %}
+                </datalist>
+                <div class="input-group-append">
+                    <button class="btn btn-primary" type="submit" id="boton-buscar">Buscar</button>
                 </div>
+            </div>
+        </form>
+    </div>
+</div>
 
                 <div class="album py-5 bg-body-tertiary">
                     <div class="container">
@@ -93,7 +112,8 @@
             document.addEventListener('DOMContentLoaded', function() {
                 const publicacionesSolicitadas = {{ publicaciones_solicitadas_ids|safe }};
                 const solicitarBtns = document.querySelectorAll('.solicitar-btn');
-
+                const favoritasList = document.getElementById('favoritas-list');
+                const options = favoritasList.querySelectorAll('option');
                 solicitarBtns.forEach(btn => {
                     const publicacionId = btn.dataset.publicacionId;
                     if (publicacionesSolicitadas.includes(parseInt(publicacionId))) {
@@ -104,9 +124,13 @@
                         btn.style.borderColor = '#ccc';
                     }
                 });
+                options.forEach(option => {
+                    console.log(option.value);  // Verifica los términos favoritos
+                });
             });
         </script>
     </body>
     </html>
 {% endif %}
 {% endblock %}
+

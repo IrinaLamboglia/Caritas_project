@@ -25,19 +25,17 @@
             <div class="row my-4">
                 <div class="col-12">
                     <form method="GET" action="{% url 'buscar_productos' %}" class="form-inline">
-                        <input type="text" name="q" class="form-control mr-2" value="{{ query }}" placeholder="Buscar productos...">
+                        <input type="text" list="favoritas" name="q" class="form-control mr-2"  placeholder="Buscar productos..." autocomplete="off">
+                        <datalist id="favoritas">
+                            {% for favorita in favoritas %}
+                                <option value="{{ favorita.termino_busqueda }}">
+                            {% endfor %}
+                        </datalist>
                         <button type="submit" class="btn btn-primary">Buscar</button>
                         <i class="fas fa-star favorite-icon {% if ya_favorita %}favorited{% endif %}" id="favorite-icon"></i>
                     </form>
                 </div>
             </div>
-
-            <!-- Lista de búsquedas favoritas -->
-            <ul>
-                {% for favorita in favoritas %}
-                    <li>{{ favorita.termino_busqueda }}</li>
-                {% endfor %}
-            </ul>
 
             <div class="album py-5 bg-body-tertiary">
                 <div class="container">
@@ -103,7 +101,6 @@
     <script>
         document.getElementById('favorite-icon').addEventListener('click', function() {
             document.getElementById('favorite-form-button').click();
-        
         });
     </script>
 
