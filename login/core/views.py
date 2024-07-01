@@ -76,7 +76,7 @@ def products(request):
 def verPerfil(request):
     user = request.user
     mis_valoraciones= Valoracion.objects.filter(usuario=user) #valoraciones del usuario del perfil 
-    
+    print(mis_valoraciones)
 # Filtrar solicitudes donde publicacion__usuario=user OR solicitante=user
     soli = Solicitud.objects.filter(Q(publicacion__usuario=user) | Q(solicitante=user), realizado=True)
 
@@ -93,12 +93,12 @@ def verPerfil(request):
              'solicitud': solicitud,
              'publicacion': solicitud.publicacion,
              'solicitante': solicitud.solicitante,
-              'valoracion': valoracion,
-               'v_mias' : mis_valoraciones,
+             'valoracion': valoracion,
+             #'valoraciones' : mis_valoraciones, #lo cambie 
              })
    #para q este activa tiene q tener categoria valida , al parecer trueque tiene q estar en false
     publi = Publicacion.objects.filter(usuario=user,estado=True, estadoCategoria=True, trueque=False) #publicaciones activas
-    return render(request, 'core\perfil\perfil.html', {'user' : user , 'elementos' : elementos, 'publicaciones' : publi})
+    return render(request, 'core/perfil/perfil.html', {'user' : user , 'elementos' : elementos, 'publicaciones' : publi,'valoraciones': mis_valoraciones})
 
 
 
@@ -149,10 +149,12 @@ def listarBusqueda(request, user_id):
     return render(request, 'core/perfil/perfil.html', {'user': user})
 
 
-
+#le hice un cambio para el listado de valoraciones en el perfil
 #perfecto
 def filtro_truequesperfil(request, usuario_id):
     user = get_object_or_404(Usuario, id=usuario_id)  # Obtener el usuario del perfil
+    mis_valoraciones= Valoracion.objects.filter(usuario=user) #valoraciones del usuario del perfil 
+
 
     filtro = request.GET.get('filtro', 'default')
 
@@ -183,7 +185,8 @@ def filtro_truequesperfil(request, usuario_id):
         'user': user,
         'elementos': elementos,
         'filtro': filtro,
-        'publicaciones':publi
+        'publicaciones':publi,
+        'valoraciones':mis_valoraciones,
     }
 
     return render(request, 'core/perfil/perfil.html', context)

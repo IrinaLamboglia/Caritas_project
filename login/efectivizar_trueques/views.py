@@ -63,7 +63,9 @@ def aceptacion_trueque(request, id):
     trueque.estado = 'aceptado'
     trueque.fecha_efectivizacion = timezone.now().date()
     
-    solicitud = Solicitud.objects.filter(trueque=id)
+    solicitud = get_object_or_404(Solicitud, trueque=trueque)
+
+   # solicitud = Solicitud.objects.filter(trueque=id)
     
     if solicitud:
         print("entro acep")
@@ -74,7 +76,6 @@ def aceptacion_trueque(request, id):
         solicitud.save()
 
     trueque.save()
-    #aca tenia entendido q solo valoraba el solicitante pero a chequear 
     enviar_correo_ayudante(trueque.solicitante)
     enviar_correo_ayudante(trueque.receptor)
 
