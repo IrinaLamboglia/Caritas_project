@@ -79,16 +79,66 @@ def products(request):
 
 def verPerfil(request):
     user = request.user
+<<<<<<< Updated upstream
     soli= Solicitud.objects.filter(publicacion__usuario=user,realizado=True)
    #para q este activa tiene q tener categoria valida , al parecer trueque tiene q estar en false
     publi = Publicacion.objects.filter(usuario=user,estado=True, estadoCategoria=True, trueque=False)
     return render(request, 'core\perfil\perfil.html', {'user' : user , 'elementos' : soli, 'publicaciones' : publi})
+=======
+    mis_valoraciones= Valoracion.objects.filter(usuario=user) #valoraciones del usuario del perfil 
+    print(mis_valoraciones)
+# Filtrar solicitudes donde publicacion__usuario=user OR solicitante=user
+    soli = Solicitud.objects.filter(Q(publicacion__usuario=user) | Q(solicitante=user), realizado=True)
+
+    elementos = []
+    for solicitud in soli:
+        try:
+            #me tengo que quedar con la valoracion q no es mia 
+            valoracion = Valoracion.objects.exclude(usuario=user).get(solicitud=solicitud)
+        except Valoracion.DoesNotExist:
+            valoracion = None
+
+
+        elementos.append({
+             'solicitud': solicitud,
+             'publicacion': solicitud.publicacion,
+             'solicitante': solicitud.solicitante,
+             'valoracion': valoracion,
+             #'valoraciones' : mis_valoraciones, #lo cambie 
+             })
+   #para q este activa tiene q tener categoria valida , al parecer trueque tiene q estar en false
+    publi = Publicacion.objects.filter(usuario=user,estado=True, estadoCategoria=True, trueque=False) #publicaciones activas
+    return render(request, 'core/perfil/perfil.html', {'user' : user , 'elementos' : elementos, 'publicaciones' : publi,'valoraciones': mis_valoraciones})
+
+>>>>>>> Stashed changes
 
 #corregido por el tema de las solis solicitadas
 def perfil_usuario(request, usuario_id, messages=None):
     user = get_object_or_404(Usuario, id=usuario_id) # el usuario del q quiero ver el perfil
     soli = Solicitud.objects.filter(publicacion__usuario=user, realizado=True) #trueques 
 
+<<<<<<< Updated upstream
+=======
+    soli = Solicitud.objects.filter(Q(publicacion__usuario=user) | Q(solicitante=user), realizado=True)
+
+    elementos = []
+    for solicitud in soli:
+        try:
+            #tengo que distinguir la valoracion, osea quedarme con el q me la realizo
+            valoracion = Valoracion.objects.exclude(usuario=user).get(solicitud=solicitud)
+        except Valoracion.DoesNotExist:
+            valoracion = None
+            print("no encuentro la valoracion")
+
+ 
+        elementos.append({
+                'solicitud' :solicitud ,
+                'publicacion': solicitud.publicacion,
+                'solicitante': solicitud.solicitante,
+                'valoracion': valoracion,
+            })
+        
+>>>>>>> Stashed changes
     publi = Publicacion.objects.filter(usuario=user, estado=True, estadoCategoria=True, trueque=False) #public activas
     print(publi.count())
     publicaciones_solicitadas_ids = Solicitud.objects.filter(solicitante=request.user).values_list('publicacion_id', flat=True) #mis publis solicitadas
@@ -493,8 +543,9 @@ def filtro_trueques(request):
             Q(publicacion__usuario=usu) | Q(publicacionOfrecida__usuario=usu),  # Usuario es solicitante o receptor
             estado=True,  # Estado aceptado
             realizado=True,  # Solicitud realizada
-            trueque__isnull=False,
-            trueque__valoraciones__isnull=True  # Sin valoraciones para este trueque
+            trueque__isnull=False
+        ).exclude(
+            Q(trueque__valoraciones__usuario=usu)#cambiado
         ).distinct() 
 
     else:

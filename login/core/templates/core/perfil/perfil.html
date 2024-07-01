@@ -182,6 +182,60 @@
     <a href="{% url 'products' %}" class="back-button">
         <i class="fas fa-arrow-left"></i> Volver
     </a>
+<<<<<<< Updated upstream
+=======
+
+<!-- si no es su perfil no lo deberia ver-->    
+{%if user == request.user %}
+
+<nav class="profile-navigation">
+    <a>
+        <div class="notification-icon">
+            <i class="fas fa-envelope"></i>
+        </div>
+    </a>
+    <p>Valoraciones</p>
+
+    <div class="notifications">
+        <h4>Valoraciones</h4>
+                {% if valoraciones %}
+                {% for valoracion in valoraciones %}
+                        <div class="notification-item">
+                            <span class="rating">
+                                {% for i in "12345" %}
+                                    <i class="fa{% if valoracion.estrellas >= i|add:"0" %}s{% else %}r{% endif %} fa-star"></i>
+                                {% endfor %}
+                            </span>
+
+                            {% if valoracion.comentario %}
+                                <p>{{ valoracion.comentario }}</p>
+                            {% endif %}
+
+
+                            {% if valoracion.usuario == valoracion.solicitud.solicitante %}
+                            <p>Valoración dirigida a: {{ valoracion.solicitud.publicacion.usuario.email}}</p>
+                            {% else %}
+                                <p>Valoración dirigida a: {{ valoracion.solicitud.solicitante.email }}</p>
+                            {% endif %}
+                            <a href="{% url 'editar_valoracion' valoracion.id %}">Editar reseña</a>
+                    
+
+                        </div>
+                    {% endfor %}
+                {% else %}
+                    <p>No hay valoraciones disponibles.</p>
+                {% endif %}
+    </div>
+</nav>
+
+{% endif %}
+
+
+
+
+</div>
+
+>>>>>>> Stashed changes
     <div class="profile-container">
         <div class="slideshow-container">
             <!-- Aquí se agregan las fotos dinámicamente -->

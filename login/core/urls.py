@@ -35,6 +35,12 @@ from rechazarTrueque.views import rechazar_trueque
 from rechazarTurno.views import rechazar_turno
 from visualizar_estadisticas.views import estadisticas_trueques
 from valorar_trueque.views import valorar_trueque
+<<<<<<< Updated upstream
+=======
+from canjearPuntos.views import listarProductosDonados,canjear_producto, generar_pdf,misCanjes
+from editar_reseña.views import editar_valoracion
+
+>>>>>>> Stashed changes
 urlpatterns = [
     path('', home, name='home'),
     path('products/', products,name='products'),
@@ -87,6 +93,7 @@ urlpatterns = [
 
     path('check_email/', views.check_email, name='check_email'),
     path('misTrueques/', views.ver_misTrueques, name='misTrueques'),
+    path('editar_reseña/<int:valoracion_id>/', editar_valoracion, name='editar_valoracion'),#nuevo
 
     path('solicitar-trueque/<int:publicacion_id>/', views.solicitar_trueque, name='solicitar_trueque'),
     path('registrar-solicitud/<int:publicacion_objetivo_id>/', views.registrar_solicitud, name='registrar_solicitud'),
