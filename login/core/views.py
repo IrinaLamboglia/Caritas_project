@@ -75,7 +75,8 @@ def products(request):
 #agregue valoraciones
 def verPerfil(request):
     user = request.user
-
+    mis_valoraciones= Valoracion.objects.filter(usuario=user) #valoraciones del usuario del perfil 
+    
 # Filtrar solicitudes donde publicacion__usuario=user OR solicitante=user
     soli = Solicitud.objects.filter(Q(publicacion__usuario=user) | Q(solicitante=user), realizado=True)
 
@@ -93,6 +94,7 @@ def verPerfil(request):
              'publicacion': solicitud.publicacion,
              'solicitante': solicitud.solicitante,
               'valoracion': valoracion,
+               'v_mias' : mis_valoraciones,
              })
    #para q este activa tiene q tener categoria valida , al parecer trueque tiene q estar en false
     publi = Publicacion.objects.filter(usuario=user,estado=True, estadoCategoria=True, trueque=False) #publicaciones activas

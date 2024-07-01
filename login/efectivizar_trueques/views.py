@@ -19,13 +19,12 @@ def efectivizar_trueques(request):
     
     # Obtener la fecha actual
     today = timezone.now().date() 
-
     # Inicializar trueques con una lista vacía
     trueques = []
 
     # Filtrar los turnos basados en la fecha y la filial del usuario
     turnos = Turno.objects.filter( filial__nombre=filial_usuario,fecha=today)
-
+    
     # Verificar si se encontraron turnos para la fecha y la filial del usuario
     if turnos.exists():
         # Si se encontraron turnos, obtener el primero
@@ -58,7 +57,6 @@ def enviar_correo_ayudante(ayudante):
     send_mail(asunto, mensaje, 'tucorreo@gmail.com', [correo_destino])
 
 
-#aca no se deberia sumar uno a las estrellas de los usuarios?
 def aceptacion_trueque(request, id):
     trueque = get_object_or_404(Trueque, id=id)
     trueque.aceptado = True

@@ -300,6 +300,77 @@
         margin-bottom: 10px;
     }
 }
+/* Estilos generales */
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+}
+
+.back-button {
+    position: absolute;
+    top: 20px;
+    left: 20px;
+    font-size: 24px;
+    color: #000;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    z-index: 10; /* Asegura que el botón de retroceso esté sobre las imágenes */
+}
+
+.back-button i {
+    margin-right: 8px;
+}
+
+.profile-navigation {
+    position: absolute;
+    top: 20px; /* Ajusta según la posición vertical deseada */
+    right: 20px; /* Ajusta según la posición horizontal deseada */
+    display: flex;
+    align-items: center;
+}
+
+
+
+    .notification-icon {
+        font-size: 24px;
+        color: #333;
+        cursor: pointer;
+        position: relative;
+        margin-left: auto; /* Alineación a la derecha */
+    }
+
+    .notifications {
+        display: none;
+        position: absolute;
+        right: 0;
+        top: 40px; /* Ajusta según la altura de tu header */
+        width: 300px;
+        background-color: #fff;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        z-index: 1000;
+        padding: 10px;
+    }
+
+    .notifications.active {
+        display: block;
+    }
+
+    .notifications h4 {
+        margin: 0 0 10px;
+    }
+
+    .notification-item {
+        padding: 10px;
+        border-bottom: 1px solid #eee;
+    }
+
+    .notification-item:last-child {
+        border-bottom: none;
+    }
 
 
 
@@ -309,10 +380,54 @@
     </style>
 </head>
 <body>
+
+
+
     <a href="{% url 'products' %}" class="back-button">
         <i class="fas fa-arrow-left"></i> Volver
     </a>
+
+<!-- si no es su perfil no lo deberia ver-->
+{%if user == request.user %}
+
+
+    <nav class="profile-navigation">
+        <a >
+        <div class="notification-icon">
+            <i class="fas fa-envelope"></i>
+        </div>
+    </a>
+        <p>Valoraciones</p> 
+
+        <div class="notifications">
+            <h4>Valoraciones</h4>
+            {% if elementos.mis_v %}
+                {% for valoracion in elementos.mis_v %}
+                    <div class="notification-item">
+                        <p>{{ valoracion.estrellas }} </p>
+                        {% if valoracion.comentario %}
+                        <p>{{valoracion.comentario}}</p>
+                        {%endif%}
+                         
+                    </div>
+
+                {% endfor %}
+            {% else %}
+                <p>No hay valoraciones disponibles.</p>
+            {% endif %}
+        </div>
+
+    </nav>
+    
+    {% endif %}
+
+
+
+
+</div>
+
     <div class="profile-container">
+    
         <div class="slideshow-container">
             <!-- Aquí se agregan las fotos dinámicamente -->
             <img class="mySlides" src="{% static 'imagenes/Fondos.png' %}">
@@ -346,6 +461,9 @@
             <p><strong>Última conexión:</strong> {{ user.last_login }}</p>
             <p><strong>Fecha de Nacimiento:</strong> {{ user.fecha_nacimiento }}</p>
         </div>
+
+
+        
         <div class="columns">
 
 
@@ -372,8 +490,6 @@
                     
                     {% if elementos %}
                         <ul>
-
-
                             {% for elemento in elementos %}
                             <li class="trade">
                                 <div class="trade-item">
@@ -503,7 +619,24 @@
              }
          });
      });
+
+
+
  </script>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const notificationIcon = document.querySelector('.notification-icon');
+        const notifications = document.querySelector('.notifications');
+
+        notificationIcon.addEventListener('click', function() {
+            notifications.classList.toggle('active');
+        });
+    });
+</script>
+
+
+
 
 </body>
 </html>
