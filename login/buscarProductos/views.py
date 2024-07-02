@@ -26,9 +26,11 @@ def buscar_productos(request):
     
     if request.method == 'POST':
         if ya_favorita:
+            messages.success(request,'La busqueda se ha eliminado de favorito')
             BusquedaFavorita.objects.filter(usuario=request.user, termino_busqueda=query).delete()
             ya_favorita = False
         else:
+            messages.success(request,'La busqueda se ha marcado como favorito')
             BusquedaFavorita.objects.create(usuario=request.user, termino_busqueda=query)
             ya_favorita = True
 
