@@ -1,8 +1,11 @@
 # core/views.py
+from django.http import JsonResponse
 from django.shortcuts import render, redirect, get_object_or_404
 from core.models import Solicitud, Valoracion
 from core.form import ValoracionForm  # Asegúrate de importar correctamente tu formulario
 from django.urls import reverse
+from django.views.decorators.csrf import csrf_exempt
+
 
 from urllib.parse import urlencode
 #creo la lista de palabras prohibidas 
@@ -48,3 +51,11 @@ def valorar_trueque(request, solicitud_id):
             form = ValoracionForm( solicitud=solicitud)
 
     return render(request, 'validar_trueque/validar.html', {'form': form, 'solicitud': solicitud})
+
+@csrf_exempt
+def eliminar_valoracion(request, valoracion_id):
+    if request.method == 'DELETE':
+        valoracion = get_object_or_404(Valoracion, id=valoracion_id)
+        valoracion.delete()
+        return JsonResponse({'success': True, 'message': 'Se ha eliminado la valoración exitosamente.'})
+    return JsonResponse({'success': False, 'message': 'Método no permitido.'}, status=405)

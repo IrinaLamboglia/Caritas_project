@@ -34,7 +34,7 @@ from efectivizar_trueques.views import efectivizar_trueques,aceptacion_trueque,p
 from rechazarTrueque.views import rechazar_trueque
 from rechazarTurno.views import rechazar_turno
 from visualizar_estadisticas.views import estadisticas_trueques
-from valorar_trueque.views import valorar_trueque
+from valorar_trueque.views import eliminar_valoracion, valorar_trueque
 
 from canjearPuntos.views import listarProductosDonados,canjear_producto, generar_pdf,misCanjes
 
@@ -156,5 +156,7 @@ urlpatterns = [
     path('donacion/success/', donacion_success, name='donacion_success'),
     path('donacion/failure/', donacion_failure, name='donacion_failure'),
     path('donacion/pending/', donacion_pending, name='donacion_pending'),
-   
+    path('valoraciones/<int:valoracion_id>/', eliminar_valoracion, name='eliminar_valoracion'),
+
+
     ]
