@@ -119,7 +119,9 @@
     </div>
 
     <!-- Error Modal -->
-    {% include 'error_modal.html' %}
+    {% block error_modal %}
+        {% include 'error_modal.html' %}
+    {% endblock %}
 
     {% include "footer.html"%} 
 
