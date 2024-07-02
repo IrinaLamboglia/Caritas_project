@@ -50,21 +50,20 @@
 <!-- agus te tuve q cambiar los mensajes porque no se mostraban no se porque, disculpa. tenia tu codigo igual y no me andaban-->
 
 <script src="{% static 'js/boton_confirmar.js' %}"></script>
-{% if messages %}
-  {% for message in messages %}
+{% if message %}
     <script>
-      document.addEventListener('DOMContentLoaded', function() {
-        Swal.fire({
-          title: '{% if message.tags == "success" %}¡Éxito!{% else %}Error{% endif %}',
-          html: "{{ message|safe }}",
-          icon: '{% if message.tags == "success" %}success{% else %}error{% endif %}',
-          showCloseButton: true,
-          focusConfirm: false,
-          confirmButtonText: 'OK'
+        document.addEventListener('DOMContentLoaded', function() {
+            Swal.fire({
+                title: '{% if message.type == "success" %}¡Éxito!{% else %}Error{% endif %}',
+                html: "{{ message.content|safe }}",
+                icon: '{% if message.type == "success" %}success{% else %}error{% endif %}',
+                showCloseButton: true,
+                focusConfirm: false,
+                confirmButtonText: 'OK'
+            });
         });
-      });
     </script>
-  {% endfor %}
 {% endif %}
+
 
 {% endblock %}
