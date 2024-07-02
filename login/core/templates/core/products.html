@@ -13,6 +13,41 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>Publicación</title>
         <link rel="stylesheet" href="{% static 'css/products-estilos.css' %}">
+   <style>
+.solicitado {
+    background-color: #a5b0b9;
+    height: 60px; /* Reducir la altura para ajustarse mejor a la tarjeta */
+    line-height: 20px; /* Centrar verticalmente el texto */
+    transition: background-color 0.3s ease, color 0.3s ease; /* Transiciones suaves para color de fondo y texto */
+    border-radius: 5px; /* Bordes redondeados */
+    border: 1px solid #007bff; /* Borde delgado */
+    color: #fff;
+    text-align: center; /* Centrar el texto horizontalmente */
+    display: inline-block; /* Hacer que el botón se ajuste al contenido */
+    text-decoration: none; /* Quitar subrayado de enlace si es necesario */
+    cursor: not-allowed; /* Cambiar el cursor a no permitido */
+}
+
+.solicitado:hover {
+    background-color: #007bff; /* Cambiar el color de fondo al pasar el cursor */
+}
+
+.card {
+    position: relative; /* Posición relativa para alinear contenido interno */
+}
+
+.card-body {
+    padding: 20px; /* Aumentar el espacio interno de la tarjeta */
+}
+
+.card-img-top {
+    width: 100%; /* Ajustar la imagen al 100% del contenedor */
+    height: auto; /* Mantener la proporción de la imagen */
+}
+
+
+   </style>
+
     </head>
     <body>
         <div class="album py-5 bg-body-tertiary">
@@ -64,19 +99,32 @@
                                 {% for publicacion in publicaciones %}
                                     <div class="col">
                                         <div class="card shadow-sm">
-                                            {% if publicacion.imagen %}
                                                 <img src="{{ publicacion.imagen.url }}" class="card-img-top" alt="{{ publicacion.titulo }}">
-                                            {% else %}
+                                                {% if not  publicacion.imagen.url%}
                                                 <img src="{% static 'placeholder_image.jpg' %}" class="card-img-top" alt="Imagen no disponible">
-                                            {% endif %}
+                                                {% endif %}
+
                                             <div class="card-body">
-                                                <h5 class="card-title">{{ publicacion.titulo }}</h5>
-                                                <p class="card-text">{{ publicacion.descripcion }}</p>
+                                                <h5 class="card-title"><strong>Titulo: </strong> {{ publicacion.titulo }}</h5>
+                                                <p class="card-text"><strong>Descripción: </strong> {{ publicacion.descripcion }}</p>
+                                                <p class="card-text"><strong>Categoria: </strong> {{ publicacion.categoria.nombre}}</p>
+
+
                                                 <div class="d-flex justify-content-between align-items-center">
-                                                    <a href="{% url 'ver_producto' publicacion.id %}" class="btn btn-outline-primary">Ver Detalles</a>
-                                                    <a href="{% url 'solicitar_trueque' publicacion.id %}" class="btn btn-outline-primary solicitar-btn" data-publicacion-id="{{ publicacion.id }}">Solicitar trueque</a>
+                                                    <h5 class="card-title mb-0">
+                                                            <a href="{% url 'perfil_usuario' publicacion.usuario.id %}" class="btn btn-outline-primary" data-publicacion-id="{{ publicacion.usuario.id }}">Perfil publicante</a>
+                                                        </h5>
+                                                        {% if publicacion.id in publicaciones_solicitadas_ids %}
+                                                            <button class="solicitado">Ya solicitada</button>
+                                                        {% else %}
+                                                            <a href="{% url 'solicitar_trueque' publicacion.id %}" class="btn btn-outline-primary solicitar-btn" data-publicacion-id="{{ publicacion.id }}">Solicitar trueque</a>
+                                                        {% endif %}
+                                                    </h5>
                                                 </div>
                                             </div>
+
+
+
                                         </div>
                                     </div>
                                 {% endfor %}
@@ -90,43 +138,16 @@
                 </div>
 
                 {% if messages %}
-                    <div id="messages-container" style="position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); z-index: 1000;">
+                    <div >
                         {% for message in messages %}
-                            <div class="alert" style="width: 300px; padding: 15px; margin-bottom: 20px; border-radius: 5px; font-size: 16px; text-align: center; background-color: {% if message.tags == 'success' %}#d4edda; color: #155724{% elif message.tags == 'info' %}#cce5ff; color: #007bff{% elif message.tags == 'warning' %}#fff3cd; color: #856404{% elif message.tags == 'error' %}#f8d7da; color: #721c24{% endif %};">
                                 {{ message }}
-                            </div>
                         {% endfor %}
                     </div>
+                    {% endif %}
 
-                    <script>
-                        setTimeout(function() {
-                            var messagesContainer = document.getElementById('messages-container');
-                            messagesContainer.style.display = 'none';
-                        }, 5000);
-                    </script>
-                {% endif %}
-            </div>
-        </div>
 
-        <script>
-            document.addEventListener('DOMContentLoaded', function() {
-                const publicacionesSolicitadas = {{ publicaciones_solicitadas_ids|safe }};
-                const solicitarBtns = document.querySelectorAll('.solicitar-btn');
-                
-                solicitarBtns.forEach(btn => {
-                    const publicacionId = btn.dataset.publicacionId;
-                    if (publicacionesSolicitadas.includes(parseInt(publicacionId))) {
-                        btn.classList.add('disabled');
-                        btn.textContent = 'Ya solicitado';
-                        btn.style.pointerEvents = 'none';
-                        btn.style.backgroundColor = '#ccc';
-                        btn.style.borderColor = '#ccc';
-                    }
-                });
-            });
-        </script>
+                  
     </body>
     </html>
 {% endif %}
 {% endblock %}
-

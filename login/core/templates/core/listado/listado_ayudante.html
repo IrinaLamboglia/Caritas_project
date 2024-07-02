@@ -1,0 +1,106 @@
+{% extends 'core/base.html' %}
+{% load static %}
+{% block content %}
+
+<link rel="stylesheet" type="text/css" href="{% static 'css/products-estilos.css' %}">
+
+    <html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Publicaciónes fundación</title>
+        <link rel="stylesheet" href="{% static 'css/products-estilos.css' %}">
+   <style>
+.solicitado {
+    background-color: #a5b0b9;
+    height: 60px; /* Reducir la altura para ajustarse mejor a la tarjeta */
+    line-height: 20px; /* Centrar verticalmente el texto */
+    transition: background-color 0.3s ease, color 0.3s ease; /* Transiciones suaves para color de fondo y texto */
+    border-radius: 5px; /* Bordes redondeados */
+    border: 1px solid #007bff; /* Borde delgado */
+    color: #fff;
+    text-align: center; /* Centrar el texto horizontalmente */
+    display: inline-block; /* Hacer que el botón se ajuste al contenido */
+    text-decoration: none; /* Quitar subrayado de enlace si es necesario */
+    cursor: not-allowed; /* Cambiar el cursor a no permitido */
+}
+
+.solicitado:hover {
+    background-color: #007bff; /* Cambiar el color de fondo al pasar el cursor */
+}
+
+.card {
+    position: relative; /* Posición relativa para alinear contenido interno */
+}
+
+.card-body {
+    padding: 20px; /* Aumentar el espacio interno de la tarjeta */
+}
+
+.card-img-top {
+    width: 100%; /* Ajustar la imagen al 100% del contenedor */
+    height: auto; /* Mantener la proporción de la imagen */
+}
+
+
+   </style>
+
+    </head>
+    <body>
+        <div class="album py-5 bg-body-tertiary">
+            <div class="container">
+                <div class="row">
+                    <div class="col-6">
+                        <h2>Productos fundación</h2>
+                    </div>
+                    <div class="col-6 text-right">
+                        {% block button %}
+                        <a href="{% url 'alta_producto' %}" class="boton-crear">Alta producto</a>
+                        {% endblock button %}
+                    </div>
+                </div>
+
+                <div class="album py-5 bg-body-tertiary">
+                    <div class="container">
+                        <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-3">
+                            {% if publicaciones %}
+                                {% for publicacion in publicaciones %}
+                                    <div class="col">
+                                        <div class="card shadow-sm">
+                                            <div class="card-body">
+                                                <h5 class="card-title"><strong>Titulo: </strong> {{ publicacion.titulo }}</h5>
+                                                <p class="card-text"><strong>Descripción: </strong> {{ publicacion.descripcion }}</p>
+                                                <p class="card-text"><strong>Categoria: </strong> {{ publicacion.categoria.nombre}}</p>
+                                                <p class="card-text"><strong>Stock: </strong> {{ publicacion.stock}}</p>
+
+                                            </div>
+
+
+
+                                        </div>
+                                    </div>
+                                {% endfor %}
+                            {% else %}
+                                <div class="col">
+                                    <p>No hay publicaciones disponibles.</p>
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+
+                {% if messages %}
+                    <div >
+                        {% for message in messages %}
+                                {{ message }}
+                        {% endfor %}
+                    </div>
+                    {% endif %}
+
+
+    
+
+    </body>
+
+    </html>
+{% endblock %}

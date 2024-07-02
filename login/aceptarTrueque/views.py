@@ -16,6 +16,10 @@ def aceptar_trueque(request, solicitud_id):
             solicitante=solicitud.solicitante,
             receptor=request.user,
         )
+        #modifique porq necesito q solicitud tenga al trueque 
+        solicitud.trueque = trueque
+        solicitud.save()
+
         trueque.generar_codigos_confirmacion()
         trueque.save()
 
@@ -35,8 +39,6 @@ def aceptar_trueque(request, solicitud_id):
         return redirect('misTrueques')
     
     return render(request, 'aceptarTrueque/aceptar_trueque.html', {'solicitud': solicitud})
-
-
 def enviar_email_cancelacion(solicitud):
     mensaje = f"""
     Hola {solicitud.solicitante.username},

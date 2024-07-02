@@ -32,6 +32,11 @@ from confirmarTurno.views import confirmar_turno
 from visualizarTrueques.views import visualizar_trueques_diarios
 from efectivizar_trueques.views import efectivizar_trueques,aceptacion_trueque,penalizar_trueque,rechazar_efectivizacion
 from rechazarTrueque.views import rechazar_trueque
+from rechazarTurno.views import rechazar_turno
+from visualizar_estadisticas.views import estadisticas_trueques
+from valorar_trueque.views import valorar_trueque
+from canjearPuntos.views import listarProductosDonados,canjear_producto, generar_pdf,misCanjes
+
 from realizarDonacion.views import realizar_donacion, donacion_failure, donacion_pending, donacion_success
 from buscarProductos.views import buscar_productos, products
 from listaDonacion.views import donation_list
@@ -97,19 +102,43 @@ urlpatterns = [
     path('elegir-turno/<int:trueque_id>/', elegir_turno, name='elegir_turno'),
     
     path('confirmar-turno/<int:trueque_id>/', confirmar_turno, name='confirmar_turno'),
+    path('rechazar-turno/<int:trueque_id>/', rechazar_turno, name='rechazar_turno'),
 
     path('trueques_diarios/', visualizar_trueques_diarios, name='visualizar_trueques_diarios'),
-    path('efectivizar_trueque/', efectivizar_trueques, name='efectivizar_trueque'),
-    path('aceptacion_trueque/<int:id>', aceptacion_trueque, name='aceptacion_trueque'),
+    path('efectivizar_trueques/', efectivizar_trueques, name='efectivizar_trueque'),
+    path('aceptacion_trueque/<int:id>/', aceptacion_trueque, name='aceptacion_trueque'),
     path('rechazar_efectivizacion/<int:id>', rechazar_efectivizacion, name='rechazar_efectivizacion'),
     path('penalizar_trueque/<int:trueque_id>/', penalizar_trueque, name='penalizar_trueque'),
     path('rechazar_trueque/<int:solicitud_id>/', rechazar_trueque, name='rechazar_trueque'),
-    
-    
+    path('valorar_trueque/<int:solicitud_id>/', valorar_trueque, name='valorar_trueque'),
+   
+    path('estadisticas_trueques/',estadisticas_trueques, name='estadisticas_trueques'),   
+
     path('eliminar_publicacion/<int:publicacion_id>/', views.eliminar_publicacion, name='eliminar_publicacion'),
     
     path('truequesAdmin/',views.trueques_realizados,name='trueques_realizados'),
+
+    path('perfil/',views.verPerfil,name='perfil'),
+    path('perfil/<int:usuario_id>/',views.perfil_usuario,name='perfil_usuario'),
+    path('solicitar/<int:publicacion_id>/', views.solicitar_t, name='solicitar_t'),
+    path('alta/',views.alta_producto,name="alta_producto"),
    
+    #path('filtro_publis/',views.filtro_publis,name="filtro_publis"),
+    path('buscar_perfil/',views.buscar_perfil, name='buscar_perfil'),
+    path('perfil/<int:user_id>/', views.listarBusqueda, name='listarBusqueda'),  # Ruta para el perfil del usuario específico
+    path('listadoProductosDonados/', listarProductosDonados, name='listadoProductosDonados'),
+    path('canjear/<int:publicacion_id>/', canjear_producto, name='canjear_producto'),
+    path('generar_pdf/', generar_pdf, name='generar_pdf'),
+    path('misCanjes/', misCanjes, name='misCanjes'),
+
+
+
+    path('filtro_truquesperfil/<int:usuario_id>/',views.filtro_truequesperfil,name="filtro_truequesperfil"), #mio
+    path('listado_ayudante/',views.listado_ayudante,name='listado_ayudante'),  ##mio
+    path('registrar_retiro/',views.registrar_retiro,name='registrar_retiro'),
+    path('codigo_retiro/',views.codigo_retiro,name="codigo_retiro"),
+    path('registrar_producto/<str:codigo_r>/', views.registrar, name='registrar_producto'),
+
     path('donar/', realizar_donacion, name='realizar_donacion'),
 
     path('buscar/', buscar_productos, name='buscar_productos'),
@@ -120,4 +149,5 @@ urlpatterns = [
     path('donacion/success/', donacion_success, name='donacion_success'),
     path('donacion/failure/', donacion_failure, name='donacion_failure'),
     path('donacion/pending/', donacion_pending, name='donacion_pending'),
-]
+   
+    ]

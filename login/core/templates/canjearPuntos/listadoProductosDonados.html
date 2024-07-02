@@ -1,0 +1,70 @@
+{% extends 'core/base.html' %}
+{% load static %}
+
+<link rel="stylesheet" type="text/css" href="{% static 'css/products-estilos.css' %}">
+
+{% block content %}
+
+<div style="display: flex; align-items: center;">
+    <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" fill="currentColor" class="bi bi-ticket-perforated" viewBox="0 0 16 16" style="margin-right: 10px;">
+        <path d="M4 4.85v.9h1v-.9zm7 0v.9h1v-.9zm-7 1.8v.9h1v-.9zm7 0v.9h1v-.9zm-7 1.8v.9h1v-.9zm7 0v.9h1v-.9zm-7 1.8v.9h1v-.9zm7 0v.9h1v-.9z"/>
+        <path d="M1.5 3A1.5 1.5 0 0 0 0 4.5V6a.5.5 0 0 0 .5.5 1.5 1.5 0 1 1 0 3 .5.5 0 0 0-.5.5v1.5A1.5 1.5 0 0 0 1.5 13h13a1.5 1.5 0 0 0 1.5-1.5V10a.5.5 0 0 0-.5-.5 1.5 1.5 0 0 1 0-3A.5.5 0 0 0 16 6V4.5A1.5 1.5 0 0 0 14.5 3zM1 4.5a.5.5 0 0 1 .5-.5h13a.5.5 0 0 1 .5.5v1.05a2.5 2.5 0 0 0 0 4.9v1.05a.5.5 0 0 1-.5.5h-13a.5.5 0 0 1-.5-.5v-1.05a2.5 2.5 0 0 0 0-4.9z"/>
+    </svg>
+    <span style="font-size: 24px;">Mis puntos: {{ usuario.puntos }}</span>
+    <button type="button" class="btn btn-outline-primary" style="margin-left: 430px;" onclick="window.location.href='{% url 'misCanjes' %}'">Mis canjes</button>
+
+</div>
+
+<div class="caja">
+    <h2 class="titulo">Premios</h2>
+    {% if publicaciones %}
+        <ul class="list-group list-group-flush">
+            {% for publicacion in publicaciones %}
+                {% if publicacion.estado or publicacion.stock != 0 %}
+                    <li class="list-group-item">
+                        <div style="display: flex; justify-content: space-between; align-items: center;">
+                            <div>
+                                <h4>{{ publicacion.titulo }}</h4>
+                                <p>{{ publicacion.descripcion }}</p>
+                                <div style="display: flex; align-items: center;">
+                                    <p style="margin-right: 20px;">Puntos de categoría: {{ publicacion.categoria.puntuacion }}</p>
+                                    <p>Stock: {{ publicacion.stock }}</p>
+                                </div>
+                            </div>
+                            <form action="{% url 'canjear_producto' publicacion.id %}" method="post">
+                                {% csrf_token %}
+                                <button type="submit" class="btn btn-primary" onclick="confirmarCanje(event)">Canjear</button>
+                            </form>
+                        </div>
+                    </li>
+                {% endif %}
+            {% endfor %}
+        </ul>
+    {% else %}
+    <div class="no-premios text-center">
+        <p style="font-size: 24px; font-family: 'Arial', sans-serif;">No hay premios disponibles</p>
+    </div>
+    {% endif %}
+</div>
+
+<!-- agus te tuve q cambiar los mensajes porque no se mostraban no se porque, disculpa. tenia tu codigo igual y no me andaban-->
+
+<script src="{% static 'js/boton_confirmar.js' %}"></script>
+{% if messages %}
+  {% for message in messages %}
+    <script>
+      document.addEventListener('DOMContentLoaded', function() {
+        Swal.fire({
+          title: '{% if message.tags == "success" %}¡Éxito!{% else %}Error{% endif %}',
+          html: "{{ message|safe }}",
+          icon: '{% if message.tags == "success" %}success{% else %}error{% endif %}',
+          showCloseButton: true,
+          focusConfirm: false,
+          confirmButtonText: 'OK'
+        });
+      });
+    </script>
+  {% endfor %}
+{% endif %}
+
+{% endblock %}

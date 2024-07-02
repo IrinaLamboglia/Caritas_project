@@ -1,0 +1,44 @@
+{% extends 'core/base.html' %}
+
+{% block content %}
+
+<a href="{% url 'listadoProductosDonados' %}" class="btn btn-primary">Volver</a>
+
+<div class="caja">
+    <h2 class="titulo">Mis canjes</h2>
+    {% if canjes %}
+        <ul class="list-group list-group-flush">
+            {% for canje in canjes %}
+                <li class="list-group-item">
+                    <div class="row">
+                        <div class="col-md-8">
+                            <h4>{{ canje.publicacion.titulo }}</h4>
+                            
+                            {% if canje.codigo_retiro != ''%}
+                            <p style="margin-bottom: 5px;">Código de retiro: {{ canje.codigo_retiro }}</p>
+                            {% endif %}
+
+                            {% if canje.estado %}
+                                <span class="badge badge-pill badge-success">Retirado</span>
+                            {% else %}
+                                <span class="badge badge-pill badge-danger">Pendiente</span>
+                            {% endif %}
+                        </div>
+                        {% if canje.codigo_retiro != '' %}
+                        <div class="col-md-4 text-md-center">
+                            <a href="/generar_pdf/?codigo_retiro={{ canje.codigo_retiro }}" class="btn btn-outline-primary">Imprimir comprobante</a>
+                        </div>
+                        {% endif %}
+
+                    </div>
+                </li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <div class="no-premios text-center">
+            <p style="font-size: 24px; font-family: 'Arial', sans-serif;">No posee canjes realizados</p>
+        </div>
+    {% endif %}
+</div>
+
+{% endblock %}

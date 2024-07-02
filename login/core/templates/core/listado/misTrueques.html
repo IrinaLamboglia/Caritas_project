@@ -140,7 +140,7 @@
 </head>
 <body>
     <div class="container">
-        <h1>Mis solicitudes de trueques</h1>
+        <h1>Mis trueques</h1>
         
         <div class="filtro-container">
             <form action="{% url 'filtro_trueques' %}" method="GET">
@@ -149,7 +149,10 @@
                     <select id="filtro" name="filtro" onchange="this.form.submit()">
                         <option value="Todas" {% if filtro == 'Todas' %} selected {% endif %}>Todas</option>
                         <option value="Aceptadas" {% if filtro == 'Aceptadas' %} selected {% endif %}>Aceptadas</option>
+                        
                         <option value="Pendientes" {% if filtro == 'Pendientes' %} selected {% endif %}>Pendientes</option>
+                        <option value="Pendientes en valoración" {% if filtro == 'Pendientes en valoración' %} selected {% endif %}>Pendientes en valoración</option>
+                    
                     </select>
                   <!--  <button type="submit">Filtrar</button> -->
                 </div>
@@ -187,6 +190,16 @@
                         </form>
                         {% else %}
                         <p>Trueque Aceptado</p>
+                        {% endif %}
+                        {% if filtro == 'Pendientes en valoración' %}
+                            {% if elemento.trueque %}
+                                <form action="{% url 'valorar_trueque' elemento.id %}" method="post">
+                                    {% csrf_token %}
+                                    <button type="submit">Valorar Trueque</button>
+                                </form>
+                            {%else%}
+                                <p>No tiene trueques para valorar</p>
+                            {% endif %}
                         {% endif %}
                     </div>
                 </li>

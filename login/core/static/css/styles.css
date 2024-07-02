@@ -1,0 +1,121 @@
+/* static/css/styles.css */
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f0f2f5;
+    margin: 0;
+    padding: 0;
+}
+
+.profile-container {
+    max-width: 900px;
+    margin: 20px auto;
+    background-color: #fff;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+}
+
+.cover-photo img {
+    width: 100%;
+    height: 200px;
+    object-fit: cover;
+}
+
+.profile-header {
+    display: flex;
+    align-items: center;
+    padding: 20px;
+    border-bottom: 1px solid #dddfe2;
+}
+
+.profile-picture {
+    margin-right: 20px;
+}
+
+.profile-picture img {
+    width: 150px;
+    height: 150px;
+    border-radius: 50%;
+    border: 3px solid #fff;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.profile-info {
+    flex-grow: 1;
+}
+
+.profile-info h1 {
+    margin: 0;
+    font-size: 28px;
+    color: #1c1e21;
+}
+
+.profile-info p {
+    margin: 5px 0;
+    font-size: 16px;
+    color: #606770;
+}
+
+.profile-details {
+    padding: 20px;
+}
+
+.profile-details h2 {
+    margin-top: 0;
+    font-size: 24px;
+    color: #1c1e21;
+    border-bottom: 2px solid #dddfe2;
+    padding-bottom: 10px;
+}
+
+.profile-details p {
+    font-size: 16px;
+    color: #1c1e21;
+    margin: 10px 0;
+}
+
+.profile-edit-form {
+    padding: 20px;
+}
+
+.profile-edit-form h2 {
+    margin-bottom: 20px;
+    font-size: 20px;
+    color: #1c1e21;
+}
+
+.profile-edit-form form {
+    display: flex;
+    flex-direction: column;
+}
+
+.profile-edit-form form input, 
+.profile-edit-form form textarea, 
+.profile-edit-form form select {
+    margin-bottom: 15px;
+    padding: 10px;
+    border: 1px solid #dddfe2;
+    border-radius: 5px;
+    font-size: 16px;
+}
+
+.profile-edit-form button {
+    align-self: flex-end;
+    padding: 10px 20px;
+    border: none;
+    background-color: #1877f2;
+    color: #fff;
+    cursor: pointer;
+    border-radius: 5px;
+    font-size: 16px;
+}
+
+.profile-edit-form button:hover {
+    background-color: #1558b0;
+}
+
+/* Estilos para la puntuación de estrellas */
+.rating {
+    color: #ffc107;
+    font-size: 20px;
+}

@@ -3,7 +3,9 @@ from django.db.models import Q
 from django.http import JsonResponse
 from django.http import HttpResponseNotAllowed, JsonResponse
 from django.shortcuts import get_object_or_404, render, redirect
-from .models import FailedLoginAttempt, Publicacion, Solicitud, Usuario, UsuarioBloqueado, porDesbloquear, Categoria,Trueque
+
+from core.formProdDonado import ProductoDonadoForm
+from .models import FailedLoginAttempt, Publicacion, Solicitud, Usuario, UsuarioBloqueado, porDesbloquear, Categoria,Trueque,Filial,Valoracion,Canje
 
 from django.contrib.auth import login
 from . formreg import UsuarioForm
@@ -20,18 +22,12 @@ from .formpubl import PublicacionForm
 from django.contrib import messages
 from django.views.decorators.csrf import csrf_exempt
 from django.contrib.auth.decorators import login_required
+from django.db.models import Q
 
 
 from django.utils.decorators import method_decorator
 
 from django.views.decorators.http import require_http_methods
-#los css los restaure por las dudas por si llega a haber conflicto
-#estan al pedo, en deshuso
-#solo hay que mantener estilo.css y login-estilos.css
-
-
-
-
 
 
 #con esto estoy diciendo que me tengo que loguear para acceder
@@ -57,25 +53,181 @@ def home(request):
     }
     return render(request, 'home.html', context)
 
+
+
 #estoy aplicando la restrinccion de que si no esta logueado
 #no puude ver los productos
 #el template login es lo que se muestra antes de q se loguee
 @login_required
 def products(request):
     usuario_actual = request.user
-    publicaciones = Publicacion.objects.filter(estado=True).exclude(usuario=usuario_actual)
+    #parece q setean trueque en false cuando no esta disponible 
+    publicaciones = Publicacion.objects.filter(estado=True, estadoCategoria=True, trueque=False, stock=-1).exclude(usuario=usuario_actual)
     publicaciones_solicitadas_ids = Solicitud.objects.filter(solicitante=usuario_actual).values_list('publicacion_id', flat=True)
+
     return render(request, 'core/products.html', {
         'publicaciones': publicaciones,
         'publicaciones_solicitadas_ids': list(publicaciones_solicitadas_ids)
     })
 
-#funcion para salir
-##def exit(request):
-##    logout(request)
-##    print("saliendo")
-##    return redirect('home')
 
+#perfecto
+#agregue valoraciones
+def verPerfil(request):
+    user = request.user
+    mis_valoraciones= Valoracion.objects.filter(usuario=user) #valoraciones del usuario del perfil 
+    print(mis_valoraciones)
+# Filtrar solicitudes donde publicacion__usuario=user OR solicitante=user
+    soli = Solicitud.objects.filter(Q(publicacion__usuario=user) | Q(solicitante=user), realizado=True)
+
+    elementos = []
+    for solicitud in soli:
+        try:
+            #me tengo que quedar con la valoracion q no es mia 
+            valoracion = Valoracion.objects.exclude(usuario=user).get(solicitud=solicitud)
+        except Valoracion.DoesNotExist:
+            valoracion = None
+
+
+        elementos.append({
+             'solicitud': solicitud,
+             'publicacion': solicitud.publicacion,
+             'solicitante': solicitud.solicitante,
+             'valoracion': valoracion,
+             #'valoraciones' : mis_valoraciones, #lo cambie 
+             })
+   #para q este activa tiene q tener categoria valida , al parecer trueque tiene q estar en false
+    publi = Publicacion.objects.filter(usuario=user,estado=True, estadoCategoria=True, trueque=False) #publicaciones activas
+    return render(request, 'core/perfil/perfil.html', {'user' : user , 'elementos' : elementos, 'publicaciones' : publi,'valoraciones': mis_valoraciones})
+
+
+
+#perfecto
+#agregue valoraciones
+#corregido por el tema de las solis solicitadas
+def perfil_usuario(request, usuario_id, messages=None):
+    user = get_object_or_404(Usuario, id=usuario_id) # el usuario del q quiero ver el perfil
+
+    soli = Solicitud.objects.filter(Q(publicacion__usuario=user) | Q(solicitante=user), realizado=True)
+
+    elementos = []
+    for solicitud in soli:
+        try:
+            #tengo que distinguir la valoracion, osea quedarme con el q me la realizo
+            valoracion = Valoracion.objects.exclude(usuario=user).get(solicitud=solicitud)
+        except Valoracion.DoesNotExist:
+            valoracion = None
+            print("no encunetro la valoracion")
+
+ 
+        elementos.append({
+                'solicitud' :solicitud ,
+                'publicacion': solicitud.publicacion,
+                'solicitante': solicitud.solicitante,
+                'valoracion': valoracion,
+            })
+        
+    publi = Publicacion.objects.filter(usuario=user, estado=True, estadoCategoria=True, trueque=False) #public activas
+    print(publi.count())
+    publicaciones_solicitadas_ids = Solicitud.objects.filter(solicitante=request.user).values_list('publicacion_id', flat=True) #mis publis solicitadas
+
+    context = {
+        'user': user,
+        'elementos': elementos,
+        'publicaciones': publi,
+        'publicaciones_solicitadas_ids': list(publicaciones_solicitadas_ids)
+
+    }
+    if messages:
+        context['messages'] = messages
+
+    return render(request, 'core/perfil/perfil.html', context)
+
+
+def listarBusqueda(request, user_id):
+    user = get_object_or_404(Usuario, id=user_id)
+    return render(request, 'core/perfil/perfil.html', {'user': user})
+
+
+#le hice un cambio para el listado de valoraciones en el perfil
+#perfecto
+def filtro_truequesperfil(request, usuario_id):
+    user = get_object_or_404(Usuario, id=usuario_id)  # Obtener el usuario del perfil
+    mis_valoraciones= Valoracion.objects.filter(usuario=user) #valoraciones del usuario del perfil 
+
+
+    filtro = request.GET.get('filtro', 'default')
+
+    if filtro == 'Trueques donde fui solicitante':
+        soli = Solicitud.objects.filter(solicitante=user, realizado=True)
+    elif filtro == 'Trueques donde fui receptor':
+        soli = Solicitud.objects.filter(publicacion__usuario=user, realizado=True)
+    else:
+        soli = Solicitud.objects.filter(Q(publicacion__usuario=user) | Q(solicitante=user), realizado=True)
+
+    elementos = []
+    for solicitud in soli:
+        try:
+            valoracion = Valoracion.objects.exclude(usuario=user).get(solicitud=solicitud) #valoracion no hecha por "mi"
+        except Valoracion.DoesNotExist:
+            valoracion = None
+            print("no encontre la valoracion ")
+
+        elementos.append({
+                'solicitud' :solicitud ,
+                'publicacion': solicitud.publicacion,
+                'solicitante': solicitud.solicitante,
+                'valoracion': valoracion,
+            })
+    
+    publi = Publicacion.objects.filter(usuario=user,estado=True, estadoCategoria=True, trueque=False) #publicaciones activas
+    context = {
+        'user': user,
+        'elementos': elementos,
+        'filtro': filtro,
+        'publicaciones':publi,
+        'valoraciones':mis_valoraciones,
+    }
+
+    return render(request, 'core/perfil/perfil.html', context)
+
+
+#perfecto
+#que onda con la cate inactiva?
+def listado_ayudante(request):
+     publicaciones = Publicacion.objects.filter(estadoCategoria=True).exclude(stock=-1)
+     return render(request, 'listado/listado_ayudante.html', {
+        'publicaciones': publicaciones})
+
+
+#perfecto 
+##registrar retiro
+def registrar_retiro(request):
+    return render(request,'registrar_retiro/registrar_retiro.html')
+
+def codigo_retiro(request):
+    query = request.GET.get('query')
+    results = []
+
+    if query:
+        results = Canje.objects.filter(codigo_retiro__istartswith=query)  
+        if not results:
+            messages.error(request, "Error: Código de retiro inválido.")
+
+    return render(request, 'registrar_retiro/registrar_retiro.html', {'query': query, 'results': results})
+
+
+def registrar(request,codigo_r):
+    print(codigo_r)
+    canje = get_object_or_404(Canje, codigo_retiro=codigo_r)
+    canje.estado = True
+    canje.codigo_retiro =''
+    canje.save()
+    messages.success(request, "Registro exitoso.")
+    return redirect('registrar_retiro')
+
+  
+#-------------------
 
 
 
@@ -83,6 +235,8 @@ def generar_codigo_aleatorio(longitud):
     caracteres = string.ascii_letters + string.digits
     codigo = ''.join(random.choice(caracteres) for _ in range(longitud))
     return codigo
+
+
 
 
 #perfecto
@@ -207,14 +361,29 @@ def formularioreg(request):
         if form.is_valid():
             print("es valido")
             usuario = form.save(commit=False)
+            usuario.puntuacion=5
+            usuario.fecha= timezone.now().date() 
             if request.user.is_authenticated and request.user.tipo == "administrador":
-                filial = usuario.filial_nombre
-                if Usuario.objects.filter(filial_nombre=filial).exists():
+                filial_nombre = request.POST.get('filial')
+                
+                # Verificar si la filial está registrada
+                if not Filial.objects.filter(nombre=filial_nombre).exists():
+                    messages.error(request, 'La filial ingresada no está registrada en el sistema.')
+                    return render(request, 'registration/registro.html', {'form': form})
+
+                if Usuario.objects.filter(filial_nombre=filial_nombre).exists():
                     messages.error(request, 'Ya existe un usuario registrado en esta filial')
                     return render(request, 'registration/registro.html', {'form': form})
                 usuario.tipo = "ayudante"
-                enviar_correo_ayudante(usuario)
+                usuario.filial_nombre=filial_nombre
                 usuario.save()
+                
+                # Actualizar el campo ayudante en el modelo Filial
+                filial = Filial.objects.get(nombre=filial_nombre)
+                filial.ayudante = usuario
+                filial.save()
+                enviar_correo_ayudante(usuario)
+                
                 return redirect('home')
             else:
                 usuario.save()
@@ -229,29 +398,6 @@ def formularioreg(request):
 
     return render(request, 'registration/registro.html', {'form': form})
 
-#def formularioreg(request):
-    print("Ejecutando recibo de registro")
-    if request.method == 'POST':
-        form = UsuarioForm(request.POST)
-        print("estoy en el primer if")
-        if form.is_valid():
-            print("El formulario es válido")
-            usuario = form.save()
-            
-            if (request.user.is_authenticated):
-                if (request.user.tipo == "administrador"):
-                     usuario.email = usuario.email  # Establecer el nombre de usuario como el correo electrónico
-                     usuario.tipo="ayudante"
-                     usuario.save()
-                     enviar_correo_ayudante(request.user)
-                     return redirect('home')
-            form.save()
-            return redirect('login')
-    else:
-        print("El formulario es inválido")
-        form = UsuarioForm()
-
-    return render(request, 'registration/registro.html', {'form': form})
 
 #perfecto
 def mostrarBaja(request):
@@ -268,10 +414,6 @@ def mostrarBaja(request):
      except Usuario.DoesNotExist:
          return render(request, 'core/bajaAyudante/bajaAyudante.html')#ayudante no existe
 
-#anda bien, chequear si lo tengo que bajr de otro modelo(chicas)
-def eliminarAyudante(request,email):
-     Usuario.objects.filter(email=email).delete()
-     return render(request, 'core/bajaAyudante/bajaAyudante.html', {'error_message': 'Se ha eliminado con exito'})
 
 
 #anda bien, chequear si lo tengo que bajr de otro modelo(chicas)
@@ -317,7 +459,7 @@ def crear_publicacion(request):
         if formulario.is_valid():
             publicacion = formulario.save(commit=False)
             publicacion.usuario = request.user
-            publicacion.estado = False;
+            publicacion.estado = False
             publicacion.save()
             messages.success(request,'La publicación se registró correctamente, queda a la espera de validación')
             return redirect('products')
@@ -328,24 +470,41 @@ def crear_publicacion(request):
     return render(request, 'core/crearPublicacion/crear_publicacion.html', {'categorias': categorias,'formulario': formulario}) 
 
 
+#perfecto
+def alta_producto(request):
+    categorias = Categoria.objects.all()
+    if request.method == 'POST':
+        formulario = ProductoDonadoForm(request.POST)
+        if formulario.is_valid():
+            publicacion = formulario.save(commit=False)
+            publicacion.usuario = request.user
+            publicacion.save()
+            messages.success(request,'La publicación se registró correctamente')
+            return render(request, 'altaProductodonado/alta.html')
+        else:
+            messages.error(request, 'Hubo un problema al cargar la publicación')
+    else:
+          formulario = ProductoDonadoForm()
+    return render(request, 'altaProductoDonado/alta.html', {'categorias': categorias,'formulario': formulario}) 
+
+
+   
+
 def ver_producto(request, publicacion_id):
     publicacion = get_object_or_404(Publicacion, id=publicacion_id)
     return render(request, 'core/crearPublicacion/ver_producto.html', {'publicacion': publicacion})
 
 
 
+#muetra los mensajes en products y redirige a products 
 #perfecto
 def solicitar_trueque(request, publicacion_id):
     #toma las publicaciones de la misma categoria q el producto q quiere 
-    print("entra")
     usu = request.user
     publicacion = get_object_or_404(Publicacion, id=publicacion_id) #tomo la publicacion
     categoria = publicacion.categoria
-    mispublis = Publicacion.objects.filter(estado=True, categoria=categoria, usuario=usu)
-    cantidad= mispublis.count()
-    if Solicitud.objects.filter(solicitante=usu, publicacion=publicacion).exists():
-        messages.info(request, 'Ya has solicitado esta publicación con exito anteriormente.')
-        return redirect('products')  # Redirigir a la página de inicio u otra página
+    mispublis = Publicacion.objects.filter(estado=True, categoria=categoria, usuario=usu) #tomo las publicaciones del solicitante q tiene la misma cate q lo q solicito
+  
     
     if mispublis.exists():
          hoy = timezone.now().date()
@@ -353,20 +512,61 @@ def solicitar_trueque(request, publicacion_id):
          if usu.puntuacion >= 3 and solicitudes_hoy.count() < 5:
              return render(request, 'core/listado/publicaciones_elegir.html', {'publicaciones': mispublis, 'publicacion_objetivo': publicacion})
          else:
-             messages.error(request, 'Error: No cumple con las condiciones para realizar un trueque.')
+             if usu.puntuacion < 3:
+                messages.error(request, 'No puede realizar esta acción porque no posee la calificación suficiente.')
+             else:
+                 messages.error(request, 'No puede realizar esta acción porque alcanzó el límite de 5 trueques por día.')
              return redirect('products')
     else:
-         messages.error(request, 'Error: No cuenta con productos de la misma categoría para truequear.')
+         messages.error(request, 'No puede realizar esta acción porque no cuenta con productos de la misma categoría para truequear.')
          return redirect('products')
 
 
+#para cuando solicita desde el perfil
+#perfecto
+def solicitar_t(request, publicacion_id):
+    usu = request.user
+    publicacion = get_object_or_404(Publicacion, id=publicacion_id)
+    categoria = publicacion.categoria
+    mispublis = Publicacion.objects.filter(estado=True, categoria=categoria, usuario=usu)
+  
+    if mispublis.exists():
+        hoy = timezone.now().date()
+        solicitudes_hoy = Solicitud.objects.filter(solicitante=usu, fecha_solicitud__date=hoy)
+        
+        if usu.puntuacion >= 3 and solicitudes_hoy.count() < 5:
+            return render(request, 'core/listado/publicaciones_elegir.html', {'publicaciones': mispublis, 'publicacion_objetivo': publicacion})
+        else:
+            if usu.puntuacion < 3:
+                messages.error(request, 'No puede realizar esta acción porque no posee la calificación suficiente.')
+            else:
+                messages.error(request, 'No puede realizar esta acción porque alcanzó el límite de 5 trueques por día.')
+            
+            # Redirige al perfil correcto con los mensajes de error
+            return perfil_usuario(request, publicacion.usuario.id)
+    else:
+        messages.error(request, 'No puede realizar esta acción porque no cuenta con productos de la misma categoría para truequear.')
+        
+        # Redirige al perfil correcto con los mensajes de error
+        return perfil_usuario(request, publicacion.usuario.id)
+
+
+
+
+
+
+#cambie para donde tiene que redirigir 
 #perfecto
 def registrar_solicitud(request, publicacion_objetivo_id):
     if request.method == 'POST':
         publicacion_ofrecida_id = request.POST.get('publicacionOfrecida')
         if not publicacion_ofrecida_id:
             messages.error(request, 'Debes seleccionar una publicación para intercambiar.')
-            return redirect('solicitar_trueque', publicacion_id=publicacion_objetivo_id)
+            # Redirige basándose en el referer
+            if 'perfil' in request.META.get('HTTP_REFERER', ''):
+                return redirect('solicitar_t', publicacion_id=publicacion_objetivo_id)
+            else:
+                return redirect('solicitar_trueque', publicacion_id=publicacion_objetivo_id)
 
         usu = request.user
         publicacion_objetivo = get_object_or_404(Publicacion, id=publicacion_objetivo_id)
@@ -381,7 +581,11 @@ def registrar_solicitud(request, publicacion_objetivo_id):
         )
 
         messages.success(request, 'Solicitud de trueque registrada exitosamente.')
-        return redirect('products')
+        # Redirige basándose en el referer
+        if 'perfil' in request.META.get('HTTP_REFERER', ''):
+            return perfil_usuario(request, publicacion_objetivo.usuario.id)
+        else:
+            return redirect('products')
 
     else:
         # Manejar otros métodos de solicitud si es necesario
@@ -391,27 +595,40 @@ def registrar_solicitud(request, publicacion_objetivo_id):
 
 
 
-#perfecto
+
+
 def filtro_trueques(request):
     filtro = request.GET.get('filtro')
     search_query = request.GET.get('search', '')
-    usu = request.user 
+    usu = request.user
 
-
-    # Filtrar las categorías según el valor del filtro
     if filtro == 'Aceptadas':
-        soli = Solicitud.objects.filter(publicacion__usuario=usu,estado=True)
+        soli = Solicitud.objects.filter(publicacion__usuario=usu, estado=True)
     elif filtro == 'Pendientes':
-        soli = Solicitud.objects.filter(publicacion__usuario=usu,estado=False)
+        soli = Solicitud.objects.filter(publicacion__usuario=usu, estado=False)
         if search_query:
             soli = soli.filter(
                 Q(publicacion__titulo__icontains=search_query) |
                 Q(publicacionOfrecida__titulo__icontains=search_query)
             )
+    elif filtro == 'Pendientes en valoración':
+        # Filtrar por solicitudes aceptadas y pendientes de valoración por ambos usuarios
+        soli = Solicitud.objects.filter(
+            Q(publicacion__usuario=usu) | Q(publicacionOfrecida__usuario=usu),  # Usuario es solicitante o receptor
+            estado=True,  # Estado aceptado
+            realizado=True,  # Solicitud realizada
+            trueque__isnull=False,
+            trueque__valoraciones__isnull=True  # Sin valoraciones para este trueque
+        ).distinct() 
+
     else:
         soli = Solicitud.objects.filter(publicacion__usuario=usu)
 
     return render(request, 'listado/misTrueques.html', {'elementos': soli, 'filtro': filtro, 'search_query': search_query})
+
+
+#filtro para productos donados 
+
 
 
 
@@ -457,7 +674,7 @@ def mis_publicaciones1(request):
 
 
 def mis_publicaciones(request):
-    publicaciones_disponibles = Publicacion.objects.filter(usuario=request.user, estado=True, estadoCategoria=True, trueque=True)
+    publicaciones_disponibles = Publicacion.objects.filter(usuario=request.user, estado=True, estadoCategoria=True,trueque=False)
     publicaciones_no_disponibles = Publicacion.objects.filter(usuario=request.user).exclude(estado=True, estadoCategoria=True)
     context = {
         'publicaciones_disponibles': publicaciones_disponibles,
@@ -466,32 +683,32 @@ def mis_publicaciones(request):
     return render(request, 'core/crearPublicacion/mis_publicaciones.html', context)
 
 @csrf_exempt
-def eliminar_publicacion(request, publicacion_id):
+#def eliminar_publicacion(request, publicacion_id):
 
-    print("fuera del try")
-    if request.method == 'DELETE':
-        try:
-            print("aca")
-            print("entra al try")
+ #   print("fuera del try")
+  #  if request.method == 'DELETE':
+   #     try:
+    #        print("aca")
+     #       print("entra al try")
             
-            publicacion = Publicacion.objects.get(pk=publicacion_id)
-            print("entrass")
-            publicacion.delete()
+      #      publicacion = Publicacion.objects.get(pk=publicacion_id)
+       #     print("entrass")
+        #    #publicacion.trueque=True
+         #   publicacion.delete()
            
-            mensaje = 'La publicación ha sido eliminada correctamente.'
-            return JsonResponse({'message': mensaje}, status=200)
-        except Publicacion.DoesNotExist:
+          #  mensaje = 'La publicación ha sido eliminada correctamente.'
+           # return JsonResponse({'message': mensaje}, status=200)
+      #  except Publicacion.DoesNotExist:
             
-            mensaje = 'La publicación no existe.'
-            return JsonResponse({'error': mensaje}, status=404)
-    else:
-        return JsonResponse({'error': 'Método no permitido'}, status=405)
+       #     mensaje = 'La publicación no existe.'
+         #   return JsonResponse({'error': mensaje}, status=404)
+    #else:
+        #return JsonResponse({'error': 'Método no permitido'}, status=405)
     
 
 
 
 
-   # views.py
 
 
 @login_required
@@ -581,9 +798,9 @@ def eliminar_publicacion(request, publicacion_id):
                 except Exception as e:
                     return JsonResponse({'error': 'Error al enviar el correo: ' + str(e)}, status=500)
             else:
-                publicacion.estado=True
-                publicacion.eliminada=True
+                publicacion.estado=False
                 publicacion.save()
+                publicacion.delete()
                 return JsonResponse({'message': 'Publicación marcada como eliminada.'}, status=200)
         
            
@@ -594,26 +811,24 @@ def eliminar_publicacion(request, publicacion_id):
             return JsonResponse({'error': mensaje}, status=404)
     else:
         return JsonResponse({'error': 'Método no permitido'}, status=405)
-def trueques_realizadosw(request):
-    elementos = Solicitud.objects.filter(realizado=True)
-    return render(request, 'core/listado/truequesAdmin.html', {'elementos': elementos})
 
 
+    
 
-#este deberia ser, probar cuando se haga el merge y tenga trueques realizados
+#lo   tengo q probar
+#ahora si es univoco con la modificacion de trueque en solicitud 
 def trueques_realizados(request):
+    print("se esta ejecutando") #si
     solicitudes = Solicitud.objects.filter(realizado=True)
     elementos = []
-
     for solicitud in solicitudes:
-        trueque = Trueque.objects.filter(
-            solicitante_id=solicitud.solicitante.id,
-            receptor_id=solicitud.publicacion.usuario.id,
-            publicacion1_id=solicitud.publicacion.id,
-            publicacion2_id=solicitud.publicacionOfrecida.id
-        ).first()
+        try:
+            trueque = Trueque.objects.get(id=solicitud.trueque_id)
+        except Trueque.DoesNotExist:
+            trueque = None
 
         if trueque:
+            print ("hay un trueque")
             elementos.append({
                 'publicacion': solicitud.publicacion,
                 'publicacionOfrecida': solicitud.publicacionOfrecida,
@@ -624,7 +839,18 @@ def trueques_realizados(request):
                 'receptor': solicitud.publicacion.usuario,  
                 'codigoReceptor' : trueque.codigo_confirmacion_receptor,
                 'codigoSolicitante' : trueque.codigo_confirmacion_solicitante,
-                'fechaTurno':trueque.fecha_efectivizacion,
+                'fechaTurno': trueque.fecha_efectivizacion,
             })
 
     return render(request, 'core/listado/truequesAdmin.html', {'elementos': elementos})
+
+
+
+def buscar_perfil(request):
+    query = request.GET.get('query')
+    results = []
+
+    if query:
+        results = Usuario.objects.filter(username__istartswith=query).exclude(tipo__in=['ayudante', 'administrador'])    
+    
+    return render(request, 'core/perfil/buscar_perfil.html', {'query': query, 'results': results})

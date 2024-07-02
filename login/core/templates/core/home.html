@@ -34,7 +34,9 @@
 
 <hr>
 {% if user.is_authenticated %}
-<h4>{{ user.email | upper }}, bienvenido!</h4>
+<div class="alert alert-primary" role="alert">
+    <i class="fas fa-envelope"></i> <strong>{{ user.email | upper }}</strong>, ¡Bienvenido!
+</div>
 {% endif %}
 
 <div id="carouselExampleIndicators" class="carousel slide mb-5" data-ride="carousel">
@@ -104,7 +106,9 @@
 </div>
 
 <section class="mb-5 mt-5">
-    <h2>Sobre Nosotros</h2>
+    <h2>
+        <i class="fas fa-info-circle"></i> Sobre Nosotros
+    </h2>
     <p>Fundación Cáritas Argentina es una organización comprometida con ayudar a las personas necesitadas. Nuestro objetivo es proporcionar apoyo y recursos a aquellos que más lo necesitan, promoviendo la solidaridad y la justicia social.</p>
     {% if user.is_authenticated and user.tipo == 'administrador' %}
         <a href="{% url 'editarSobreNosotros' %}" class="btn btn-primary">
@@ -131,9 +135,11 @@
 
     
     {% if user.is_authenticated %}
-    <h3 class="position-absolute" >
-        <span class="badge text-bg-info">Filiales</span>
-    </h3>
+    <h6 class="position-absolute" >
+        <span class="badge badge-danger badge-lg">
+            <i class="fas fa-thumbtack fa-fw"></i> Filiales
+        </span>
+    </h6>
     {% block mapita %}
    
 

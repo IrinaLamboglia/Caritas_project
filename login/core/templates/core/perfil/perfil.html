@@ -1,0 +1,652 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Perfil</title>
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+    <link rel="icon" type="image/png" href="{% static 'imagenes/logoCaritas.jpg' %}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+
+    <style>
+        
+        .back-button {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            font-size: 24px;
+            color: #000;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            z-index: 10; /* Asegura que el botón de retroceso esté sobre las imágenes */
+        }
+        .back-button i {
+            margin-right: 8px;
+        }
+        .profile-container {
+            width: 80%;
+            margin: 0 auto;
+            padding: 20px;
+            position: relative; /* Permite posicionar elementos hijos relativos a este contenedor */
+        }
+        .cover-photo img {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+            border: 2px solid #cfe0ec;
+        }
+
+        .profile-header {
+            display: flex;
+            align-items: center;
+
+            align-self: baseline;
+
+            position: left;
+
+            bottom: 20px; /* Ajusta la posición vertical */
+            left: 20px; /* Ajusta la posición horizontal */
+            z-index: 20; /* Asegura que el perfil esté sobre el slideshow */
+            background-color: rgba(255, 255, 255, 0.8); /* Fondo semi-transparente para legibilidad */
+            padding: 10px;
+            border-radius: 8px;
+        }
+
+        .profile-picture {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            overflow: hidden;
+            border: 5px solid #4c8bb7;
+            margin-right: 20px;
+        }
+        .profile-picture img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        .profile-info h1 {
+            margin: 0;
+        }
+        .profile-details {
+            margin-top: 20px;
+        }
+        .profile-details h2 {
+            border-bottom: 2px solid #ddd;
+            padding-bottom: 10px;
+            margin-bottom: 20px;
+        }
+        .rating i {
+            color: #f39c12;
+        }
+        .columns {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+        .column {
+            flex: 1;
+            min-width: 300px;
+        }
+        .publication, .trade {
+            border: 1px solid #c8e0f7;
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        .publication img, .trade img {
+            width: 100px;
+            height: 100px;
+            object-fit: cover;
+            margin-right: 15px;
+        }
+        .publication-info, .trade-info {
+            flex: 1;
+        }
+        .publication, .trade {
+            display: flex;
+            align-items: center;
+        }
+        .slideshow-container {
+            max-width: 100%;
+            position: relative;
+            margin-top: 20px;
+            overflow: hidden;
+        }
+        .mySlides {
+            display: none;
+            width: 100%;
+            height: 400px; /* Ajusta la altura según tus necesidades */
+            object-fit: cover;
+        }
+
+
+    .solicitar-btn {
+        background-color: #4c8bb7;
+        color: #fff;
+        border: none;
+        padding: 10px 20px;
+        font-size: 16px;
+        border-radius: 5px;
+        transition: background-color 0.3s ease;
+        text-decoration: none;
+    }
+
+    .solicitar-btn:hover {
+        background-color: #357ca5;
+    }
+    
+    .solicitado{
+        background-color: #a5b0b9;
+        color: #fff;
+        border: none;
+        padding: 10px 20px;
+        font-size: 16px;
+        border-radius: 5px;
+        transition: background-color 0.3s ease;
+        text-decoration: none;
+    }
+    
+    .modal {
+            display: none; /* Ocultar inicialmente */
+            position: fixed;
+            z-index: 1000;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%);
+            background-color: rgba(0, 0, 0, 0.5); /* Fondo semitransparente */
+            padding: 20px;
+            border-radius: 8px;
+            color: rgb(240, 231, 231);
+            text-align: center;
+        }
+
+        .modal-content {
+            background-color: #f44336; /* Color de fondo rojo */
+            padding: 20px;
+            border-radius: 8px;
+        }
+
+        .close {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            color: rgb(218, 69, 131);
+            cursor: pointer;
+        }
+    .trade-item {
+    display: flex; /* Usa flexbox para alinear los elementos horizontalmente */
+    margin-bottom: 20px;
+    flex-direction: column; /* Cambia la dirección del flexbox a columna */
+}
+
+.trade-image {
+    margin-right: 0; /* Elimina el margen derecho para alinear la imagen */
+    align-self: center;
+    /* Estilos adicionales para la imagen */
+}
+
+.trade-details {
+    /* Estilos para los detalles de la solicitud */
+}
+
+.valoracion-section {
+    margin-top: 15px;
+    padding: 10px;
+    border: 1px solid #eee;
+    background-color: #f9f9f9;
+}
+.filtro-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+        .filtro-container form {
+            display: flex;
+            align-items: center;
+            width: 100%;
+            flex-wrap: wrap;
+            justify-content: space-between;
+        }
+        .filtro-section {
+            display: flex;
+            align-items: center;
+            margin-right: 10px;
+            flex-grow: 1;
+        }
+        .filtro-container label {
+            font-weight: bold;
+            font-size: 20px;
+            color: #333;
+            margin-right: 10px;
+        }
+        .filtro-container select {
+            padding: 5px;
+            font-size: 16px;
+            margin-right: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        .search-container {
+            display: flex;
+            align-items: center;
+            flex-grow: 1;
+            justify-content: flex-end;
+        }
+        .search-container input[type="text"] {
+            padding: 5px;
+            font-size: 16px;
+            margin-right: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        .search-container button,
+        .filtro-container button[type="submit"] {
+            padding: 5px 10px;
+            font-size: 16px;
+            border: none;
+            border-radius: 5px;
+            background-color: #007bff;
+            color: white;
+            cursor: pointer;
+            margin-left: 10px;
+        }
+        .search-container button:hover,
+        .filtro-container button[type="submit"]:hover {
+            background-color: #0056b3;
+        }
+        .trade-item {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.trade-image {
+    display: flex;
+    gap: 10px; /* Espacio entre las imágenes */
+    margin-right: 20px;
+}
+
+.trade-image img {
+    width: 100px;  /* Ajusta el tamaño según tus necesidades */
+    height: 100px; /* Ajusta el tamaño según tus necesidades */
+    object-fit: cover;
+}
+
+.trade-details {
+    flex: 1;
+}
+
+.column {
+    flex: 1;
+    min-width: 300px;
+    margin-bottom: 20px;
+}
+
+@media (max-width: 768px) {
+    .trade-item {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .trade-image {
+        margin-right: 0;
+        margin-bottom: 10px;
+    }
+}
+/* Estilos generales */
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+}
+
+.back-button {
+    position: absolute;
+    top: 20px;
+    left: 20px;
+    font-size: 24px;
+    color: #000;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    z-index: 10; /* Asegura que el botón de retroceso esté sobre las imágenes */
+}
+
+.back-button i {
+    margin-right: 8px;
+}
+
+.profile-navigation {
+    position: absolute;
+    top: 20px; /* Ajusta según la posición vertical deseada */
+    right: 20px; /* Ajusta según la posición horizontal deseada */
+    display: flex;
+    align-items: center;
+}
+
+
+
+    .notification-icon {
+        font-size: 24px;
+        color: #333;
+        cursor: pointer;
+        position: relative;
+        margin-left: auto; /* Alineación a la derecha */
+    }
+
+    .notifications {
+        display: none;
+        position: absolute;
+        right: 0;
+        top: 40px; /* Ajusta según la altura de tu header */
+        width: 300px;
+        background-color: #fff;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        z-index: 1000;
+        padding: 10px;
+    }
+
+    .notifications.active {
+        display: block;
+    }
+
+    .notifications h4 {
+        margin: 0 0 10px;
+    }
+
+    .notification-item {
+        padding: 10px;
+        border-bottom: 1px solid #eee;
+    }
+
+    .notification-item:last-child {
+        border-bottom: none;
+    }
+
+
+
+
+
+
+    </style>
+</head>
+<body>
+
+
+
+    <a href="{% url 'products' %}" class="back-button">
+        <i class="fas fa-arrow-left"></i> Volver
+    </a>
+
+<!-- si no es su perfil no lo deberia ver-->
+{%if user == request.user %}
+
+<nav class="profile-navigation">
+    <a>
+        <div class="notification-icon">
+            <i class="fas fa-envelope"></i>
+        </div>
+    </a>
+    <p>Valoraciones</p>
+
+    <div class="notifications">
+        <h4>Valoraciones</h4>
+                {% if valoraciones %}
+                {% for valoracion in valoraciones %}
+                        <div class="notification-item">
+                            <span class="rating">
+                                {% for i in "12345" %}
+                                    <i class="fa{% if valoracion.estrellas >= i|add:"0" %}s{% else %}r{% endif %} fa-star"></i>
+                                {% endfor %}
+                            </span>
+
+                            {% if valoracion.comentario %}
+                                <p>{{ valoracion.comentario }}</p>
+                            {% endif %}
+
+
+                            {% if valoracion.usuario == valoracion.solicitud.solicitante %}
+                            <p>Valoración dirigida a: {{ valoracion.solicitud.publicacion.usuario.email}}</p>
+                            {% else %}
+                                <p>Valoración dirigida a: {{ valoracion.solicitud.solicitante.email }}</p>
+                            {% endif %}
+
+
+                        </div>
+                    {% endfor %}
+                {% else %}
+                    <p>No hay valoraciones disponibles.</p>
+                {% endif %}
+    </div>
+</nav>
+
+{% endif %}
+
+
+
+
+</div>
+
+    <div class="profile-container">
+    
+        <div class="slideshow-container">
+            <!-- Aquí se agregan las fotos dinámicamente -->
+            <img class="mySlides" src="{% static 'imagenes/Fondos.png' %}">
+            <img class="mySlides" src="{% static 'imagenes/foto1.jpg' %}">
+            <img class="mySlides" src="{% static 'imagenes/foto2.jpg' %}">
+            <img class="mySlides" src="{% static 'imagenes/foto3.jpg' %}">
+            <img class="mySlides" src="{% static 'imagenes/foto4.png' %}">
+        </div>
+
+        <div class="profile-header">
+            <div class="profile-picture">
+                <img src="{% static 'imagenes/logoCaritas.jpg' %}" alt="Profile Picture">
+            </div>
+            <div class="profile-info">
+                <h1>{{ user.nombre }}</h1>
+                <p>{{ "Usuario de Fundación cáritas" }}</p>
+            </div>
+        </div>
+
+
+        <div class="profile-details">
+            <h2>Información del Perfil</h2>
+            <p><strong>Apellido:</strong> {{ user.apellido }}</p>
+            <p><strong>Puntuación:</strong>
+                <span class="rating">
+                    {% for i in "12345" %}
+                        <i class="fa{% if user.puntuacion >= i|add:"0" %}s{% else %}r{% endif %} fa-star"></i>
+                    {% endfor %}
+                </span>
+            </p>
+            <p><strong>Última conexión:</strong> {{ user.last_login }}</p>
+            <p><strong>Fecha de Nacimiento:</strong> {{ user.fecha_nacimiento }}</p>
+        </div>
+
+
+        
+        <div class="columns">
+
+
+            <div class="column">
+                <div class="profile-details">
+                    <h2>Trueques Realizados</h2>
+                  
+                    <ul>
+                        <li>
+                            <div class="filtro-container">
+                                <form action="{% url 'filtro_truequesperfil' user.id %}" method="GET">
+                                    <div class="filtro-section">
+                                        <label for="filtro">Filtrar:</label>
+                                        <select id="filtro" name="filtro" onchange="this.form.submit()">
+                                            <option value="Todas" {% if filtro == 'Todas' %} selected {% endif %}>Todas</option>
+                                            <option value="Trueques donde fui receptor" {% if filtro == 'Trueques donde fui receptor' %} selected {% endif %}>Trueques donde fui receptor</option>
+                                            <option value="Trueques donde fui solicitante" {% if filtro == 'Trueques donde fui solicitante' %} selected {% endif %}>Trueques donde fui solicitante</option>                        
+                                        </select>
+                                    </div>
+                                </form>
+                            </div>
+                        </li>
+                    </ul>
+                    
+                    {% if elementos %}
+                        <ul>
+                            {% for elemento in elementos %}
+                            <li class="trade">
+                                <div class="trade-item">
+                                    <div class="trade-image">
+                                        <!-- Imagen de la publicación del receptor -->
+                                        <img src="{{ elemento.publicacion.imagen.url }}" alt="Imagen de la publicacion del receptor">
+                                        <!-- Imagen de la publicación del solicitante -->
+                                        <img src="{{ elemento.solicitud.publicacionOfrecida.imagen.url }}" alt="Imagen de la publicacion del solicitante">
+                                    </div>
+                                
+
+                                    <div class="trade-details">
+                                        <!-- Detalles de la solicitud -->
+                                        <p><strong>Título de la publicación receptor:</strong> {{ elemento.publicacion.titulo }}</p>
+                                        <p><strong>Publicante:</strong>{{elemento.publicacion.usuario.nombre}}</p>
+                                        <p><strong>Título de la publicación solicitante:</strong> {{ elemento.solicitud.publicacionOfrecida.titulo }}</p>
+                                        <p><strong>Solicitante:</strong> {{ elemento.solicitante.nombre }}</p>
+                                    
+                                        <!-- Valoración de la solicitud -->
+                                        {% if elemento.valoracion %}
+                                            <div class="valoracion-section">
+                                                <h3>Valoración de {{ elemento.valoracion.usuario.nombre }}</h3>
+                                                <div class="rating">
+                                                    {% for i in "12345" %}
+                                                        <i class="fa {% if elemento.valoracion.estrellas >= i|add:"0" %}fa-star{% else %}fa-star-o{% endif %}"></i>
+                                                    {% endfor %}
+                                                </div>
+                                                {% if elemento.valoracion.comentario %}
+                                                <p><strong>Descripción:</strong></p>
+                                                <p>{{ elemento.valoracion.comentario }}</p>
+                                            {% endif %}
+
+                                            </div>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </li>
+                            {% endfor %}
+                        </ul>
+                    {% else %}
+                        <p>No cuenta con trueques</p>
+                    {% endif %}
+                </div>
+            </div>
+            <div class="column">
+                <div class="profile-details">
+                    <h2>Publicaciones Activas</h2>
+                    {% if publicaciones %}
+                        <ul>
+                            {% for publicacion in publicaciones %}
+                                <li class="publication">
+                                    <img src="{{ publicacion.imagen.url }}" alt="{{ publicacion.titulo }}">
+                                    <div class="publication-info">
+                                        <p><strong>Título:</strong> {{ publicacion.titulo }}</p>
+                                        <p><strong>Descripción:</strong> {{ publicacion.descripcion }}</p>
+                                        <p class="card-text"><strong>Categoria: </strong> {{ publicacion.categoria.nombre}}</p>
+
+                                        <div class="d-flex justify-content-between align-items-center">
+                                           {%if user != request.user %}
+                                            {% if publicacion.id in publicaciones_solicitadas_ids %}
+                                            <button class="solicitado" disabled>Ya solicitada</button>
+                                        {% else %}
+
+                                            <a href="{% url 'solicitar_t' publicacion.id %}" class="btn btn-outline-primary solicitar-btn" data-publicacion-id="{{ publicacion.id }}">Solicitar trueque</a>
+                                        
+                                            {% endif %}
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                </li>
+                            {% endfor %}
+                        </ul>
+                    {% else %}
+                        <p>No cuenta con publicaciones activas</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Asegúrate de que jQuery esté cargado -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        $(document).ready(function() {
+            var slideIndex = 0;
+            showSlides();
+
+            function showSlides() {
+                var slides = $(".mySlides");
+                for (var i = 0; i < slides.length; i++) {
+                    slides.eq(i).hide();
+                }
+                slideIndex++;
+                if (slideIndex > slides.length) { slideIndex = 1 }
+                slides.eq(slideIndex - 1).fadeIn(1000);
+                setTimeout(showSlides, 3000); // Cambia la imagen cada 3 segundos (3000 milisegundos)
+            }
+        });
+    </script>
+ {% if messages %}
+ <div id="myModal" class="modal">
+     <div class="modal-content">
+         {% for message in messages %}
+             <span class="close">&times;</span>
+             <p>{{ message }}</p>
+         {% endfor %}
+     </div>
+ </div>
+ {% endif %}
+
+ <script>
+     // Mostrar modal cuando hay mensajes
+     $(document).ready(function() {
+         {% if messages %}
+         $("#myModal").css("display", "block");
+         {% endif %}
+
+         // Cerrar modal al hacer clic en el botón de cerrar
+         $(".close").click(function() {
+             $("#myModal").css("display", "none");
+         });
+
+         // Cerrar modal si se hace clic fuera del contenido
+         $(window).click(function(event) {
+             if (event.target == $("#myModal")[0]) {
+                 $("#myModal").css("display", "none");
+             }
+         });
+     });
+
+
+
+ </script>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const notificationIcon = document.querySelector('.notification-icon');
+        const notifications = document.querySelector('.notifications');
+
+        notificationIcon.addEventListener('click', function() {
+            notifications.classList.toggle('active');
+        });
+    });
+</script>
+
+
+
+
+</body>
+</html>
