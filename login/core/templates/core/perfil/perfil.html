@@ -387,7 +387,6 @@ body {
         <i class="fas fa-arrow-left"></i> Volver
     </a>
 
-<!-- si no es su perfil no lo deberia ver-->
 {%if user == request.user %}
 
 <nav class="profile-navigation">
@@ -420,6 +419,8 @@ body {
                                 <p>Valoración dirigida a: {{ valoracion.solicitud.solicitante.email }}</p>
                             {% endif %}
 
+                            <a href="{% url 'editar_valoracion' valoracion.id %}">Editar reseña</a>
+
 
                         </div>
                     {% endfor %}
@@ -435,6 +436,7 @@ body {
 
 
 </div>
+
 
     <div class="profile-container">
     

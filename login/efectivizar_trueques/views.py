@@ -62,10 +62,16 @@ def aceptacion_trueque(request, id):
     trueque.estado = 'aceptado'
     trueque.fecha_efectivizacion = timezone.now().date()
     
-    solicitud = get_object_or_404(Solicitud, trueque=trueque)
+
+   # solicitud = get_object_or_404(Solicitud, trueque=trueque)
 
    # solicitud = Solicitud.objects.filter(trueque=id)
+
+
+    solicitud = Solicitud.objects.filter(trueque=trueque).first()#cambiado
+
     
+
     if solicitud:
         print("entro acep")
         solicitud.realizado = True
@@ -73,7 +79,14 @@ def aceptacion_trueque(request, id):
         solicitud.publicacion.estado = False
         solicitud.trueque=trueque
         solicitud.save()
-
+        # Sumar puntos a los usuarios
+        categoria_puntos = solicitud.publicacion.categoria.puntuacion
+        solicitante = trueque.solicitante
+        receptor = trueque.receptor
+        solicitante.puntuacion += categoria_puntos
+        receptor.puntuacion += categoria_puntos
+        solicitante.save()
+        receptor.save()
     trueque.save()
     enviar_correo_ayudante(trueque.solicitante)
     enviar_correo_ayudante(trueque.receptor)
@@ -89,6 +102,10 @@ def rechazar_efectivizacion(request, id):
     except Trueque.DoesNotExist:
         messages.error(request, 'El Trueque no existe.')
         return redirect('efectivizar_trueque')
+    
+    usuario = trueque.solicitante
+    usuario.puntuacion -= 1
+    usuario.save()
     
     solicitud = Solicitud.objects.filter(
         solicitante=trueque.solicitante,

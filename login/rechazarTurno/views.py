@@ -18,7 +18,7 @@ def rechazar_turno(request, trueque_id):
         return redirect('inicio')
     
     if trueque.turno.fecha - datetime.date.today() < datetime.timedelta(days=1):
-        messages.error(request, 'La cancelación requiere al menos 24 horas de antelación.')
+        messages.error(request, 'La cancelación requiere al menos 24 horas de antelación. No se puede cancelar')
     else:
         trueque.confirmado = False
         trueque.save()
