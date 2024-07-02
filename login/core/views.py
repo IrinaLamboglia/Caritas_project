@@ -60,6 +60,7 @@ def home(request):
 #el template login es lo que se muestra antes de q se loguee
 @login_required
 def products(request):
+    print("ENTRO")
     usuario_actual = request.user
     #parece q setean trueque en false cuando no esta disponible 
     publicaciones = Publicacion.objects.filter(estado=True, estadoCategoria=True, trueque=False, stock=-1).exclude(usuario=usuario_actual)
@@ -672,9 +673,8 @@ def mis_publicaciones1(request):
     publicaciones = Publicacion.objects.all()
     return render(request, 'core/crearPublicacion/mis_publicaciones1.html', {'publicaciones': publicaciones})
 
-
 def mis_publicaciones(request):
-    publicaciones_disponibles = Publicacion.objects.filter(usuario=request.user, estado=True, estadoCategoria=True,trueque=False)
+    publicaciones_disponibles = Publicacion.objects.filter(usuario=request.user, estado=True, estadoCategoria=True, trueque=False, stock=-1)
     publicaciones_no_disponibles = Publicacion.objects.filter(usuario=request.user).exclude(estado=True, estadoCategoria=True)
     context = {
         'publicaciones_disponibles': publicaciones_disponibles,

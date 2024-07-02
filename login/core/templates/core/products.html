@@ -100,7 +100,7 @@
                                     <div class="col">
                                         <div class="card shadow-sm">
                                                 <img src="{{ publicacion.imagen.url }}" class="card-img-top" alt="{{ publicacion.titulo }}">
-                                                {% if not  publicacion.imagen.url%}
+                                                {% if not  publicacion.imagen.url %}
                                                 <img src="{% static 'placeholder_image.jpg' %}" class="card-img-top" alt="Imagen no disponible">
                                                 {% endif %}
 

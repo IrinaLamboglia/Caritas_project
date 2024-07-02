@@ -37,9 +37,12 @@
                 <td>{{ publicacion.nuevo }}</td>
                 <td>{{ publicacion.usuario }}</td>
                 <td>{{ publicacion.categoria }}</td>
-                <td scope="row"><img src="{{ publicacion.imagen.url }}" style="height: 50px; width: 50px;" alt="..."></td>
-                <td>
-                    <button type="button" class="btn btn-danger btn-sm eliminar-btn" data-id="{{ publicacion.id }}">
+                {% if publicacion.imagen %}
+                        <img src="{{ publicacion.imagen.url }}" style="height: 50px; width: 50px;" alt="...">
+                {% else %}
+                        <p>No hay imagen disponible</p>
+                    {% endif %}                <td>
+                        <button type="button" class="btn btn-danger btn-sm eliminar-btn" data-id="{{ publicacion.id }}">
                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
                             class="bi bi-trash-fill" viewBox="0 0 16 16">
                             <path

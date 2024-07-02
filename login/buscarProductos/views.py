@@ -43,9 +43,9 @@ def buscar_productos(request):
     return render(request, 'buscarProductos/buscar_productos.html', context)
 
 @login_required
-def products(request):
+def productos(request):
     favoritas = BusquedaFavorita.objects.filter(usuario=request.user)
-    publicaciones = Publicacion.objects.all()
+    publicaciones = Publicacion.objects.filter(stock__gt=-1)  # Filtrar por stock mayor que -1
 
     context = {
         'favoritas': favoritas,

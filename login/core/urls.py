@@ -39,7 +39,7 @@ from valorar_trueque.views import eliminar_valoracion, valorar_trueque
 from canjearPuntos.views import listarProductosDonados,canjear_producto, generar_pdf,misCanjes
 
 from realizarDonacion.views import realizar_donacion, donacion_failure, donacion_pending, donacion_success
-from buscarProductos.views import buscar_productos, products
+from buscarProductos.views import buscar_productos, productos
 from listaDonacion.views import donation_list
 
 
@@ -150,7 +150,7 @@ urlpatterns = [
 
     path('buscar/', buscar_productos, name='buscar_productos'),
 
-    path('producto-favorito/', products, name='producto_favorito'),
+    path('producto-favorito/', productos, name='producto_favorito'),
 
     path('donaciones/', donation_list, name='donation_list'),
     path('donacion/success/', donacion_success, name='donacion_success'),
