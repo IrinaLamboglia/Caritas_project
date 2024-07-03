@@ -1,8 +1,11 @@
+from itertools import count
+from django.forms import IntegerField
 from django.utils import timezone
 from django.db.models import Q
 from django.http import JsonResponse
 from django.http import HttpResponseNotAllowed, JsonResponse
 from django.shortcuts import get_object_or_404, render, redirect
+from django.db.models import Count, Case, When, Q
 
 from core.formProdDonado import ProductoDonadoForm
 from .models import FailedLoginAttempt, Publicacion, Solicitud, Usuario, UsuarioBloqueado, porDesbloquear, Categoria,Trueque,Filial,Valoracion,Canje
@@ -616,14 +619,21 @@ def filtro_trueques(request):
                 Q(publicacionOfrecida__titulo__icontains=search_query)
             )
     elif filtro == 'Pendientes en valoración':
+    # Filtrar por solicitudes aceptadas y pendientes de valoración por ambos usuarios
         soli = Solicitud.objects.filter(
-            Q(publicacion__usuario=usu) | Q(publicacionOfrecida__usuario=usu),  # Usuario es solicitante o receptor
-            estado=True,  # Estado aceptado
-            realizado=True,  # Solicitud realizada
-            trueque__isnull=False
-        ).exclude(
-            Q(trueque__valoraciones__usuario=usu) | Q(trueque__valoraciones__isnull=True)
-        ).distinct()
+        Q(publicacion__usuario=usu) | Q(publicacionOfrecida__usuario=usu),  # Usuario es solicitante o receptor
+        estado=True,  # Estado aceptado
+        realizado=True,  # Solicitud realizada
+        trueque__isnull=False
+    ).annotate(
+        valoraciones_count=Count(Case(
+            When(trueque__valoraciones__usuario=usu, then=1)
+        ))
+    ).filter(
+        valoraciones_count=0
+    ).distinct()
+    elif filtro == 'Todas':  
+         soli= Solicitud.object.filter(publicacion__usuario=usu)
 
     return render(request, 'listado/misTrueques.html', {'elementos': soli, 'filtro': filtro, 'search_query': search_query})
 
