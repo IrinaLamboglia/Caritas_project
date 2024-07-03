@@ -29,23 +29,7 @@
 
 
 
-<script src="{% static 'js/boton_confirmar.js' %}"></script>
-{% if messages %}
-  {% for message in messages %}
-    <script>
-      document.addEventListener('DOMContentLoaded', function() {
-        Swal.fire({
-          title: '{% if message.tags == "success" %}¡Éxito!{% else %}Error{% endif %}',
-          html: "{{ message|safe }}",
-          icon: '{% if message.tags == "success" %}success{% else %}error{% endif %}',
-          showCloseButton: true,
-          focusConfirm: false,
-          confirmButtonText: 'OK'
-        });
-      });
-    </script>
-  {% endfor %}
-{% endif %}
+
 
 
 {% endblock %}

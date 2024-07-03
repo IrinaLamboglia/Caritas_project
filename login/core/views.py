@@ -8,7 +8,7 @@ from django.shortcuts import get_object_or_404, render, redirect
 from django.db.models import Count, Case, When, Q
 
 from core.formProdDonado import ProductoDonadoForm
-from .models import FailedLoginAttempt, Publicacion, Solicitud, Usuario, UsuarioBloqueado, porDesbloquear, Categoria,Trueque,Filial,Valoracion,Canje
+from .models import FailedLoginAttempt, Publicacion, Solicitud, Usuario, UsuarioBloqueado, porDesbloquear, Categoria,Trueque,Filial,Valoracion,Canje,Donation
 
 from django.contrib.auth import login
 from . formreg import UsuarioForm
@@ -49,6 +49,7 @@ logger = logging.getLogger(__name__)
 def home(request):
     #Publicacion.objects.all().delete()
     #Categoria.objects.all().delete()
+    #Donation.objects.all().delete()
     user = request.user  # Obtiene el usuario autenticado de la sesión
     context = {
         'user': user,
@@ -327,6 +328,8 @@ def login_nuevo(request):
             print("Failed attempts:", failed_attempts)  # Imprime el número de intentos fallidos en la consola
     # Si no es una solicitud POST o si la autenticación falló, renderizar el formulario de inicio de sesión nuevamente
     return render(request, 'login.html', {'error_message': error_message})
+
+
 
 
 

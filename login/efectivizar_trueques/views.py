@@ -83,8 +83,9 @@ def aceptacion_trueque(request, id):
         categoria_puntos = solicitud.publicacion.categoria.puntuacion
         solicitante = trueque.solicitante
         receptor = trueque.receptor
-        solicitante.puntuacion += categoria_puntos
-        receptor.puntuacion += categoria_puntos
+        #es en puntos , puntuacion es los de las estrellas 
+        solicitante.puntos += categoria_puntos
+        receptor.puntos += categoria_puntos
         solicitante.save()
         receptor.save()
     trueque.save()

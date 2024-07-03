@@ -59,7 +59,7 @@ EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
 EMAIL_HOST_USER = 'giuproyectocaritas@gmail.com'  # Usar 'apikey' como usuario
-EMAIL_HOST_PASSWORD = 'buhy wbny mebp xbfe'
+EMAIL_HOST_PASSWORD = 'bscr nroi trgj ehqf'
 
 
 
