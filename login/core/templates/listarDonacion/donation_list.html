@@ -1,0 +1,30 @@
+{% extends 'base.html' %}
+
+{% block title %}Donaciones{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <h1>Donaciones</h1>
+    {% if donaciones %}
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+                    <th>Monto</th>
+                    <th>Fecha</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for donacion in donaciones %}
+                <tr>
+                    <td>{{ donacion.monto }}</td>
+                    <td>{{ donacion.date }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        <h3>Total Donado: {{ total_donado }}</h3>
+    {% else %}
+        <p>No hay donaciones disponibles.</p>
+    {% endif %}
+</div>
+{% endblock %}

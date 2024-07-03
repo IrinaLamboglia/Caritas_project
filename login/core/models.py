@@ -174,3 +174,24 @@ class Valoracion(models.Model):
 
     def __str__(self):
         return f'{self.trueque} - {self.usuario} - {self.estrellas} estrellas'
+    
+class BusquedaFavorita(models.Model):
+    usuario = models.ForeignKey(Usuario, on_delete=models.CASCADE)
+    termino_busqueda = models.CharField(max_length=255)
+    fecha_guardada = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        unique_together = ('usuario', 'termino_busqueda')
+
+    def __str__(self):
+        return f"{self.usuario.username} - {self.termino_busqueda}"
+
+
+class Donation(models.Model):
+    monto = models.DecimalField(max_digits=10, decimal_places=2)
+    status = models.CharField(max_length=20)    
+    date = models.DateTimeField(default=timezone.now)
+    preference_id = models.CharField(max_length=100, unique=True, null=True)
+
+    def __str__(self):
+        return f"Donation {self.id} - {self.monto} - {self.status}"

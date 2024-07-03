@@ -34,8 +34,18 @@ from efectivizar_trueques.views import efectivizar_trueques,aceptacion_trueque,p
 from rechazarTrueque.views import rechazar_trueque
 from rechazarTurno.views import rechazar_turno
 from visualizar_estadisticas.views import estadisticas_trueques
-from valorar_trueque.views import valorar_trueque
+from valorar_trueque.views import eliminar_valoracion, valorar_trueque
+
 from canjearPuntos.views import listarProductosDonados,canjear_producto, generar_pdf,misCanjes
+
+from realizarDonacion.views import realizar_donacion, donacion_failure, donacion_pending, donacion_success
+from buscarProductos.views import buscar_productos, productos
+from listaDonacion.views import donation_list
+
+
+from canjearPuntos.views import listarProductosDonados,canjear_producto, generar_pdf,misCanjes
+from editar_reseña.views import editar_valoracion
+
 
 urlpatterns = [
     path('', home, name='home'),
@@ -89,6 +99,7 @@ urlpatterns = [
 
     path('check_email/', views.check_email, name='check_email'),
     path('misTrueques/', views.ver_misTrueques, name='misTrueques'),
+    path('editar_reseña/<int:valoracion_id>/', editar_valoracion, name='editar_valoracion'),#nuevo
 
     path('solicitar-trueque/<int:publicacion_id>/', views.solicitar_trueque, name='solicitar_trueque'),
     path('registrar-solicitud/<int:publicacion_objetivo_id>/', views.registrar_solicitud, name='registrar_solicitud'),
@@ -133,6 +144,19 @@ urlpatterns = [
     path('listado_ayudante/',views.listado_ayudante,name='listado_ayudante'),  ##mio
     path('registrar_retiro/',views.registrar_retiro,name='registrar_retiro'),
     path('codigo_retiro/',views.codigo_retiro,name="codigo_retiro"),
-    path('registrar_producto/<str:codigo_r>/', views.registrar, name='registrar_producto')
-   
+    path('registrar_producto/<str:codigo_r>/', views.registrar, name='registrar_producto'),
+
+    path('donar/', realizar_donacion, name='realizar_donacion'),
+
+    path('buscar/', buscar_productos, name='buscar_productos'),
+
+    path('producto-favorito/', productos, name='producto_favorito'),
+
+    path('donaciones/', donation_list, name='donation_list'),
+    path('donacion/success/', donacion_success, name='donacion_success'),
+    path('donacion/failure/', donacion_failure, name='donacion_failure'),
+    path('donacion/pending/', donacion_pending, name='donacion_pending'),
+    path('valoraciones/<int:valoracion_id>/', eliminar_valoracion, name='eliminar_valoracion'),
+
+
     ]

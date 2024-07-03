@@ -59,15 +59,12 @@ def canjear_producto(request, publicacion_id):
             f"Canje exitoso para '{publicacion.titulo}'. Código de retiro: {codigo_retiro}. "
             f"<a href='{enlace_descarga}?codigo_retiro={codigo_retiro}' class='btn btn-success' style='margin-left: 10px;'>Descargar comprobante</a>"
         )
-
-
-#te cambie los mensajes porque no me andaban cuando hice el merge, perdooon. lo cambio ahora para avanzar con el registrar retiro
-
-        messages.success(request, mensaje_exito)
+        request.session['message'] = {'content': mensaje_exito, 'type': 'success'}
     else:
-        messages.error(request, "Solicitud inválida: No tienes suficientes puntos para canjear este producto.")
+        request.session['message'] = {'content': "Solicitud inválida: No tienes suficientes puntos para canjear este producto.", 'type': 'error'}
     
     return redirect('listadoProductosDonados')
+
 
 # ya funciona :)
 def generar_pdf(request):

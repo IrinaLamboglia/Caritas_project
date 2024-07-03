@@ -306,7 +306,7 @@
                                 <div class="number">
                                     <h2>{{ total_trueques | floatformat:"1" }}<span></span></h2>
                                 </div>
-                                <h3>Total de Trueques en Total:</h3>
+                                <h3>Total truques en la fecha seleccionada:</h3>
                             </div>
                         </div>
                     </div>
@@ -322,7 +322,7 @@
                                 <div class="number">
                                     <h2>{{ porcentaje_aceptados | floatformat:"1" }}<span>%</span></h2>
                                 </div>
-                                <h3>Aceptados</h3>
+                                <h3>Porcentaje aceptados en la fecha seleccionada</h3>
                             </div>
                         </div>
                     </div>
@@ -336,7 +336,7 @@
                                 <div class="number">
                                     <h2>{{ porcentaje_rechazados | floatformat:"1" }}<span>%</span></h2>
                                 </div>
-                                <h3>Rechazados</h3>
+                                <h3>Porcentaje rechazados en la fecha seleccionada</h3>
                             </div>
                         </div>
                     </div>
@@ -350,7 +350,7 @@
                                 <div class="number">
                                     <h2>{{ porcentaje_penalizados | floatformat:"1" }}<span>%</span></h2>
                                 </div>
-                                <h3>Penalizados</h3>
+                                <h3>Porcentaje penalizados en la fecha seleccionada</h3>
                             </div>
                         </div>
                     
@@ -442,7 +442,7 @@
                                         <div class="number">
                                             <h2>{{ total_usuarios_registrados}}<span></span></h2>
                                         </div>
-                                        <h3>Usuarios Registrados</h3>
+                                        <h3>Total Usuarios Registrados</h3>
                                     </div>
                                 </div>
                                 <div class="card">
@@ -453,9 +453,9 @@
                                             <circle cx="70" cy="70" r="70"></circle>
                                         </svg>
                                         <div class="number">
-                                            <h2>{{ porcentaje_usuarios_registrados }}<span>%</span></h2>
+                                            <h2>{{ porcentaje_usuarios_registrados| floatformat:"1" }}<span>%</span></h2>
                                         </div>
-                                        <h3>Usuarios Registrados</h3>
+                                        <h3>Usuarios registrados en la fecha solicitada</h3>
                                     </div>
                                 </div>
                             </div>

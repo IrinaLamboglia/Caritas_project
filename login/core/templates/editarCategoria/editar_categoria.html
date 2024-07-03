@@ -132,18 +132,27 @@
 </head>
 <body>
     <h1>Editar Categoría: {{ nombre_original }}</h1>
-    <form id="editarForm" method="POST" class="form-container">
-        {% csrf_token %} 
-        <label for="id_nombre">Nombre:</label>
-        {{ form.nombre }}
+<form id="editarForm" method="POST" class="form-container">
+    {% csrf_token %}
+    <label for="id_nombre">Nombre:</label>
+    {{ form.nombre }}
 
-        <button type="button" onclick="openModal()" class="form-container button" >Guardar Cambios</button>
-        {% if form.errors.nombre %}
-            <div class="error-message">
-                {{ form.errors.nombre }}
-            </div>
-        {% endif %}
-    </form>
+    <label for="id_puntuacion">Puntuación:</label>
+    {{ form.puntuacion }}
+
+    <button type="button" onclick="openModal()" class="form-container button">Guardar Cambios</button>
+    
+    {% if form.errors %}
+        <div class="error-message">
+            {% for field, errors in form.errors.items %}
+                {% for error in errors %}
+                    <p>{{ error }}</p>
+                {% endfor %}
+            {% endfor %}
+        </div>
+    {% endif %}
+</form>
+
 
     <!-- Modal -->
     <div id="confirmModal" class="modal">

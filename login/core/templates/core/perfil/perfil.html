@@ -387,7 +387,6 @@ body {
         <i class="fas fa-arrow-left"></i> Volver
     </a>
 
-<!-- si no es su perfil no lo deberia ver-->
 {%if user == request.user %}
 
 <nav class="profile-navigation">
@@ -420,6 +419,15 @@ body {
                                 <p>Valoración dirigida a: {{ valoracion.solicitud.solicitante.email }}</p>
                             {% endif %}
 
+                            <a href="{% url 'editar_valoracion' valoracion.id %}">Editar reseña</a>
+                            <!--Hacer boton de eliminar acá despues -->
+                            <button type="button" class="btn btn-danger btn-sm eliminar-btn" data-id="{{ valoracion.id }}">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                                    class="bi bi-trash-fill" viewBox="0 0 16 16">
+                                    <path d="M2.5 1a1 1 0 0 0-1 1v1a1 1 0 0 0 1 1H3v9a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2V4h.5a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1H10a1 1 0 0 0-1-1H7a1 1 0 0 0-1 1zm3 4a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-1 0v-7a.5.5 0 0 1 .5-.5M8 5a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-1 0v-7A.5.5 0 0 1 8 5m3 .5v7a.5.5 0 0 1-1 0v-7a.5.5 0 0 1 1 0" />
+                                </svg>
+                            </button>
+                            
 
                         </div>
                     {% endfor %}
@@ -435,6 +443,7 @@ body {
 
 
 </div>
+
 
     <div class="profile-container">
     
@@ -580,6 +589,10 @@ body {
         </div>
     </div>
 
+    
+   
+
+
     <!-- Asegúrate de que jQuery esté cargado -->
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script>
@@ -645,6 +658,57 @@ body {
     });
 </script>
 
+<script>
+    function getCookie(name) {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            const cookies = document.cookie.split(';');
+            for (let i = 0; i < cookies.length; i++) {
+                const cookie = cookies[i].trim();
+                if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    }
+
+    function eliminarValoracion(valoracionId) {
+        if (confirm("¿Estás seguro de que quieres eliminar esta valoración?")) {
+            const csrftoken = getCookie('csrftoken');
+            console.log(`Enviando solicitud DELETE a /valoraciones/${valoracionId}/`);
+            fetch(`/valoraciones/${valoracionId}/`, {
+                method: 'DELETE',
+                headers: {
+                    'X-CSRFToken': csrftoken,
+                    'Content-Type': 'application/json'
+                }
+            })
+            .then(response => {
+                if (response.ok) {
+                    return response.json();
+                }
+                throw new Error('Error al eliminar la valoración.');
+            })
+            .then(data => {
+                alert(data.message || 'Valoración eliminada con éxito.');
+                window.location.reload();
+            })
+            .catch(error => console.error('Error al eliminar la valoración:', error));
+        }
+    }
+
+    document.addEventListener("DOMContentLoaded", function() {
+        const buttons = document.querySelectorAll(".eliminar-btn");
+        buttons.forEach(button => {
+            button.addEventListener("click", function() {
+                const valoracionId = this.getAttribute("data-id");
+                eliminarValoracion(valoracionId);
+            });
+        });
+    });
+</script>
 
 
 

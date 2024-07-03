@@ -7,6 +7,8 @@
     <title>{% block title %}Cáritas Argentina{% endblock %}</title>
     <link rel="icon" type="image/png" href="{% static 'imagenes/logoCaritas.jpg' %}">
     <!-- Bootstrap CSS -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
+
      
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
     <!-- Leaflet CSS -->
@@ -41,39 +43,61 @@
             <span class="navbar-toggler-icon"></span>
         </button>
 
+
+        <!----  Navbar-->
+
         <div class="collapse navbar-collapse" id="navbarNav">
             <ul class="navbar-nav ml-auto">
                 <li class="nav-item">
                     <a class="nav-link" href="{% url 'home' %}">Inicio</a>
                 </li>
-
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'realizar_donacion' %}">Donar</a>
+                </li>
                 {% if user.is_authenticated %}
                   
 
                     {% if user.tipo == "administrador" %}
-                        <li class="nav-item"><a class="nav-link" href="{% url 'agregar_categoria' %}">Agregar categoría</a></li>
-                        <li class="nav-item"><a class="nav-link" href="{% url 'mostrarBaja' %}">Buscar ayudante</a></li>
-                        <li class="nav-item"><a class="nav-link" href="{% url 'listadoBloqueados' %}">Ver bloqueados</a></li>
-                        <li class="nav-item"><a class="nav-link" href="{% url 'mostarCategoria' %}">Desactivar/Activar categorías</a></li>
-                        <li class="nav-item"><a class="nav-link" href="{% url 'registro' %}">Alta Ayudante</a></li>
-                        <li class="nav-item"><a class="nav-link" href="{% url 'mis_publicaciones1' %}">Eliminar Publicaciones</a></li>
-                        <li class="nav-item"><a class="nav-link" href="{% url 'trueques_realizados' %}">Trueques realizados</a></li>
+                    <div class="dropdown">
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownAdmin" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                Administrador
+                            </a>
+                            <div class="dropdown-menu" aria-labelledby="navbarDropdownAdmin">
+                                <a class="dropdown-item" href="{% url 'agregar_categoria' %}">Agregar categoría</a>
+                                <a class="dropdown-item" href="{% url 'mostrarBaja' %}">Buscar ayudante</a>
+                                <a class="dropdown-item" href="{% url 'listadoBloqueados' %}">Ver bloqueados</a>
+                                <a class="dropdown-item" href="{% url 'mostarCategoria' %}">Desactivar/Activar categorías</a>
+                                <a class="dropdown-item" href="{% url 'registro' %}">Alta Ayudante</a>
+                                <a class="dropdown-item" href="{% url 'mis_publicaciones1' %}">Eliminar Publicaciones</a>
+                                <a class="dropdown-item" href="{% url 'trueques_realizados' %}">Trueques realizados</a>
+                                <a class="dropdown-item" href="{% url 'estadisticas_trueques' %}">Estadisticas</a>
+                                <a class="dropdown-item" href="{% url 'donation_list' %}">Donaciones</a>
 
-                        <li class="nav-item"><a class="nav-link" href="{% url 'estadisticas_trueques' %}">Estadisticas</a></li>
-                    {% elif user.tipo == "ayudante" %}
-                        <li class="nav-item"><a class="nav-link" href="{% url 'agregar_categoria' %}">Agregar categoría</a></li>
-                        <li class="nav-item"><a class="nav-link" href="{% url 'mostarCategoria' %}">Desactivar/Activar categorías</a></li>
-                        <li class="nav-item"><a class="nav-link" href="{% url 'mostrar_validacion' %}">Validar</a></li>
-                        <li class="nav-item"><a class="nav-link" href="{% url 'visualizar_trueques_diarios' %}">Trueques diarios</a></li>
-                        <li class="nav-item"><a class="nav-link" href="{% url 'efectivizar_trueque' %}">Efectivizar Trueques</a></li>
-                        <li class="nav-item"><a class="nav-link" href="{% url 'listado_ayudante' %}">Productos fundación</a></li>
-                        <li class="nav-item"><a class="nav-link" href="{% url 'registrar_retiro' %}">Registrar retiro</a></li>
-
-
-
-                         </div>
+                            </div>
                         </li>
                     </div>
+                       
+                    {% elif user.tipo == "ayudante" %}
+                        <div class="dropdown">
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownAyudante" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                Ayudante
+                            </a>
+                            <div class="dropdown-menu" aria-labelledby="navbarDropdownAyudante">
+                                <a class="dropdown-item" href="{% url 'agregar_categoria' %}">Agregar categoría</a>
+                                <a class="dropdown-item" href="{% url 'mostarCategoria' %}">Desactivar/Activar categorías</a>
+                                <a class="dropdown-item" href="{% url 'mostrar_validacion' %}">Validar</a>
+                                <a class="dropdown-item" href="{% url 'visualizar_trueques_diarios' %}">Trueques diarios</a>
+                                <a class="dropdown-item" href="{% url 'efectivizar_trueque' %}">Efectivizar Trueques</a>
+                                <a class="dropdown-item" href="{% url 'alta_producto' %}">Alta producto</a>
+                                <a class="dropdown-item" href="{% url 'listado_ayudante' %}">Productos fundación</a>
+                                <a class="dropdown-item" href="{% url 'registrar_retiro' %}">Registrar retiro</a>
+
+                             </div>
+                        </li>
+                    </div>
+
                     {% else %}
                     <div class="dropdown">
                         <li class="nav-item dropdown">
@@ -96,6 +120,7 @@
                         </form>
                     </li>
                     {% endif %}
+                    
 
                     <li class="nav-item">
                         <a class="nav-link" href="#" onclick="confirmarSalida()">Salir</a>
@@ -119,7 +144,9 @@
     </div>
 
     <!-- Error Modal -->
-    {% include 'error_modal.html' %}
+    {% block error_modal %}
+        {% include 'error_modal.html' %}
+    {% endblock %}
 
     {% include "footer.html"%} 
 

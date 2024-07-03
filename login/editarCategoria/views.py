@@ -9,11 +9,14 @@ def editar_categoria(request, id):
     nombre_original = categoria.nombre  # Guarda el nombre original de la categoría
     
     if request.method == "POST":
-        form = CategoriaForm(request.POST, instance=categoria)
+        if 'nombre' in request.POST:
+            form = CategoriaForm(request.POST, instance=categoria)
+        else:
+            form = CategoriaForm({'nombre': categoria.nombre}, request.POST, instance=categoria)
+
         if form.is_valid():
             form.save()
-            return redirect('mostarCategoria')  # Redirigir a la página de categorías
-   
+            return redirect('mostarCategoria')
     else:
         form = CategoriaForm(instance=categoria)
         

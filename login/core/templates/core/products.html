@@ -63,6 +63,34 @@
                     </div>
                 </div>
 
+                <!-- Barra de búsqueda -->
+<div class="row my-4">
+    <div class="col-12">
+        <form method="GET" action="{% url 'buscar_productos' %}" class="form-inline">
+            <div class="input-group">
+                <input 
+                    type="text" 
+                    id="busqueda-texto" 
+                    name="q" 
+                    class="form-control" 
+                    placeholder="Buscar productos..." 
+                    list="favoritas-list"
+                    aria-label="Buscar productos" 
+                    aria-describedby="boton-buscar"
+                    autocomplete="off"
+                />
+                <datalist id="favoritas-list">
+                    {% for favorita in favoritas %}
+                        <option value="{{ favorita.termino_busqueda }}"></option>
+                    {% endfor %}
+                </datalist>
+                <div class="input-group-append">
+                    <button class="btn btn-primary" type="submit" id="boton-buscar">Buscar</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
 
                 <div class="album py-5 bg-body-tertiary">
                     <div class="container">
@@ -72,7 +100,7 @@
                                     <div class="col">
                                         <div class="card shadow-sm">
                                                 <img src="{{ publicacion.imagen.url }}" class="card-img-top" alt="{{ publicacion.titulo }}">
-                                                {% if not  publicacion.imagen.url%}
+                                                {% if not  publicacion.imagen.url %}
                                                 <img src="{% static 'placeholder_image.jpg' %}" class="card-img-top" alt="Imagen no disponible">
                                                 {% endif %}
 
@@ -108,7 +136,7 @@
                         </div>
                     </div>
                 </div>
-
+                {% block error_modal %}
                 {% if messages %}
                     <div >
                         {% for message in messages %}
@@ -116,6 +144,7 @@
                         {% endfor %}
                     </div>
                     {% endif %}
+                {% endblock %}
 
 
                   

@@ -60,6 +60,7 @@ def home(request):
 #el template login es lo que se muestra antes de q se loguee
 @login_required
 def products(request):
+    print("ENTRO")
     usuario_actual = request.user
     #parece q setean trueque en false cuando no esta disponible 
     publicaciones = Publicacion.objects.filter(estado=True, estadoCategoria=True, trueque=False, stock=-1).exclude(usuario=usuario_actual)
@@ -603,26 +604,26 @@ def filtro_trueques(request):
     usu = request.user
 
     if filtro == 'Aceptadas':
+        print(filtro)
         soli = Solicitud.objects.filter(publicacion__usuario=usu, estado=True)
+        print(soli.count())
     elif filtro == 'Pendientes':
         soli = Solicitud.objects.filter(publicacion__usuario=usu, estado=False)
+        print(soli.count())
         if search_query:
             soli = soli.filter(
                 Q(publicacion__titulo__icontains=search_query) |
                 Q(publicacionOfrecida__titulo__icontains=search_query)
             )
     elif filtro == 'Pendientes en valoración':
-        # Filtrar por solicitudes aceptadas y pendientes de valoración por ambos usuarios
         soli = Solicitud.objects.filter(
             Q(publicacion__usuario=usu) | Q(publicacionOfrecida__usuario=usu),  # Usuario es solicitante o receptor
             estado=True,  # Estado aceptado
             realizado=True,  # Solicitud realizada
-            trueque__isnull=False,
-            trueque__valoraciones__isnull=True  # Sin valoraciones para este trueque
-        ).distinct() 
-
-    else:
-        soli = Solicitud.objects.filter(publicacion__usuario=usu)
+            trueque__isnull=False
+        ).exclude(
+            Q(trueque__valoraciones__usuario=usu) | Q(trueque__valoraciones__isnull=True)
+        ).distinct()
 
     return render(request, 'listado/misTrueques.html', {'elementos': soli, 'filtro': filtro, 'search_query': search_query})
 
@@ -672,9 +673,8 @@ def mis_publicaciones1(request):
     publicaciones = Publicacion.objects.all()
     return render(request, 'core/crearPublicacion/mis_publicaciones1.html', {'publicaciones': publicaciones})
 
-
 def mis_publicaciones(request):
-    publicaciones_disponibles = Publicacion.objects.filter(usuario=request.user, estado=True, estadoCategoria=True,trueque=False)
+    publicaciones_disponibles = Publicacion.objects.filter(usuario=request.user, estado=True, estadoCategoria=True, trueque=False, stock=-1)
     publicaciones_no_disponibles = Publicacion.objects.filter(usuario=request.user).exclude(estado=True, estadoCategoria=True)
     context = {
         'publicaciones_disponibles': publicaciones_disponibles,
