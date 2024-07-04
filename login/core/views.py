@@ -8,7 +8,7 @@ from django.shortcuts import get_object_or_404, render, redirect
 from django.db.models import Count, Case, When, Q
 
 from core.formProdDonado import ProductoDonadoForm
-from .models import FailedLoginAttempt, Publicacion, Solicitud, Usuario, UsuarioBloqueado, porDesbloquear, Categoria,Trueque,Filial,Valoracion,Canje,Donation
+from .models import FailedLoginAttempt, Publicacion, Solicitud, Usuario, UsuarioBloqueado, porDesbloquear, Categoria,Trueque,Filial,Valoracion,Canje,Donation,BusquedaFavorita
 
 from django.contrib.auth import login
 from . formreg import UsuarioForm
@@ -62,18 +62,22 @@ def home(request):
 #estoy aplicando la restrinccion de que si no esta logueado
 #no puude ver los productos
 #el template login es lo que se muestra antes de q se loguee
-@login_required
+@login_required    #cambio con el tema de busqueda favorita 
 def products(request):
     print("ENTRO")
     usuario_actual = request.user
     #parece q setean trueque en false cuando no esta disponible 
     publicaciones = Publicacion.objects.filter(estado=True, estadoCategoria=True, trueque=False, stock=-1).exclude(usuario=usuario_actual)
     publicaciones_solicitadas_ids = Solicitud.objects.filter(solicitante=usuario_actual).values_list('publicacion_id', flat=True)
-
+    favoritas = BusquedaFavorita.objects.filter(usuario=request.user)
+    
     return render(request, 'core/products.html', {
+        'favoritas': favoritas,
         'publicaciones': publicaciones,
         'publicaciones_solicitadas_ids': list(publicaciones_solicitadas_ids)
     })
+
+
 
 
 #perfecto

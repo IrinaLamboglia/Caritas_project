@@ -64,7 +64,7 @@
                     </div>
                 </div>
 
-                <!-- Barra de búsqueda -->
+              <!-- Barra de búsqueda , cambios -->
 <div class="row my-4">
     <div class="col-12">
         <form method="GET" action="{% url 'buscar_productos' %}" class="form-inline">
@@ -81,9 +81,13 @@
                     autocomplete="off"
                 />
                 <datalist id="favoritas-list">
-                    {% for favorita in favoritas %}
-                        <option value="{{ favorita.termino_busqueda }}"></option>
-                    {% endfor %}
+                    {% if favoritas %}
+                        {% for favorita in favoritas %}
+                            <option value="{{ favorita.termino_busqueda }}"></option>
+                        {% endfor %}
+                    {% else %}
+                        <option value="No hay búsquedas favoritas" data-placeholder></option>
+                    {% endif %}
                 </datalist>
                 <div class="input-group-append">
                     <button class="btn btn-primary" type="submit" id="boton-buscar">Buscar</button>
@@ -154,5 +158,23 @@
                   
     </body>
     </html>
+   <!-- se agrego -->
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            var input = document.getElementById('busqueda-texto');
+            var datalist = document.getElementById('favoritas-list');
+        
+            input.addEventListener('input', function() {
+                var selectedOption = datalist.querySelector(option[value="${input.value}"]);
+                if (selectedOption && selectedOption.hasAttribute('data-placeholder')) {
+                    input.value = '';
+                }
+            });
+        });
+        </script>
+
+
+
 {% endif %}
 {% endblock %}
